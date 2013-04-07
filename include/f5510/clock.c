@@ -79,7 +79,7 @@ void clockSetDCO(dco_freq_t freq)
       // (N + 1) * FLLRef = Fdco
       // (249 + 1) * 32768 = 8MHz
       UCSCTL2 |= 249;
-      
+
       // Enable the FLL control loop
       __bic_SR_register(SCG0);
 
@@ -105,7 +105,7 @@ void clockSetDCO(dco_freq_t freq)
       // (N + 1) * FLLRef = Fdco
       // (374 + 1) * 32768 = 12MHz
       UCSCTL2 = FLLD_1 + 374;
-      
+
       // Enable the FLL control loop
       __bic_SR_register(SCG0);
 
@@ -118,15 +118,15 @@ void clockSetDCO(dco_freq_t freq)
     case DCO_F_25MHz:
       // Increase Vcore setting to level3 to support fsystem=25MHz
       // NOTE: Change core voltage one level at a time..
-      upVcore (0x01);
-      upVcore (0x02);
-      upVcore (0x03);
-      
+      clockUpVcore(0x01);
+      clockUpVcore(0x02);
+      clockUpVcore(0x03);
+
       // Set DCO FLL reference = REFO
       UCSCTL3 = SELREF_2;
       UCSCTL4 |= SELA_2;
 
-      
+
       // Disable the FLL control loop
       __bis_SR_register(SCG0);
       // Set lowest possible DCOx, MODx
@@ -138,7 +138,7 @@ void clockSetDCO(dco_freq_t freq)
       // (762 + 1) * 32768 = 25MHz
       // Set FLL Div = fDCOCLK/2
       UCSCTL2 = FLLD_1 + 762;
-      
+
       // Enable the FLL control loop
       __bic_SR_register(SCG0);
 
@@ -156,7 +156,7 @@ void clockSetDCO(dco_freq_t freq)
   {
     // Clear XT2,XT1,DCO fault flags
     UCSCTL7 &= ~(XT2OFFG + XT1LFOFFG + DCOFFG);
-    // Clear fault flags                      
+    // Clear fault flags
     SFRIFG1 &= ~OFIFG;
   } while (SFRIFG1&OFIFG); // Test oscillator fault flag 
 }
