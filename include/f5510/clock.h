@@ -17,7 +17,8 @@
 
 #pragma once
 
-#include "main.h"
+#include <msp430f5510.h>
+#include "../ab2.h"
 
 // Define the DCO frequencies supported by the clock module
 typedef enum
