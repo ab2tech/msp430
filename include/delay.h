@@ -12,10 +12,6 @@
 // Example for 25MHz
 // #define F_CPU 25000000UL
 
-#ifndef F_CPU
-  #error "F_CPU is not set..."
-#endif
-
 // Delay Functions
 #define _delay_ns(__ns) \
   if((unsigned long) (F_CPU/1000000000.0 * __ns) != F_CPU/1000000000.0 * __ns)\
