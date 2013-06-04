@@ -20,39 +20,49 @@
 #include "../ab2.h"
 #include <msp430f5510.h>
 
-// Define the pins as msp_pin_t type
-// Also provide PORT*_MAX and MSP_PIN_SIZE values, which should NOT be used as
-// pins, but are provided as references
-// MSP430F5510 64-pin (RGC) or 80-pin BGA (ZQE)
 // Set the individual port size (bits per port)
 #define PORT_SIZE     8
+// Define the number of ports on the device
 #define NUM_PORTS     7
+// Define the number of interrupt ports on the device
 #define NUM_INT_PORTS 2
+// Define the number of ports with SEL registers
 #define NUM_SEL_PORTS 6
 
+// Define the port offsets
+#define PORT1 (PORT_SIZE)
+#define PORT2 (PORT_SIZE*2)
+#define PORT3 (PORT_SIZE*3)
+#define PORT4 (PORT_SIZE*4)
+#define PORT5 (PORT_SIZE*5)
+#define PORT6 (PORT_SIZE*6)
+#define PORTJ (PORT_SIZE*NUM_PORTS)
+
+// Define the pins as msp_pin_t type
 #ifdef MSP430F5510_EXT
+// MSP430F5510 64-pin (RGC) or 80-pin BGA (ZQE)
   typedef enum
   {
-    p1_0=(PORT_SIZE), p1_1, p1_2, p1_3, p1_4, p1_5, p1_6, p1_7,
-    p2_0=(PORT_SIZE*2), p2_1, p2_2, p2_3, p2_4, p2_5, p2_6, p2_7,
-    p3_0=(PORT_SIZE*3), p3_1, p3_2, p3_3, p3_4,
-    p4_0=(PORT_SIZE*4), p4_1, p4_2, p4_3, p4_4, p4_5, p4_6, p4_7,
-    p5_0=(PORT_SIZE*5), p5_1, p5_2, p5_3, p5_4, p5_5,
-    p6_0=(PORT_SIZE*6), p6_1, p6_2, p6_3, p6_4, p6_5, p6_6, p6_7,
-    pJ_0=(PORT_SIZE*NUM_PORTS), pJ_1, pJ_2, pJ_3
+    p1_0=(PORT1), p1_1, p1_2, p1_3, p1_4, p1_5, p1_6, p1_7,
+    p2_0=(PORT2), p2_1, p2_2, p2_3, p2_4, p2_5, p2_6, p2_7,
+    p3_0=(PORT3), p3_1, p3_2, p3_3, p3_4,
+    p4_0=(PORT4), p4_1, p4_2, p4_3, p4_4, p4_5, p4_6, p4_7,
+    p5_0=(PORT5), p5_1, p5_2, p5_3, p5_4, p5_5,
+    p6_0=(PORT6), p6_1, p6_2, p6_3, p6_4, p6_5, p6_6, p6_7,
+    pJ_0=(PORTJ), pJ_1, pJ_2, pJ_3
   } msp_pin_t;
 
-// MSP430F5510 48-pin (RGZ or PT)
 #else
+// MSP430F5510 48-pin (RGZ or PT)
   typedef enum
   {
-    p1_0=(PORT_SIZE), p1_1, p1_2, p1_3, p1_4, p1_5, p1_6, p1_7,
-    p2_0=(PORT_SIZE*2),
+    p1_0=(PORT1), p1_1, p1_2, p1_3, p1_4, p1_5, p1_6, p1_7,
+    p2_0=(PORT2),
     // PORT3 not available
-    p4_0=(PORT_SIZE*4), p4_1, p4_2, p4_3, p4_4, p4_5, p4_6, p4_7,
-    p5_0=(PORT_SIZE*5), p5_1, p5_2, p5_3, p5_4, p5_5,
-    p6_0=(PORT_SIZE*6), p6_1, p6_2, p6_3,
-    pJ_0=(PORT_SIZE*NUM_PORTS), pJ_1, pJ_2, pJ_3
+    p4_0=(PORT4), p4_1, p4_2, p4_3, p4_4, p4_5, p4_6, p4_7,
+    p5_0=(PORT5), p5_1, p5_2, p5_3, p5_4, p5_5,
+    p6_0=(PORT6), p6_1, p6_2, p6_3,
+    pJ_0=(PORTJ), pJ_1, pJ_2, pJ_3
   } msp_pin_t;
 #endif
 
@@ -62,10 +72,10 @@ extern volatile uint8_t *msp_pin_out[NUM_PORTS];
 extern volatile uint8_t *msp_pin_dir[NUM_PORTS];
 extern volatile uint8_t *msp_pin_ren[NUM_PORTS];
 extern volatile uint8_t *msp_pin_ds[NUM_PORTS];
-extern volatile uint8_t *msp_pin_sel[NUM_PORTS-1];
-extern volatile uint8_t *msp_pin_ies[NUM_PORTS-5];
-extern volatile uint8_t *msp_pin_ie[NUM_PORTS-5];
-extern volatile uint8_t *msp_pin_ifg[NUM_PORTS-5];
+extern volatile uint8_t *msp_pin_sel[NUM_SEL_PORTS];
+extern volatile uint8_t *msp_pin_ies[NUM_INT_PORTS];
+extern volatile uint8_t *msp_pin_ie[NUM_INT_PORTS];
+extern volatile uint8_t *msp_pin_ifg[NUM_INT_PORTS];
 
 #define bit(pin) (msp_pin_bit[(pin % PORT_SIZE)])
 #define in(pin)  (*msp_pin_in[(pin / PORT_SIZE) - 1])

@@ -39,7 +39,6 @@ volatile uint8_t *msp_pin_ds[NUM_PORTS] = {
 #ifndef DISABLE_PFW_SEL
 volatile uint8_t *msp_pin_sel[NUM_SEL_PORTS] = {
   &P1SEL, &P2SEL, &P3SEL, &P4SEL, &P5SEL, &P6SEL
-
 };
 #endif
 #ifndef DISABLE_PFW_IES
