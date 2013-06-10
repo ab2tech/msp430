@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "../ab2.h"
+#include "msp/ab2.h"
 #include <msp430g2553.h>
 
 // Set the individual port size (bits per port)
