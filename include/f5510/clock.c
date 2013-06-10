@@ -16,16 +16,9 @@
 // Simplify MSP430F5510 clock initialization and frequency modification
 #include "clock.h"
 
-// Global variables to maintain the state of the DCO and ACLK
-dco_freq_t  dco_freq;
-aclk_freq_t aclk_freq;
-
-// Return the current frequency of the DCO in terms of the definition structure
-// established in the header file of this library
-dco_freq_t clockGetDCOFreq()
-{
-  return dco_freq;
-}
+// Global variables to maintain the state of the ACLK and DCO
+aclk_src_t aclk_src;
+dco_freq_t dco_freq;
 
 // Initialize the clock to the default settings
 // DCO -> 25MHz
@@ -33,16 +26,16 @@ dco_freq_t clockGetDCOFreq()
 void clockInit()
 {
   clockSetDCO(DCO_F_25MHz);
-  clockSetACLK(ACLK_F_REFO);
+  clockSetACLK(ACLK_SRC_REFO);
 }
 
-// Set ACLK to the aclk_freq_t value specified
-void clockSetACLK(aclk_freq_t freq)
+// Set ACLK to the aclk_src_t value specified
+void clockSetACLK(aclk_src_t src)
 {
-  aclk_freq = freq;
-  switch (aclk_freq)
+  aclk_src = src;
+  switch (src)
   {
-    case ACLK_F_REFO:
+    case ACLK_SRC_REFO:
       // Set ACLK = REFO
       UCSCTL4 |= SELA_2;
       break;
@@ -55,7 +48,7 @@ void clockSetACLK(aclk_freq_t freq)
 void clockSetDCO(dco_freq_t freq)
 {
   dco_freq = freq;
-  switch (dco_freq)
+  switch (freq)
   {
     case DCO_F_1MHz:
       // In this case, we're done
@@ -122,7 +115,6 @@ void clockSetDCO(dco_freq_t freq)
       // Set DCO FLL reference = REFO
       UCSCTL3 = SELREF_2;
       UCSCTL4 |= SELA_2;
-
 
       // Disable the FLL control loop
       __bis_SR_register(SCG0);

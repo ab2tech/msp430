@@ -15,28 +15,31 @@
 // MSP430F5510 Clock Library
 // Simplify MSP430F5510 clock initialization and frequency modification
 
+// TODO: Needs additional features added for complete clock module support.
+//       The library currently supports basic functionalities, but should be
+//       enhanced to provide more complete support of the clock module.
+
 #pragma once
 
 #include <msp430f5510.h>
-#include "../ab2.h"
+#include "msp/ab2.h"
+
+// Define the ACLK sources supported by the clock module
+typedef enum
+{
+  ACLK_SRC_REFO
+} aclk_src_t;
 
 // Define the DCO frequencies supported by the clock module
 typedef enum
-{ 
-  DCO_F_1MHz, 
-  DCO_F_8MHz, 
-  DCO_F_12MHz, 
-  DCO_F_25MHz 
+{
+  DCO_F_1MHz,
+  DCO_F_8MHz,
+  DCO_F_12MHz,
+  DCO_F_25MHz
 } dco_freq_t;
 
-// Define the ACLK frequencies supported by the clock module
-typedef enum 
-{ 
-  ACLK_F_REFO
-} aclk_freq_t;
-  
-dco_freq_t clockGetDCOFreq(void);
-void       clockInit(void);
-void       clockSetACLK(aclk_freq_t freq);
-void       clockSetDCO(dco_freq_t freq);
-void       clockUpVcore (uint16_t level);
+void clockInit(void);
+void clockSetACLK(aclk_src_t src);
+void clockSetDCO(dco_freq_t freq);
+void clockUpVcore (uint16_t level);
