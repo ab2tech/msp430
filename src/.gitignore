@@ -1,0 +1,6 @@
+# Ignore workspace metadata
+.metadata
+# Ignore personal settings
+.settings
+# Ignore Debug folders
+Debug
