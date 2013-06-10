@@ -1,6 +1,6 @@
 MSP430 Project Examples
 =======================
 
-Sorry, there are currently no project examples. We will be posting examples very soon that will demonstrate the functionality of our libraries and how to implement them.
+Example projects that demonstrate our libraries can be found here. For the most part, they won't be all that useful other than to show off some cool stuff to do with our libraries.
 
-Have a great day!
+Have a great day and enjoy!
