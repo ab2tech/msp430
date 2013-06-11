@@ -36,12 +36,23 @@ xt2_range_t xt2_range;
 // DCO   -> 16MHz
 // MCLK  -> DCO / 1
 // SMCLK -> DCO / 1
-void clockInit()
+void clockInitDefaults()
 {
   clockSetACLK(ACLK_SRC_VLO, CLK_DIV_1);
   clockSetDCO(DCO_F_16MHz);
   clockSetMCLK(MCLK_SRC_DCO, CLK_DIV_1);
   clockSetSMCLK(SMCLK_SRC_DCO, CLK_DIV_1);
+}
+
+void clockInit(aclk_src_t asrc, clk_div_t adiv,
+               dco_freq_t dcof,
+               mclk_src_t msrc, clk_div_t mdiv,
+               smclk_src_t ssrc, clk_div_t sdiv)
+{
+  clockSetACLK(asrc, adiv);
+  clockSetDCO(dcof);
+  clockSetMCLK(msrc, mdiv);
+  clockSetSMCLK(ssrc, sdiv);
 }
 
 // Set the ACLK source and divider

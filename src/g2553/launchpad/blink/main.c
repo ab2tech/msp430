@@ -9,7 +9,7 @@ void main (void)
   // Stop watchdog timer
   WDTCTL = WDTPW | WDTHOLD;
   // Initialize the clock to 16MHz
-  clockInit();
+  clockInitDefaults();
 
   // Blink the blink pin
   blink(BLINK_PIN);

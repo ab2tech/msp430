@@ -86,8 +86,11 @@ typedef enum
   XT2_F_DIG   // Digital external clock source
 } xt2_range_t;
 
-void clockInit(void);
-
+void clockInitDefaults(void);
+void clockInit(aclk_src_t asrc, clk_div_t adiv,
+               dco_freq_t dcof,
+               mclk_src_t msrc, clk_div_t mdiv,
+               smclk_src_t ssrc, clk_div_t sdiv);
 void clockSetACLK(aclk_src_t src, clk_div_t div);
 void clockSetDCO(dco_freq_t freq);
 void clockSetMCLK(mclk_src_t src, clk_div_t div);
