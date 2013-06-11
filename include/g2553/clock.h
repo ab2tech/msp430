@@ -16,6 +16,7 @@
 // Simplify MSP430G2553 clock initialization and frequency modification
 
 #pragma once
+#define AB2_CLOCK
 
 #include <msp430g2553.h>
 #include "msp/ab2.h"
