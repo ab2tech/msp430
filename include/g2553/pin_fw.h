@@ -16,6 +16,7 @@
 // ports to allow more dynamic use of them.
 
 #pragma once
+#define AB2_PFW
 
 #include "msp/ab2.h"
 #include <msp430g2553.h>
