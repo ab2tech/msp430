@@ -31,3 +31,10 @@
 #define F_16MHz 16000000UL
 #define F_20MHz 20000000UL
 #define F_25MHz 25000000UL
+
+// Define a boolean type that can be used in all AB2 software
+typedef enum
+{
+  FALSE=0,
+  TRUE=1
+} bool_t;
