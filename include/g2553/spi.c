@@ -70,6 +70,8 @@ spi_ret_t spiInit(spi_usci_t usci)
       // Initialize USCI state machine
       off(UCA0CTL1, UCSWRST);
 
+      break;
+
     case SPI_B0:
       // Enable spi using the B0 Port SEL & SEL2 registers
       pinSelOn(spi_pins[SPI_B0][SPI_USCI_CLK]);
@@ -92,6 +94,8 @@ spi_ret_t spiInit(spi_usci_t usci)
 
       // Initialize USCI state machine
       off(UCB0CTL1, UCSWRST);
+
+      break;
 
     default:
       return SPI_USCI_DNE;
