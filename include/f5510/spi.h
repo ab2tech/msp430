@@ -14,6 +14,8 @@
 
 // MSP430F5510 SPI Library
 // Simple SPI library for providing maximum re-use and ease of integration
+// MSP430F5510 64-pin (RGC) or 80-pin BGA (ZQE) supported with definition of
+// MSP430F5510_EXT flag
 
 // Limitations: Only master out SPI is supported. Read should be trivial, with
 // the only qualification being the configuration of an RX ISR
@@ -38,6 +40,10 @@ typedef enum
 // Define the various SPI USCIs available on the 5510
 typedef enum
 {
+#ifdef MSP430F5510_EXT
+  SPI_A0,
+  SPI_B0,
+#endif
   SPI_A1,
   SPI_B1,
   NUM_SPI_USCIs
