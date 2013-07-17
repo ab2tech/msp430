@@ -18,10 +18,10 @@
 #pragma once
 #define AB2_tlc5925
 
-#include "msp/ab2.h"
-#include <msp430f5510.h>
-#include "pin_fw.h"
-#include "spi.h"
+#include "ab2.h"
+// Steal our MSP include from pin_fw to make this a generic library
+#include "../pin_fw.h"
+#include "../spi.h"
 
 // Define a return type for TLC5925 functions with no meaningful return value
 // (return status)
@@ -86,7 +86,7 @@ tlc5925_ret_t tlc5925Write(tlc5925_t *tlc, uint16_t channel_data);
 #define ANIMATION_DELAY 50
 
 // Channel presets (channel 0 referenced)
-#define BOLD_CURSOR                     (BIT3|BIT4)
+#define BOLD_CURSOR                     (CH03|CH04)
 #define BOTTOM_LEFT_QUADRANT            (CH03|CH04|CH05|CH06|CH07)
 #define BOTTOM_RIGHT_QUADRANT           (CH00|CH01|CH02|CH03|CH15)
 #define CH0_15                          (CH00|CH01|CH02|CH03|CH04|CH05|CH06|

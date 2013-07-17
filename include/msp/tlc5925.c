@@ -32,6 +32,7 @@ tlc5925_ret_t tlc5925ChannelScanDown(tlc5925_t *tlc, uint16_t starting_channel,
       _delay_ms(ANIMATION_DELAY);
     }
   }
+  return TLC5925_NO_ERR;
 }
 
 // Scans through all TLC5925 channels from low to high beginning with the
