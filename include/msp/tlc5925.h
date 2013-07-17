@@ -62,6 +62,9 @@ typedef struct tlc5925
   msp_pin_t    le;
   msp_pin_t    oe;
   tlc5925_ch_t start_ch; // tlc arrays are not always 0-indexed
+
+  // Internal state variable for tracking tlc5925 init state. This should never
+  // be modified outside of the tlc5925 library
   bool_t       is_init;
 } tlc5925_t;
 
