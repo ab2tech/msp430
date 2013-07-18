@@ -4,8 +4,7 @@
 // the operating frequency of your MSP430 device.
 
 #pragma once
-#include "msp/ab2.h"
-#include "../../main.h"
+#include "ab2.h"
 
 // F_CPU should be defined to the frequency to base delays upon before sourcing
 // the delay library as follows:
