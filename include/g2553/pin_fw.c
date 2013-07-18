@@ -14,45 +14,112 @@
 
 #include "pin_fw.h"
 
-const uint8_t msp_pin_bit[PORT_SIZE] = {
+const uint8_t msp_pin_bit[MSP_PIN_SIZE] = {
+  // PORT1
+  BIT0, BIT1, BIT2, BIT3, BIT4, BIT5, BIT6, BIT7,
+  // PORT2
   BIT0, BIT1, BIT2, BIT3, BIT4, BIT5, BIT6, BIT7
+  // PORT3
+#ifdef MSP430G2553_EXT
+  , BIT0, BIT1, BIT2, BIT3, BIT4, BIT5, BIT6, BIT7
+#endif
 };
-volatile uint8_t *msp_pin_in[NUM_PORTS] = {
-  &P1IN, &P2IN, &P3IN
+
+const uint16_t msp_pin_in[MSP_PIN_SIZE] = {
+  (uint16_t) &P1IN, (uint16_t) &P1IN, (uint16_t) &P1IN, (uint16_t) &P1IN,
+    (uint16_t) &P1IN, (uint16_t) &P1IN, (uint16_t) &P1IN, (uint16_t) &P1IN,
+  (uint16_t) &P2IN, (uint16_t) &P2IN, (uint16_t) &P2IN, (uint16_t) &P2IN,
+    (uint16_t) &P2IN, (uint16_t) &P2IN, (uint16_t) &P2IN, (uint16_t) &P2IN
+#ifdef MSP430G2553_EXT
+  , (uint16_t) &P3IN, (uint16_t) &P3IN, (uint16_t) &P3IN, (uint16_t) &P3IN,
+    (uint16_t) &P3IN, (uint16_t) &P3IN, (uint16_t) &P3IN, (uint16_t) &P3IN
+#endif
 };
-volatile uint8_t *msp_pin_out[NUM_PORTS] = {
-  &P1OUT, &P2OUT, &P3OUT
+
+const uint16_t msp_pin_out[MSP_PIN_SIZE] = {
+  (uint16_t) &P1OUT, (uint16_t) &P1OUT, (uint16_t) &P1OUT, (uint16_t) &P1OUT,
+    (uint16_t) &P1OUT, (uint16_t) &P1OUT, (uint16_t) &P1OUT, (uint16_t) &P1OUT,
+  (uint16_t) &P2OUT, (uint16_t) &P2OUT, (uint16_t) &P2OUT, (uint16_t) &P2OUT,
+    (uint16_t) &P2OUT, (uint16_t) &P2OUT, (uint16_t) &P2OUT, (uint16_t) &P2OUT
+#ifdef MSP430G2553_EXT
+  , (uint16_t) &P3OUT, (uint16_t) &P3OUT, (uint16_t) &P3OUT, (uint16_t) &P3OUT,
+    (uint16_t) &P3OUT, (uint16_t) &P3OUT, (uint16_t) &P3OUT, (uint16_t) &P3OUT
+#endif
 };
-volatile uint8_t *msp_pin_dir[NUM_PORTS] = {
-  &P1DIR, &P2DIR, &P3DIR
+
+const uint16_t msp_pin_dir[MSP_PIN_SIZE] = {
+  (uint16_t) &P1DIR, (uint16_t) &P1DIR, (uint16_t) &P1DIR, (uint16_t) &P1DIR,
+    (uint16_t) &P1DIR, (uint16_t) &P1DIR, (uint16_t) &P1DIR, (uint16_t) &P1DIR,
+  (uint16_t) &P2DIR, (uint16_t) &P2DIR, (uint16_t) &P2DIR, (uint16_t) &P2DIR,
+    (uint16_t) &P2DIR, (uint16_t) &P2DIR, (uint16_t) &P2DIR, (uint16_t) &P2DIR
+#ifdef MSP430G2553_EXT
+  , (uint16_t) &P3DIR, (uint16_t) &P3DIR, (uint16_t) &P3DIR, (uint16_t) &P3DIR,
+    (uint16_t) &P3DIR, (uint16_t) &P3DIR, (uint16_t) &P3DIR, (uint16_t) &P3DIR
+#endif
 };
+
 #ifndef DISABLE_PFW_REN
-  volatile uint8_t *msp_pin_ren[NUM_PORTS] = {
-    &P1REN, &P2REN, &P3REN
-  };
+const uint16_t msp_pin_ren[MSP_PIN_SIZE] = {
+  (uint16_t) &P1REN, (uint16_t) &P1REN, (uint16_t) &P1REN, (uint16_t) &P1REN,
+    (uint16_t) &P1REN, (uint16_t) &P1REN, (uint16_t) &P1REN, (uint16_t) &P1REN,
+  (uint16_t) &P2REN, (uint16_t) &P2REN, (uint16_t) &P2REN, (uint16_t) &P2REN,
+    (uint16_t) &P2REN, (uint16_t) &P2REN, (uint16_t) &P2REN, (uint16_t) &P2REN
+#ifdef MSP430G2553_EXT
+  , (uint16_t) &P3REN, (uint16_t) &P3REN, (uint16_t) &P3REN, (uint16_t) &P3REN,
+    (uint16_t) &P3REN, (uint16_t) &P3REN, (uint16_t) &P3REN, (uint16_t) &P3REN
 #endif
+};
+#endif
+
 #ifndef DISABLE_PFW_SEL
-volatile uint8_t *msp_pin_sel[NUM_PORTS] = {
-  &P1SEL, &P2SEL, &P3SEL
+const uint16_t msp_pin_sel[MSP_PIN_SIZE] = {
+  (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL,
+    (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL,
+  (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL,
+    (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL
+#ifdef MSP430G2553_EXT
+  , (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL,
+    (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL
+#endif
 };
 #endif
+
 #ifndef DISABLE_PFW_SEL2
-volatile uint8_t *msp_pin_sel2[NUM_PORTS] = {
-  &P1SEL2, &P2SEL2, &P3SEL2
+const uint16_t msp_pin_sel2[MSP_PIN_SIZE] = {
+  (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL,
+    (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL,
+  (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL,
+    (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL
+#ifdef MSP430G2553_EXT
+  , (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL,
+    (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL
+#endif
 };
 #endif
+
 #ifndef DISABLE_PFW_IES
-volatile uint8_t *msp_pin_ies[NUM_INT_PORTS] = {
-  &P1IES, &P2IES
+const uint16_t msp_pin_ies[INT_PORT_MAX] = {
+  (uint16_t) &P1IES, (uint16_t) &P1IES, (uint16_t) &P1IES, (uint16_t) &P1IES,
+    (uint16_t) &P1IES, (uint16_t) &P1IES, (uint16_t) &P1IES, (uint16_t) &P1IES,
+  (uint16_t) &P2IES, (uint16_t) &P2IES, (uint16_t) &P2IES, (uint16_t) &P2IES,
+    (uint16_t) &P2IES, (uint16_t) &P2IES, (uint16_t) &P2IES, (uint16_t) &P2IES
 };
 #endif
+
 #ifndef DISABLE_PFW_IE
-volatile uint8_t *msp_pin_ie[NUM_INT_PORTS] = {
-  &P1IE, &P2IE
+const uint16_t msp_pin_ie[INT_PORT_MAX] = {
+  (uint16_t) &P1IE, (uint16_t) &P1IE, (uint16_t) &P1IE, (uint16_t) &P1IE,
+    (uint16_t) &P1IE, (uint16_t) &P1IE, (uint16_t) &P1IE, (uint16_t) &P1IE,
+  (uint16_t) &P2IE, (uint16_t) &P2IE, (uint16_t) &P2IE, (uint16_t) &P2IE,
+    (uint16_t) &P2IE, (uint16_t) &P2IE, (uint16_t) &P2IE, (uint16_t) &P2IE
 };
 #endif
+
 #ifndef DISABLE_PFW_IFG
-volatile uint8_t *msp_pin_ifg[NUM_INT_PORTS] = {
-  &P1IFG, &P2IFG
+const uint16_t msp_pin_ifg[INT_PORT_MAX] = {
+  (uint16_t) &P1IFG, (uint16_t) &P1IFG, (uint16_t) &P1IFG, (uint16_t) &P1IFG,
+    (uint16_t) &P1IFG, (uint16_t) &P1IFG, (uint16_t) &P1IFG, (uint16_t) &P1IFG,
+  (uint16_t) &P2IFG, (uint16_t) &P2IFG, (uint16_t) &P2IFG, (uint16_t) &P2IFG,
+    (uint16_t) &P2IFG, (uint16_t) &P2IFG, (uint16_t) &P2IFG, (uint16_t) &P2IFG
 };
 #endif

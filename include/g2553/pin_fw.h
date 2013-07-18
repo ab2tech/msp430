@@ -16,73 +16,75 @@
 // ports to allow more dynamic use of them.
 
 #pragma once
-#define AB2_PFW
 
 #include "msp/ab2.h"
 #include <msp430g2553.h>
 
-// Set the individual port size (bits per port)
-#define PORT_SIZE     8
-// Define the number of ports on the device
-#define NUM_PORTS     3
-// Define the number of interrupt ports on the device
-#define NUM_INT_PORTS 2
-
-// Define the port offsets
-#define PORT1 (PORT_SIZE)
-#define PORT2 (PORT_SIZE*2)
-#define PORT3 (PORT_SIZE*NUM_PORTS)
-
 // Define the pins as msp_pin_t type
 #ifdef MSP430G2553_EXT
 // MSP430G2553 28-pin (TSSOP) or 32-pin (QFN)
-  typedef enum
+  typedef const enum
   {
-    p1_0=(PORT1), p1_1, p1_2, p1_3, p1_4, p1_5, p1_6, p1_7,
-    p2_0=(PORT2), p2_1, p2_2, p2_3, p2_4, p2_5, p2_6, p2_7,
-    p3_0=(PORT3), p3_1, p3_2, p3_3, p3_4, p3_5, p3_6, p3_7
+    p1_0, p1_1, p1_2, p1_3, p1_4, p1_5, p1_6, p1_7,
+    p2_0, p2_1, p2_2, p2_3, p2_4, p2_5, p2_6, p2_7,
+    p3_0, p3_1, p3_2, p3_3, p3_4, p3_5, p3_6, p3_7,
+    MSP_PIN_SIZE
   } msp_pin_t;
+
 #else
 // MSP430G2553 20-pin (TSSOP or PDIP)
-  typedef enum
+  typedef const enum
   {
-    p1_0=(PORT1), p1_1, p1_2, p1_3, p1_4, p1_5, p1_6, p1_7,
-    p2_0=(PORT2), p2_1, p2_2, p2_3, p2_4, p2_5, p2_6, p2_7
+    p1_0, p1_1, p1_2, p1_3, p1_4, p1_5, p1_6, p1_7,
+    p2_0, p2_1, p2_2, p2_3, p2_4, p2_5, p2_6, p2_7,
+    MSP_PIN_SIZE
   } msp_pin_t;
 #endif
 
-extern const    uint8_t  msp_pin_bit[PORT_SIZE];
-extern volatile uint8_t *msp_pin_in[NUM_PORTS];
-extern volatile uint8_t *msp_pin_out[NUM_PORTS];
-extern volatile uint8_t *msp_pin_dir[NUM_PORTS];
-extern volatile uint8_t *msp_pin_ren[NUM_PORTS];
-extern volatile uint8_t *msp_pin_sel[NUM_PORTS];
-extern volatile uint8_t *msp_pin_sel2[NUM_PORTS];
-extern volatile uint8_t *msp_pin_ies[NUM_INT_PORTS];
-extern volatile uint8_t *msp_pin_ie[NUM_INT_PORTS];
-extern volatile uint8_t *msp_pin_ifg[NUM_INT_PORTS];
+#define PORT1 p1_7
+#define PORT2 p2_7
+#ifdef MSP430G2553_EXT
+#define PORT3 p3_7
+#endif
 
-#define bit(pin) (msp_pin_bit[(pin % PORT_SIZE)])
-#define in(pin)  (*msp_pin_in[(pin / PORT_SIZE) - 1])
-#define out(pin) (*msp_pin_out[(pin / PORT_SIZE) - 1])
-#define dir(pin) (*msp_pin_dir[(pin / PORT_SIZE) - 1])
+#define INT_PORT_MAX (PORT2+1)
+
+extern const uint8_t  msp_pin_bit[MSP_PIN_SIZE];
+extern const uint16_t msp_pin_in[MSP_PIN_SIZE];
+extern const uint16_t msp_pin_out[MSP_PIN_SIZE];
+extern const uint16_t msp_pin_dir[MSP_PIN_SIZE];
+extern const uint16_t msp_pin_ren[MSP_PIN_SIZE];
+extern const uint16_t msp_pin_ds[MSP_PIN_SIZE];
+extern const uint16_t msp_pin_sel[MSP_PIN_SIZE];
+extern const uint16_t msp_pin_sel2[MSP_PIN_SIZE];
+extern const uint16_t msp_pin_ies[INT_PORT_MAX];
+extern const uint16_t msp_pin_ie[INT_PORT_MAX];
+extern const uint16_t msp_pin_ifg[INT_PORT_MAX];
+
+#define bit(pin) (msp_pin_bit[(pin)])
+#define in(pin)  (*(volatile uint8_t *) msp_pin_in[(pin)])
+#define out(pin) (*(volatile uint8_t *) msp_pin_out[(pin)])
+#define dir(pin) (*(volatile uint8_t *) msp_pin_dir[(pin)])
 #ifndef DISABLE_PFW_REN
-  #define ren(pin) (*msp_pin_ren[(pin / PORT_SIZE) - 1])
+#define ren(pin) (*(volatile uint8_t *) msp_pin_ren[(pin)])
+#endif
+#ifndef DISABLE_PFW_DS
+#define ds(pin)  (*(volatile uint8_t *) msp_pin_ds[(pin)])
 #endif
 #ifndef DISABLE_PFW_SEL
-  #define sel(pin) (*msp_pin_sel[(pin / PORT_SIZE) - 1])
+#define sel(pin) (*(volatile uint8_t *) msp_pin_sel[(pin)])
 #endif
 #ifndef DISABLE_PFW_SEL2
-  #define sel2(pin) (*msp_pin_sel2[(pin / PORT_SIZE) - 1])
+#define sel2(pin) (*(volatile uint8_t *) msp_pin_sel2[(pin)])
 #endif
 #ifndef DISABLE_PFW_IES
-  #define ies(pin) (*msp_pin_ies[(pin / PORT_SIZE) - 1])
+#define ies(pin) (*(volatile uint8_t *) msp_pin_ies[(pin)])
 #endif
 #ifndef DISABLE_PFW_IE
-  #define ie(pin)  (*msp_pin_ie[(pin / PORT_SIZE) - 1])
+#define ie(pin)  (*(volatile uint8_t *) msp_pin_ie[(pin)])
 #endif
 #ifndef DISABLE_PFW_IFG
-  #define ifg(pin) (*msp_pin_ifg[(pin / PORT_SIZE) - 1])
+#define ifg(pin) (*(volatile uint8_t *) msp_pin_ifg[(pin)])
 #endif
 
 // Pin Macros
@@ -107,37 +109,43 @@ extern volatile uint8_t *msp_pin_ifg[NUM_INT_PORTS];
 #define pinInput(pin) off(dir((pin)), bit((pin)))
 
 #ifndef DISABLE_PFW_REN
-  // pinRenOn - enables the pullup resistor for the given pin
-  #define pinRenOn(pin) on(ren((pin)), bit((pin)))
-  // pinRenOff - disables the pullup resistor for the given pin
-  #define pinRenOff(pin) off(ren((pin)), bit((pin)))
+// pinRenOn - enables the pullup resistor for the given pin
+#define pinRenOn(pin) on(ren((pin)), bit((pin)))
+// pinRenOff - disables the pullup resistor for the given pin
+#define pinRenOff(pin) off(ren((pin)), bit((pin)))
+#endif
+#ifndef DISABLE_PFW_DS
+// pinDsFull - drive the given pin at full strength
+#define pinDsFull(pin) on(ds((pin)), bit((pin))
+// pinDsReduced - drive the given pin at reduced strength
+#define pinDsReduced(pin) off(ds((pin)), bit((pin))
 #endif
 #ifndef DISABLE_PFW_SEL
-  // pinSelOn - enable the given pin's corresponding sel bit
-  #define pinSelOn(pin) on(sel((pin)), bit((pin)))
-  // pinSelOff - disable the given pin's corresponding sel bit
-  #define pinSelOff(pin) off(sel((pin)), bit((pin)))
+// pinSelOn - enable the given pin's corresponding sel bit
+#define pinSelOn(pin) on(sel((pin)), bit((pin)))
+// pinSelOff - disable the given pin's corresponding sel bit
+#define pinSelOff(pin) off(sel((pin)), bit((pin)))
 #endif
 #ifndef DISABLE_PFW_SEL2
-  // pinSel2On - enable the given pin's corresponding sel2 bit
-  #define pinSel2On(pin) on(sel2((pin)), bit((pin)))
-  // pinSel2Off - disable the given pin's corresponding sel2 bit
-  #define pinSel2Off(pin) off(sel2((pin)), bit((pin)))
+// pinSelOn - enable the given pin's corresponding sel bit
+#define pinSel2On(pin) on(sel((pin)), bit((pin)))
+// pinSelOff - disable the given pin's corresponding sel bit
+#define pinSel2Off(pin) off(sel((pin)), bit((pin)))
 #endif
 #ifndef DISABLE_PFW_IES
-  // pinIesHighToLow - make the interrupt edge high-to-low
-  #define pinIesHighToLow(pin) on(ies((pin)), bit((pin)))
-  // pinIesLowToHigh - make the interrupt edge low-to-high
-  #define pinIesLowToHigh(pin) off(ies((pin)), bit((pin)))
+// pinIesHighToLow - make the interrupt edge high-to-low
+#define pinIesHighToLow(pin) on(ies((pin)), bit((pin)))
+// pinIesLowToHigh - make the interrupt edge low-to-high
+#define pinIesLowToHigh(pin) off(ies((pin)), bit((pin)))
 #endif
 #ifndef DISABLE_PFW_IE
-  // pinIeEnable - enable the given pin's interrupt
-  #define pinIeEnable(pin) on(ie((pin)), bit((pin)))
-  // pinIeDisable - disable the given pin's interrupt
-  #define pinIeDisable(pin) off(ie((pin)), bit((pin)))
+// pinIeEnable - enable the given pin's interrupt
+#define pinIeEnable(pin) on(ie((pin)), bit((pin)))
+// pinIeDisable - disable the given pin's interrupt
+#define pinIeDisable(pin) off(ie((pin)), bit((pin)))
 #endif
 #ifndef DISABLE_PFS_IFG
-  // pinIfgClear - clear the given pin's interrupt flag
-  #define pinIfgClear(pin) off(ifg((pin)), bit((pin)))
+// pinIfgClear - clear the given pin's interrupt flag
+#define pinIfgClear(pin) off(ifg((pin)), bit((pin)))
 #endif
 // END Pin Macros

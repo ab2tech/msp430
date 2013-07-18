@@ -14,45 +14,234 @@
 
 #include "pin_fw.h"
 
-const uint8_t msp_pin_bit[PORT_SIZE] = {
-  BIT0, BIT1, BIT2, BIT3, BIT4, BIT5, BIT6, BIT7
+const uint8_t msp_pin_bit[MSP_PIN_SIZE] = {
+  // PORT1
+  BIT0, BIT1, BIT2, BIT3, BIT4, BIT5, BIT6, BIT7,
+  // PORT2
+#ifdef MSP430F5510_EXT
+  BIT0, BIT1, BIT2, BIT3, BIT4, BIT5, BIT6, BIT7,
+#else
+  BIT0,
+#endif
+  // PORT3
+#ifdef MSP430F5510_EXT
+  BIT0, BIT1, BIT2, BIT3, BIT4
+#endif
+  // PORT4
+  BIT0, BIT1, BIT2, BIT3, BIT4, BIT5, BIT6, BIT7,
+  // PORT5
+  BIT0, BIT1, BIT2, BIT3, BIT4, BIT5,
+  // PORT6
+#ifdef MSP430F5510_EXT
+  BIT0, BIT1, BIT2, BIT3, BIT4, BIT5, BIT6, BIT7,
+#else
+  BIT0, BIT1, BIT2, BIT3,
+#endif
+  // PORTJ
+  BIT0, BIT1, BIT2, BIT3
 };
-volatile uint8_t *msp_pin_in[NUM_PORTS] = {
-  &P1IN, &P2IN, &P3IN, &P4IN, &P5IN, &P6IN, &PJIN_L
+
+const uint16_t msp_pin_in[MSP_PIN_SIZE] = {
+  (uint16_t) &P1IN, (uint16_t) &P1IN, (uint16_t) &P1IN, (uint16_t) &P1IN,
+    (uint16_t) &P1IN, (uint16_t) &P1IN, (uint16_t) &P1IN, (uint16_t) &P1IN,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P2IN, (uint16_t) &P2IN, (uint16_t) &P2IN, (uint16_t) &P2IN,
+    (uint16_t) &P2IN, (uint16_t) &P2IN, (uint16_t) &P2IN, (uint16_t) &P2IN,
+#else
+  (uint16_t) &P2IN,
+#endif
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P3IN, (uint16_t) &P3IN, (uint16_t) &P3IN, (uint16_t) &P3IN,
+    (uint16_t) &P3IN, (uint16_t) &P3IN, (uint16_t) &P3IN, (uint16_t) &P3IN,
+#endif
+  (uint16_t) &P4IN, (uint16_t) &P4IN, (uint16_t) &P4IN, (uint16_t) &P4IN,
+    (uint16_t) &P4IN, (uint16_t) &P4IN, (uint16_t) &P4IN, (uint16_t) &P4IN,
+  (uint16_t) &P5IN, (uint16_t) &P5IN, (uint16_t) &P5IN, (uint16_t) &P5IN,
+    (uint16_t) &P5IN, (uint16_t) &P5IN,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P6IN, (uint16_t) &P6IN, (uint16_t) &P6IN, (uint16_t) &P6IN,
+    (uint16_t) &P6IN, (uint16_t) &P6IN, (uint16_t) &P6IN, (uint16_t) &P6IN,
+#else
+  (uint16_t) &P6IN, (uint16_t) &P6IN, (uint16_t) &P6IN, (uint16_t) &P6IN,
+#endif
+  (uint16_t) &PJIN_L, (uint16_t) &PJIN_L, (uint16_t) &PJIN_L,
+    (uint16_t) &PJIN_L
 };
-volatile uint8_t *msp_pin_out[NUM_PORTS] = {
-  &P1OUT, &P2OUT, &P3OUT, &P4OUT, &P5OUT, &P6OUT, &PJOUT_L
+
+const uint16_t msp_pin_out[MSP_PIN_SIZE] = {
+  (uint16_t) &P1OUT, (uint16_t) &P1OUT, (uint16_t) &P1OUT, (uint16_t) &P1OUT,
+    (uint16_t) &P1OUT, (uint16_t) &P1OUT, (uint16_t) &P1OUT, (uint16_t) &P1OUT,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P2OUT, (uint16_t) &P2OUT, (uint16_t) &P2OUT, (uint16_t) &P2OUT,
+    (uint16_t) &P2OUT, (uint16_t) &P2OUT, (uint16_t) &P2OUT, (uint16_t) &P2OUT,
+#else
+  (uint16_t) &P2OUT,
+#endif
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P3OUT, (uint16_t) &P3OUT, (uint16_t) &P3OUT, (uint16_t) &P3OUT,
+    (uint16_t) &P3OUT, (uint16_t) &P3OUT, (uint16_t) &P3OUT, (uint16_t) &P3OUT,
+#endif
+  (uint16_t) &P4OUT, (uint16_t) &P4OUT, (uint16_t) &P4OUT, (uint16_t) &P4OUT,
+    (uint16_t) &P4OUT, (uint16_t) &P4OUT, (uint16_t) &P4OUT, (uint16_t) &P4OUT,
+  (uint16_t) &P5OUT, (uint16_t) &P5OUT, (uint16_t) &P5OUT, (uint16_t) &P5OUT,
+    (uint16_t) &P5OUT, (uint16_t) &P5OUT,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P6OUT, (uint16_t) &P6OUT, (uint16_t) &P6OUT, (uint16_t) &P6OUT,
+    (uint16_t) &P6OUT, (uint16_t) &P6OUT, (uint16_t) &P6OUT, (uint16_t) &P6OUT,
+#else
+  (uint16_t) &P6OUT, (uint16_t) &P6OUT, (uint16_t) &P6OUT, (uint16_t) &P6OUT,
+#endif
+  (uint16_t) &PJOUT_L, (uint16_t) &PJOUT_L, (uint16_t) &PJOUT_L,
+    (uint16_t) &PJOUT_L
 };
-volatile uint8_t *msp_pin_dir[NUM_PORTS] = {
-  &P1DIR, &P2DIR, &P3DIR, &P4DIR, &P5DIR, &P6DIR, &PJDIR_L
+
+const uint16_t msp_pin_dir[MSP_PIN_SIZE] = {
+  (uint16_t) &P1DIR, (uint16_t) &P1DIR, (uint16_t) &P1DIR, (uint16_t) &P1DIR,
+    (uint16_t) &P1DIR, (uint16_t) &P1DIR, (uint16_t) &P1DIR, (uint16_t) &P1DIR,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P2DIR, (uint16_t) &P2DIR, (uint16_t) &P2DIR, (uint16_t) &P2DIR,
+    (uint16_t) &P2DIR, (uint16_t) &P2DIR, (uint16_t) &P2DIR, (uint16_t) &P2DIR,
+#else
+  (uint16_t) &P2DIR,
+#endif
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P3DIR, (uint16_t) &P3DIR, (uint16_t) &P3DIR, (uint16_t) &P3DIR,
+    (uint16_t) &P3DIR, (uint16_t) &P3DIR, (uint16_t) &P3DIR, (uint16_t) &P3DIR,
+#endif
+  (uint16_t) &P4DIR, (uint16_t) &P4DIR, (uint16_t) &P4DIR, (uint16_t) &P4DIR,
+    (uint16_t) &P4DIR, (uint16_t) &P4DIR, (uint16_t) &P4DIR, (uint16_t) &P4DIR,
+  (uint16_t) &P5DIR, (uint16_t) &P5DIR, (uint16_t) &P5DIR, (uint16_t) &P5DIR,
+    (uint16_t) &P5DIR, (uint16_t) &P5DIR,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P6DIR, (uint16_t) &P6DIR, (uint16_t) &P6DIR, (uint16_t) &P6DIR,
+    (uint16_t) &P6DIR, (uint16_t) &P6DIR, (uint16_t) &P6DIR, (uint16_t) &P6DIR,
+#else
+  (uint16_t) &P6DIR, (uint16_t) &P6DIR, (uint16_t) &P6DIR, (uint16_t) &P6DIR,
+#endif
+  (uint16_t) &PJDIR_L, (uint16_t) &PJDIR_L, (uint16_t) &PJDIR_L,
+    (uint16_t) &PJDIR_L
 };
+
 #ifndef DISABLE_PFW_REN
-  volatile uint8_t *msp_pin_ren[NUM_PORTS] = {
-    &P1REN, &P2REN, &P3REN, &P4REN, &P5REN, &P6REN, &PJREN_L
-  };
+const uint16_t msp_pin_ren[MSP_PIN_SIZE] = {
+  (uint16_t) &P1REN, (uint16_t) &P1REN, (uint16_t) &P1REN, (uint16_t) &P1REN,
+    (uint16_t) &P1REN, (uint16_t) &P1REN, (uint16_t) &P1REN, (uint16_t) &P1REN,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P2REN, (uint16_t) &P2REN, (uint16_t) &P2REN, (uint16_t) &P2REN,
+    (uint16_t) &P2REN, (uint16_t) &P2REN, (uint16_t) &P2REN, (uint16_t) &P2REN,
+#else
+  (uint16_t) &P2REN,
 #endif
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P3REN, (uint16_t) &P3REN, (uint16_t) &P3REN, (uint16_t) &P3REN,
+    (uint16_t) &P3REN, (uint16_t) &P3REN, (uint16_t) &P3REN, (uint16_t) &P3REN,
+#endif
+  (uint16_t) &P4REN, (uint16_t) &P4REN, (uint16_t) &P4REN, (uint16_t) &P4REN,
+    (uint16_t) &P4REN, (uint16_t) &P4REN, (uint16_t) &P4REN, (uint16_t) &P4REN,
+  (uint16_t) &P5REN, (uint16_t) &P5REN, (uint16_t) &P5REN, (uint16_t) &P5REN,
+    (uint16_t) &P5REN, (uint16_t) &P5REN,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P6REN, (uint16_t) &P6REN, (uint16_t) &P6REN, (uint16_t) &P6REN,
+    (uint16_t) &P6REN, (uint16_t) &P6REN, (uint16_t) &P6REN, (uint16_t) &P6REN,
+#else
+  (uint16_t) &P6REN, (uint16_t) &P6REN, (uint16_t) &P6REN, (uint16_t) &P6REN,
+#endif
+  (uint16_t) &PJREN_L, (uint16_t) &PJREN_L, (uint16_t) &PJREN_L,
+    (uint16_t) &PJREN_L
+};
+#endif
+
 #ifndef DISABLE_PFW_DS
-volatile uint8_t *msp_pin_ds[NUM_PORTS] = {
-  &P1DS, &P2DS, &P3DS, &P4DS, &P5DS, &P6DS, &PJDS_L
+const uint16_t msp_pin_ds[MSP_PIN_SIZE] = {
+  (uint16_t) &P1DS, (uint16_t) &P1DS, (uint16_t) &P1DS, (uint16_t) &P1DS,
+    (uint16_t) &P1DS, (uint16_t) &P1DS, (uint16_t) &P1DS, (uint16_t) &P1DS,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P2DS, (uint16_t) &P2DS, (uint16_t) &P2DS, (uint16_t) &P2DS,
+    (uint16_t) &P2DS, (uint16_t) &P2DS, (uint16_t) &P2DS, (uint16_t) &P2DS,
+#else
+  (uint16_t) &P2DS,
+#endif
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P3DS, (uint16_t) &P3DS, (uint16_t) &P3DS, (uint16_t) &P3DS,
+    (uint16_t) &P3DS, (uint16_t) &P3DS, (uint16_t) &P3DS, (uint16_t) &P3DS,
+#endif
+  (uint16_t) &P4DS, (uint16_t) &P4DS, (uint16_t) &P4DS, (uint16_t) &P4DS,
+    (uint16_t) &P4DS, (uint16_t) &P4DS, (uint16_t) &P4DS, (uint16_t) &P4DS,
+  (uint16_t) &P5DS, (uint16_t) &P5DS, (uint16_t) &P5DS, (uint16_t) &P5DS,
+    (uint16_t) &P5DS, (uint16_t) &P5DS,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P6DS, (uint16_t) &P6DS, (uint16_t) &P6DS, (uint16_t) &P6DS,
+    (uint16_t) &P6DS, (uint16_t) &P6DS, (uint16_t) &P6DS, (uint16_t) &P6DS,
+#else
+  (uint16_t) &P6DS, (uint16_t) &P6DS, (uint16_t) &P6DS, (uint16_t) &P6DS,
+#endif
+  (uint16_t) &PJDS_L, (uint16_t) &PJDS_L, (uint16_t) &PJDS_L,
+    (uint16_t) &PJDS_L
 };
 #endif
+
 #ifndef DISABLE_PFW_SEL
-volatile uint8_t *msp_pin_sel[NUM_SEL_PORTS] = {
-  &P1SEL, &P2SEL, &P3SEL, &P4SEL, &P5SEL, &P6SEL
+const uint16_t msp_pin_sel[SEL_PORT_MAX] = {
+  (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL,
+    (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL,
+    (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL,
+#else
+  (uint16_t) &P2SEL,
+#endif
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL,
+    (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL,
+#endif
+  (uint16_t) &P4SEL, (uint16_t) &P4SEL, (uint16_t) &P4SEL, (uint16_t) &P4SEL,
+    (uint16_t) &P4SEL, (uint16_t) &P4SEL, (uint16_t) &P4SEL, (uint16_t) &P4SEL,
+  (uint16_t) &P5SEL, (uint16_t) &P5SEL, (uint16_t) &P5SEL, (uint16_t) &P5SEL,
+    (uint16_t) &P5SEL, (uint16_t) &P5SEL,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P6SEL, (uint16_t) &P6SEL, (uint16_t) &P6SEL, (uint16_t) &P6SEL,
+    (uint16_t) &P6SEL, (uint16_t) &P6SEL, (uint16_t) &P6SEL, (uint16_t) &P6SEL
+#else
+  (uint16_t) &P6SEL, (uint16_t) &P6SEL, (uint16_t) &P6SEL, (uint16_t) &P6SEL
+#endif
 };
 #endif
+
 #ifndef DISABLE_PFW_IES
-volatile uint8_t *msp_pin_ies[NUM_INT_PORTS] = {
-  &P1IES, &P2IES
+const uint16_t msp_pin_ies[INT_PORT_MAX] = {
+  (uint16_t) &P1IES, (uint16_t) &P1IES, (uint16_t) &P1IES, (uint16_t) &P1IES,
+    (uint16_t) &P1IES, (uint16_t) &P1IES, (uint16_t) &P1IES, (uint16_t) &P1IES,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P2IES, (uint16_t) &P2IES, (uint16_t) &P2IES, (uint16_t) &P2IES,
+    (uint16_t) &P2IES, (uint16_t) &P2IES, (uint16_t) &P2IES, (uint16_t) &P2IES
+#else
+  (uint16_t) &P2IES
+#endif
 };
 #endif
+
 #ifndef DISABLE_PFW_IE
-volatile uint8_t *msp_pin_ie[NUM_INT_PORTS] = {
-  &P1IE, &P2IE
+const uint16_t msp_pin_ie[INT_PORT_MAX] = {
+  (uint16_t) &P1IE, (uint16_t) &P1IE, (uint16_t) &P1IE, (uint16_t) &P1IE,
+    (uint16_t) &P1IE, (uint16_t) &P1IE, (uint16_t) &P1IE, (uint16_t) &P1IE,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P2IE, (uint16_t) &P2IE, (uint16_t) &P2IE, (uint16_t) &P2IE,
+    (uint16_t) &P2IE, (uint16_t) &P2IE, (uint16_t) &P2IE, (uint16_t) &P2IE
+#else
+  (uint16_t) &P2IE
+#endif
 };
 #endif
+
 #ifndef DISABLE_PFW_IFG
-volatile uint8_t *msp_pin_ifg[NUM_INT_PORTS] = {
-  &P1IFG, &P2IFG
+const uint16_t msp_pin_ifg[INT_PORT_MAX] = {
+  (uint16_t) &P1IFG, (uint16_t) &P1IFG, (uint16_t) &P1IFG, (uint16_t) &P1IFG,
+    (uint16_t) &P1IFG, (uint16_t) &P1IFG, (uint16_t) &P1IFG, (uint16_t) &P1IFG,
+#ifdef MSP430F5510_EXT
+  (uint16_t) &P2IFG, (uint16_t) &P2IFG, (uint16_t) &P2IFG, (uint16_t) &P2IFG,
+    (uint16_t) &P2IFG, (uint16_t) &P2IFG, (uint16_t) &P2IFG, (uint16_t) &P2IFG
+#else
+  (uint16_t) &P2IFG
+#endif
 };
 #endif
