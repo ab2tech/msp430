@@ -34,25 +34,22 @@ typedef enum
 } tlc5925_ret_t;
 
 // Channel definitions
-typedef enum
-{
-  CH00=BIT0,
-  CH01=BIT1,
-  CH02=BIT2,
-  CH03=BIT3,
-  CH04=BIT4,
-  CH05=BIT5,
-  CH06=BIT6,
-  CH07=BIT7,
-  CH08=BIT8,
-  CH09=BIT9,
-  CH10=BITA,
-  CH11=BITB,
-  CH12=BITC,
-  CH13=BITD,
-  CH14=BITE,
-  CH15=BITF
-} tlc5925_ch_t;
+#define CH00                            BIT0
+#define CH01                            BIT1
+#define CH02                            BIT2
+#define CH03                            BIT3
+#define CH04                            BIT4
+#define CH05                            BIT5
+#define CH06                            BIT6
+#define CH07                            BIT7
+#define CH08                            BIT8
+#define CH09                            BIT9
+#define CH10                            BITA
+#define CH11                            BITB
+#define CH12                            BITC
+#define CH13                            BITD
+#define CH14                            BITE
+#define CH15                            BITF
 
 // Define a type to contain pertinent TLC data. For each TLC in use, an
 // instance of this struct type must exist.
@@ -61,7 +58,7 @@ typedef struct tlc5925
   spi_usci_t   usci;
   msp_pin_t    le;
   msp_pin_t    oe;
-  tlc5925_ch_t start_ch; // tlc arrays are not always 0-indexed
+  uint16_t     start_ch; // tlc arrays are not always 0-indexed
 
   // Internal state variable for tracking tlc5925 init state. This should never
   // be modified outside of the tlc5925 library
@@ -92,18 +89,18 @@ tlc5925_ret_t tlc5925Write(tlc5925_t *tlc, uint16_t channel_data);
 #define BOLD_CURSOR                     (CH03|CH04)
 #define BOTTOM_LEFT_QUADRANT            (CH03|CH04|CH05|CH06|CH07)
 #define BOTTOM_RIGHT_QUADRANT           (CH00|CH01|CH02|CH03|CH15)
-#define CH0_15                          (CH00|CH01|CH02|CH03|CH04|CH05|CH06|
-                                         CH07|CH08|CH09|CH10|CH11|CH12|CH13|
+#define CH0_15                          (CH00|CH01|CH02|CH03|CH04|CH05|CH06| \
+                                         CH07|CH08|CH09|CH10|CH11|CH12|CH13| \
                                          CH14|CH15)
-#define CH5555                          (CH00|CH02|CH04|CH06|CH08|CH10|CH12|
+#define CH5555                          (CH00|CH02|CH04|CH06|CH08|CH10|CH12| \
                                          CH14)
-#define CHAAAA                          (CH01|CH03|CH05|CH07|CH09|CH11|CH13|
+#define CHAAAA                          (CH01|CH03|CH05|CH07|CH09|CH11|CH13| \
                                          CH15)
-#define CRASH_DUMMY_LEFT                (CH00|CH01|CH02|CH03|CH07|CH08|CH09|
+#define CRASH_DUMMY_LEFT                (CH00|CH01|CH02|CH03|CH07|CH08|CH09| \
                                          CH10|CH11|CH15)
-#define CRASH_DUMMY_RIGHT               (CH03|CH04|CH05|CH06|CH07|CH11|CH12|
+#define CRASH_DUMMY_RIGHT               (CH03|CH04|CH05|CH06|CH07|CH11|CH12| \
                                          CH13|CH14|CH15)
-#define RIGHT_HALF                      (CH03|CH04|CH05|CH06|CH07|CH08|CH09|
+#define RIGHT_HALF                      (CH03|CH04|CH05|CH06|CH07|CH08|CH09| \
                                          CH10|CH11)
-#define LEFT_HALF                       (CH11|CH12|CH13|CH14|CH15|CH00|CH01|
+#define LEFT_HALF                       (CH11|CH12|CH13|CH14|CH15|CH00|CH01| \
                                          CH02|CH03)

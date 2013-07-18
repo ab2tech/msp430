@@ -72,7 +72,6 @@ tlc5925_ret_t tlc5925Pulse(tlc5925_t *tlc, uint16_t pulse_quantity,
 // TLC5925 initialization of output and latch pins
 tlc5925_ret_t tlc5925Init(tlc5925_t *tlc)
 {
-  tlc5925_ret_t retVal = TLC5925_NO_ERR;
   // Don't re-initialize the TLC
   if (tlc->is_init == TRUE)
     return TLC5925_REINIT;
