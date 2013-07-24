@@ -25,14 +25,20 @@
 #include "macros.h"
 
 // Define common frequencies for use with F_CPU
+#define F_32kHz    32768
 #define F_1MHz   1000000UL
+#define F_2MHz   2000000UL
 #define F_4MHz   4000000UL
 #define F_8MHz   8000000UL
+#define F_10MHz 10000000UL
+#define F_12MHz 12000000UL
 #define F_16MHz 16000000UL
 #define F_20MHz 20000000UL
+#define F_24MHz 24000000UL
 #define F_25MHz 25000000UL
+#define F_32MHz 32000000UL
 
-// Define a boolean type that can be used in all AB2 software
+// Define a boolean type that can be used in all AB2 C software
 typedef enum
 {
   FALSE=0,

@@ -15,21 +15,41 @@
 // Simplify MSP430 operations with macros
 
 #pragma once
+#include <stdint.h>
 
-// Pin Macros
-#define on(reg, bit) ((reg) |= (bit))
-#define off(reg, bit) ((reg) &= ~(bit))
-#define toggle(reg, bit) ((reg) ^= (bit))
+// HW Register Access
+#define REG32(x) \
+        (*((volatile uint32_t *)((uint16_t)(x))))
+#define REG16(x) \
+        (*((volatile uint16_t *)((uint16_t)(x))))
+#define REG8(x)  \
+        (*((volatile uint8_t *)((uint16_t)(x))))
+		
+// Register Macros
+#define andeq(reg, bits)  ((reg) &= (bits))
+#define eq(reg, bits)     ((reg)  = (bits))
+#define lsheq(reg, bits)  ((reg) <<= (bits))
+#define oreq(reg, bits)   ((reg) |= (bits))
+#define rsheq(reg, bits)  ((reg) >>= (bits))
+#define xoreq(reg, bits)  ((reg) ^= (bits))
+
+#define on(reg, bits)     (oreq((reg), (bits)))
+#define off(reg, bits)    (andeq((reg), (~(bits))))
+#define set(reg, bits)    (eq((reg), (bits)))
+#define toggle(reg, bits) (xoreq((reg), (bits)))
+
+#define read(reg, bits)   ((reg) & (bits))
+
 // Wrap the pulse macro in a do/while loop to enable single line capability
-#define pulse(out, bit) do {\
-                             on((out), (bit)); \
-                             off((out), (bit)); \
+#define pulse(out, bits) do {\
+                             on((out), (bits)); \
+                             off((out), (bits)); \
                            } while (0);
 
-#define pulseDuration(out, bit, duration) do {\
-                             on((out), (bit)); \
+#define pulseDuration(out, bits, duration) do {\
+                             on((out), (bits)); \
                              __delay_cycles((duration)); \
-                             off((out), (bit)); \
+                             off((out), (bits)); \
                            } while (0);
 
 // Bit manipulation macros
