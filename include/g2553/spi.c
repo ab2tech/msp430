@@ -22,7 +22,7 @@
 
 static bool_t is_init[NUM_SPI_USCIs] = {FALSE, FALSE};
 
-static msp_pin_t spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS] = {
+static const msp_pin_t spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS] = {
   {
     // USCI_A0
     // CLK , SOMI, SIMO

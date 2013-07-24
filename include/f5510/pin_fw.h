@@ -23,7 +23,7 @@
 // Define the pins as msp_pin_t type
 #ifdef MSP430F5510_EXT
 // MSP430F5510 64-pin (RGC) or 80-pin BGA (ZQE)
-  typedef const enum
+  typedef enum
   {
     p1_0, p1_1, p1_2, p1_3, p1_4, p1_5, p1_6, p1_7,
     p2_0, p2_1, p2_2, p2_3, p2_4, p2_5, p2_6, p2_7,
@@ -37,7 +37,7 @@
 
 #else
 // MSP430F5510 48-pin (RGZ or PT)
-  typedef const enum
+  typedef enum
   {
     p1_0, p1_1, p1_2, p1_3, p1_4, p1_5, p1_6, p1_7,
     p2_0,

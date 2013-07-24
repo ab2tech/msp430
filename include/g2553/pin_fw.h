@@ -23,7 +23,7 @@
 // Define the pins as msp_pin_t type
 #ifdef MSP430G2553_EXT
 // MSP430G2553 28-pin (TSSOP) or 32-pin (QFN)
-  typedef const enum
+  typedef enum
   {
     p1_0, p1_1, p1_2, p1_3, p1_4, p1_5, p1_6, p1_7,
     p2_0, p2_1, p2_2, p2_3, p2_4, p2_5, p2_6, p2_7,
@@ -33,7 +33,7 @@
 
 #else
 // MSP430G2553 20-pin (TSSOP or PDIP)
-  typedef const enum
+  typedef enum
   {
     p1_0, p1_1, p1_2, p1_3, p1_4, p1_5, p1_6, p1_7,
     p2_0, p2_1, p2_2, p2_3, p2_4, p2_5, p2_6, p2_7,

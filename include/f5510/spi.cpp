@@ -22,7 +22,7 @@
 
 bool spi::is_init[NUM_SPI_USCIs] = {false, false};
 
-msp_pin_t spi::spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS] = {
+const msp_pin_t spi::spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS] = {
 #ifdef MSP430F5510_EXT
   {
     // USCI_A0
