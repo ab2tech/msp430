@@ -14,8 +14,8 @@ int main (void)
   pinOutput(pJ_0);
 
   //status = clk.cfgCLK(CLK_ACLK, CLK_SEL_DCO, CLK_DIV_1);
-  status = clk.clk2PinSetAclkDivider(CLK_DIV_8);
-  status = clk.clk2PinEnable(CLK_PIN_ACLK);
+  clk.clk2PinSetAclkDivider(CLK_DIV_8);
+  clk.clk2PinEnable(CLK_PIN_ACLK);
   // check status as appropriate
 //  clk.delayMS(2000);
 //  //clk.cfgSysFreq(F_1MHz);
