@@ -94,7 +94,7 @@ public:
   void outputDisable(void);
   void outputEnable(void);
   void pulse(uint16_t pulse_quantity, uint16_t channel_data);
-  void shiftDown(uint16_t shift_quantity , uint16_t channel_data);
+  void shiftDown(uint16_t shift_quantity, uint16_t channel_data);
   void shiftUp(uint16_t shift_quantity, uint16_t channel_data);
   void write(uint16_t channel_data);
 };

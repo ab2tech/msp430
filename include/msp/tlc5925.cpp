@@ -54,13 +54,13 @@ void tlc5925::latch(void)
   pinPulse(le);
 }
 
-//  Sets TLC5925 output enable bit high (active low)
+// Sets TLC5925 output enable bit high (active low)
 void tlc5925::outputDisable(void)
 {
   pinOn(oe);
 }
 
-//  Sets TLC5925 output enable bit low (active low)
+// Sets TLC5925 output enable bit low (active low)
 void tlc5925::outputEnable(void)
 {
   pinOff(oe);
@@ -80,8 +80,8 @@ void tlc5925::pulse(uint16_t pulse_quantity, uint16_t channel_data)
   }
 }
 
-//  Rotates the specified TLC5925 channel data up (left shift with carry) the
-//  channels
+// Rotates the specified TLC5925 channel data up (left shift with carry) the
+// channels
 void tlc5925::shiftDown(uint16_t shift_quantity, uint16_t channel_data)
 {
   for(shift_quantity;shift_quantity>0;shift_quantity--)
@@ -92,8 +92,8 @@ void tlc5925::shiftDown(uint16_t shift_quantity, uint16_t channel_data)
   }
 }
 
-//  Rotates the specified TLC5925 channel data up (left shift with carry) the
-//  channels
+// Rotates the specified TLC5925 channel data up (left shift with carry) the
+// channels
 void tlc5925::shiftUp(uint16_t shift_quantity , uint16_t channel_data)
 {
   for(shift_quantity;shift_quantity>0;shift_quantity--)
