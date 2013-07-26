@@ -21,12 +21,13 @@
 void tlc5925::channelScanDown(uint16_t scan_quantity)
 {
   uint8_t i;
+  uint16_t next_ch = start_ch;
   for(scan_quantity; scan_quantity > 0; scan_quantity--)
   {
     for(i=17; i>0; i--)
     {
-      write((uint16_t) start_ch);
-      start_ch = (tlc5925_ch_t) ((start_ch>>1)|(start_ch<<15));
+      write((uint16_t) next_ch);
+      next_ch = (tlc5925_ch_t) ((start_ch>>1)|(start_ch<<15));
       clk->delayMS(anim_delay);
     }
   }
@@ -37,12 +38,13 @@ void tlc5925::channelScanDown(uint16_t scan_quantity)
 void tlc5925::channelScanUp(uint16_t scan_quantity)
 {
   uint8_t i;
+  uint16_t next_ch = start_ch;
   for(scan_quantity; scan_quantity > 0; scan_quantity--)
   {
     for(i=17; i>0; i--)
     {
-      write((uint16_t) start_ch);
-      start_ch = (tlc5925_ch_t) ((start_ch<<1)|(start_ch>>15));
+      write((uint16_t) next_ch);
+      next_ch = (tlc5925_ch_t) ((start_ch<<1)|(start_ch>>15));
       clk->delayMS(anim_delay);
     }
   }
