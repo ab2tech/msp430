@@ -58,7 +58,7 @@ public:
     if (!is_init[spi_usci])
     {
       is_init[spi_usci] = true;
-      init(spi_usci);
+      init();
     }
   }
   uint16_t getPrescaler(void);
@@ -70,7 +70,7 @@ public:
   void write(uint8_t byte);
 
 private:
-  void init(spi_usci_t usci);
+  void init(void);
   spi_usci_t spi_usci;
   static bool is_init[NUM_SPI_USCIs];
   static const msp_pin_t spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS];
