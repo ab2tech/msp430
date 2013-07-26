@@ -53,7 +53,13 @@ class spi
 {
 public:
   spi(spi_usci_t spi) : spi_usci(spi) {
-    init(spi_usci);
+    // Only initialize this USCI if it hasn't already been initialized
+    // (useful if multiple libraries initialize the same SPI USCI)
+    if (!is_init[spi_usci])
+    {
+      is_init[spi_usci] = true;
+      init(spi_usci);
+    }
   }
   uint16_t getPrescaler(void);
   void pulseClk(void);

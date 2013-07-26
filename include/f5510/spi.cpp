@@ -20,7 +20,14 @@
 
 #include "spi.h"
 
-bool spi::is_init[NUM_SPI_USCIs] = {false, false};
+bool spi::is_init[NUM_SPI_USCIs] =
+#ifdef MSP430F5510_EXT
+  //  A0     B0     A1     B1
+  {false, false, false, false};
+#else
+//    A1     B1
+  {false, false};
+#endif
 
 const msp_pin_t spi::spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS] = {
 #ifdef MSP430F5510_EXT
@@ -51,21 +58,14 @@ void spi::init(spi_usci_t spi)
 {
   spi_usci = spi;
 
-  // Only initialize this USCI if it hasn't already been initialized (useful if
-  // multiple libraries initialize the same SPI USCI)
-  if (!is_init[spi_usci])
-    is_init[spi_usci] = true;
-  else
-    return;
-
   // Which USCI are we initializing?
   switch (spi_usci)
   {
 #ifdef MSP430F5510_EXT
     case SPI_A0:
       // Enable spi using the A0 Port SEL register
-      pinSelOn(spi_pins[SPI_A0][SPI_USCI_CLK]);
-      pinSelOn(spi_pins[SPI_A0][SPI_USCI_SIMO]);
+      pinSelOn(spi_pins[spi_usci][SPI_USCI_CLK]);
+      pinSelOn(spi_pins[spi_usci][SPI_USCI_SIMO]);
 
       // Put state machine in reset
       on(UCA0CTL1, UCSWRST);
@@ -87,8 +87,8 @@ void spi::init(spi_usci_t spi)
 
     case SPI_B0:
       // Enable spi using the B0 Port SEL register
-      pinSelOn(spi_pins[SPI_B0][SPI_USCI_CLK]);
-      pinSelOn(spi_pins[SPI_B0][SPI_USCI_SIMO]);
+      pinSelOn(spi_pins[spi_usci][SPI_USCI_CLK]);
+      pinSelOn(spi_pins[spi_usci][SPI_USCI_SIMO]);
 
       // Put state machine in reset
       on(UCB0CTL1, UCSWRST);
@@ -111,8 +111,8 @@ void spi::init(spi_usci_t spi)
 
     case SPI_A1:
       // Enable spi using the A1 Port SEL register
-      pinSelOn(spi_pins[SPI_A1][SPI_USCI_CLK]);
-      pinSelOn(spi_pins[SPI_A1][SPI_USCI_SIMO]);
+      pinSelOn(spi_pins[spi_usci][SPI_USCI_CLK]);
+      pinSelOn(spi_pins[spi_usci][SPI_USCI_SIMO]);
 
       // Put state machine in reset
       on(UCA1CTL1, UCSWRST);
@@ -134,8 +134,8 @@ void spi::init(spi_usci_t spi)
 
     case SPI_B1:
       // Enable spi using the B1 Port SEL register
-      pinSelOn(spi_pins[SPI_B1][SPI_USCI_CLK]);
-      pinSelOn(spi_pins[SPI_B1][SPI_USCI_SIMO]);
+      pinSelOn(spi_pins[spi_usci][SPI_USCI_CLK]);
+      pinSelOn(spi_pins[spi_usci][SPI_USCI_SIMO]);
 
       // Put state machine in reset
       on(UCB1CTL1, UCSWRST);
@@ -181,53 +181,14 @@ uint16_t spi::getPrescaler(void)
 
 void spi::pulseClk(void)
 {
-  switch (spi_usci)
-  {
-#ifdef MSP430F5510_EXT
-    case SPI_A0:
-      // Need to first disable the SPI functionality of the pin
-      pinSelOff(spi_pins[SPI_A0][SPI_USCI_CLK]);
-      // Now make sure it's an output
-      pinOutput(spi_pins[SPI_A0][SPI_USCI_CLK]);
-      // Now pulse the pin
-      pinPulse(spi_pins[SPI_A0][SPI_USCI_CLK]);
-      // Now turn the SPI functionality back on
-      pinSelOn(spi_pins[SPI_A0][SPI_USCI_CLK]);
-      break;
-    case SPI_B0:
-      // Need to first disable the SPI functionality of the pin
-      pinSelOff(spi_pins[SPI_B0][SPI_USCI_CLK]);
-      // Now make sure it's an output
-      pinOutput(spi_pins[SPI_B0][SPI_USCI_CLK]);
-      // Now pulse the pin
-      pinPulse(spi_pins[SPI_B0][SPI_USCI_CLK]);
-      // Now turn the SPI functionality back on
-      pinSelOn(spi_pins[SPI_B0][SPI_USCI_CLK]);
-      break;
-#endif
-    case SPI_A1:
-      // Need to first disable the SPI functionality of the pin
-      pinSelOff(spi_pins[SPI_A1][SPI_USCI_CLK]);
-      // Now make sure it's an output
-      pinOutput(spi_pins[SPI_A1][SPI_USCI_CLK]);
-      // Now pulse the pin
-      pinPulse(spi_pins[SPI_A1][SPI_USCI_CLK]);
-      // Now turn the SPI functionality back on
-      pinSelOn(spi_pins[SPI_A1][SPI_USCI_CLK]);
-      break;
-    case SPI_B1:
-      // Need to first disable the SPI functionality of the pin
-      pinSelOff(spi_pins[SPI_B1][SPI_USCI_CLK]);
-      // Now make sure it's an output
-      pinOutput(spi_pins[SPI_B1][SPI_USCI_CLK]);
-      // Now pulse the pin
-      pinPulse(spi_pins[SPI_B1][SPI_USCI_CLK]);
-      // Now turn the SPI functionality back on
-      pinSelOn(spi_pins[SPI_B1][SPI_USCI_CLK]);
-      break;
-    default:
-      return; // this can't be good...
-  }
+  // Need to first disable the SPI functionality of the pin
+  pinSelOff(spi_pins[spi_usci][SPI_USCI_CLK]);
+  // Now make sure it's an output
+  pinOutput(spi_pins[spi_usci][SPI_USCI_CLK]);
+  // Now pulse the pin
+  pinPulse(spi_pins[spi_usci][SPI_USCI_CLK]);
+  // Now turn the SPI functionality back on
+  pinSelOn(spi_pins[spi_usci][SPI_USCI_CLK]);
 }
 
 void spi::fallingEdge(void)
