@@ -346,20 +346,20 @@ void spi::write(uint8_t byte)
 #ifdef MSP430F5510_EXT
     case SPI_A0:
       UCA0TXBUF = byte;
-      while ((UCA0STAT&UCBUSY));
+      while ((UCA0STAT & UCBUSY));
       break;
     case SPI_B0:
       UCB0TXBUF = byte;
-      while ((UCB0STAT&UCBUSY));
+      while ((UCB0STAT & UCBUSY));
       break;
 #endif
     case SPI_A1:
       UCA1TXBUF = byte;
-      while ((UCA1STAT&UCBUSY));
+      while ((UCA1STAT & UCBUSY));
       break;
     case SPI_B1:
       UCB1TXBUF = byte;
-      while ((UCB1STAT&UCBUSY));
+      while ((UCB1STAT & UCBUSY));
       break;
     default:
       return; // wrong
