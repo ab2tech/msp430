@@ -87,7 +87,7 @@ void tlc5925::shiftDown(uint16_t shift_quantity, uint16_t channel_data)
   for(shift_quantity; shift_quantity>0; shift_quantity--)
   {
     write(channel_data);
-    channel_data = (channel_data>>1)|(channel_data<<15);
+    channel_data = rlc(channel_data);
     clk->delayMS(anim_delay);
   }
 }
@@ -99,7 +99,7 @@ void tlc5925::shiftUp(uint16_t shift_quantity , uint16_t channel_data)
   for(shift_quantity; shift_quantity>0; shift_quantity--)
   {
     write(channel_data);
-    channel_data = (channel_data<<1)|(channel_data>>15);
+    channel_data = rrc(channel_data);
     clk->delayMS(anim_delay);
   }
 }
