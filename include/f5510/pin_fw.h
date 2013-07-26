@@ -83,26 +83,26 @@ extern const uint16_t msp_pin_ie[INT_PORT_MAX];
 extern const uint16_t msp_pin_ifg[INT_PORT_MAX];
 
 #define bit(pin) (msp_pin_bit[(pin)])
-#define in(pin)  (REG16(msp_pin_in[(pin)]))
-#define out(pin) (REG16(msp_pin_out[(pin)]))
-#define dir(pin) (REG16(msp_pin_dir[(pin)]))
+#define in(pin)  (REG8(msp_pin_in[(pin)]))
+#define out(pin) (REG8(msp_pin_out[(pin)]))
+#define dir(pin) (REG8(msp_pin_dir[(pin)]))
 #ifndef DISABLE_PFW_REN
-#define ren(pin) (REG16(msp_pin_ren[(pin)])
+#define ren(pin) (REG8(msp_pin_ren[(pin)])
 #endif
 #ifndef DISABLE_PFW_DS
-#define ds(pin)  (REG16(msp_pin_ds[(pin)]))
+#define ds(pin)  (REG8(msp_pin_ds[(pin)]))
 #endif
 #ifndef DISABLE_PFW_SEL
-#define sel(pin) (REG16(msp_pin_sel[(pin)]))
+#define sel(pin) (REG8(msp_pin_sel[(pin)]))
 #endif
 #ifndef DISABLE_PFW_IES
-#define ies(pin) (REG16(msp_pin_ies[(pin)]))
+#define ies(pin) (REG8(msp_pin_ies[(pin)]))
 #endif
 #ifndef DISABLE_PFW_IE
-#define ie(pin)  (REG16(msp_pin_ie[(pin)]))
+#define ie(pin)  (REG8(msp_pin_ie[(pin)]))
 #endif
 #ifndef DISABLE_PFW_IFG
-#define ifg(pin) (REG16(msp_pin_ifg[(pin)]))
+#define ifg(pin) (REG8(msp_pin_ifg[(pin)]))
 #endif
 
 // Pin Macros
