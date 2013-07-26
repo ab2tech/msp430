@@ -67,21 +67,11 @@ typedef enum _tlc5925_ch_t
 // TLC5925 class declaration
 class tlc5925
 {
-private:
-  // Animation delay (loop/pulse)
-  uint16_t     anim_delay;
-  clock       *clk;
-  msp_pin_t    oe;
-  msp_pin_t    le;
-  spi_usci_t   spi;
-
-  // Allows modification of effective channel 0 index
-  tlc5925_ch_t start_ch;
 public:
-  tlc5925(clock *clk, msp_pin_t oe, msp_pin_t le, uint16_t anim_delay
-          tlc5925_ch_t start_ch = CH03, spi_usci_t spi = SPI_B1)
+  tlc5925(clock *clk, msp_pin_t oe, msp_pin_t le, uint16_t anim_delay,
+          tlc5925_ch_t start_ch = CH03, spi_usci_t spi_usci = SPI_B1)
     : clk(clk), oe(oe), le(le), anim_delay(anim_delay),
-      start_ch(start_ch), spi(spi) {
+      start_ch(start_ch), tlc_spi(spi_usci) {
       // SPI was initialized using the initialization list...
       pinOutput(oe);
       pinOutput(le);
@@ -90,11 +80,21 @@ public:
   };
   void channelScanDown(uint16_t scan_quantity);
   void channelScanUp(uint16_t scan_quantity);
+  void flash(uint16_t pulse_quantity, uint16_t channel_data);
   void latch(void);
   void outputDisable(void);
   void outputEnable(void);
-  void pulse(uint16_t pulse_quantity, uint16_t channel_data);
   void shiftDown(uint16_t shift_quantity, uint16_t channel_data);
   void shiftUp(uint16_t shift_quantity, uint16_t channel_data);
   void write(uint16_t channel_data);
+private:
+  // Animation delay (loop/pulse)
+  uint16_t     anim_delay;
+  clock       *clk;
+  msp_pin_t    oe;
+  msp_pin_t    le;
+  spi          tlc_spi;
+
+  // Allows modification of effective channel 0 index
+  tlc5925_ch_t start_ch;
 };

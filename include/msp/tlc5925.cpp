@@ -20,13 +20,13 @@
 // specified channel for the specified number of scans
 void tlc5925::channelScanDown(uint16_t scan_quantity)
 {
-  for(scan_quantity;scan_quantity>0;scan_quantity--)
+  uint8_t i;
+  for(scan_quantity; scan_quantity > 0; scan_quantity--)
   {
-    uint8_t i = 17;
-    for(i;i>0;i--)
+    for(i=17; i>0; i--)
     {
-      write(start_ch);
-      start_ch = (start_ch>>1)|(start_ch<<15);
+      write((uint16_t) start_ch);
+      start_ch = (tlc5925_ch_t) ((start_ch>>1)|(start_ch<<15));
       clk->delayMS(anim_delay);
     }
   }
@@ -36,15 +36,29 @@ void tlc5925::channelScanDown(uint16_t scan_quantity)
 // specified channel for the specified number of scans
 void tlc5925::channelScanUp(uint16_t scan_quantity)
 {
-  for(scan_quantity;scan_quantity>0;scan_quantity--)
+  uint8_t i;
+  for(scan_quantity; scan_quantity > 0; scan_quantity--)
   {
-    uint8_t i = 17;
-    for(i;i>0;i--)
+    for(i=17; i>0; i--)
     {
-      write(starting_channel);
-      start_ch = (start_ch<<1)|(start_ch>>15);
+      write((uint16_t) start_ch);
+      start_ch = (tlc5925_ch_t) ((start_ch<<1)|(start_ch>>15));
       clk->delayMS(anim_delay);
     }
+  }
+}
+
+// Pulses the provided channel data for the specified pulse quantity
+void tlc5925::flash(uint16_t pulse_quantity, uint16_t channel_data)
+{
+  outputDisable();
+  write(channel_data);
+  for(pulse_quantity;pulse_quantity>0;pulse_quantity--)
+  {
+    outputEnable();
+    clk->delayMS(anim_delay);
+    outputDisable();
+    clk->delayMS(anim_delay);
   }
 }
 
@@ -66,25 +80,11 @@ void tlc5925::outputEnable(void)
   pinOff(oe);
 }
 
-// Pulses the provided channel data for the specified pulse quantity
-void tlc5925::pulse(uint16_t pulse_quantity, uint16_t channel_data)
-{
-  outputDisable();
-  write(channel_data);
-  for(pulse_quantity;pulse_quantity>0;pulse_quantity--)
-  {
-    outputEnable();
-    clk->delayMS(anim_delay);
-    outputDisable();
-    clk->delayMS(anim_delay);
-  }
-}
-
 // Rotates the specified TLC5925 channel data up (left shift with carry) the
 // channels
 void tlc5925::shiftDown(uint16_t shift_quantity, uint16_t channel_data)
 {
-  for(shift_quantity;shift_quantity>0;shift_quantity--)
+  for(shift_quantity; shift_quantity>0; shift_quantity--)
   {
     write(channel_data);
     channel_data = (channel_data>>1)|(channel_data<<15);
@@ -96,7 +96,7 @@ void tlc5925::shiftDown(uint16_t shift_quantity, uint16_t channel_data)
 // channels
 void tlc5925::shiftUp(uint16_t shift_quantity , uint16_t channel_data)
 {
-  for(shift_quantity;shift_quantity>0;shift_quantity--)
+  for(shift_quantity; shift_quantity>0; shift_quantity--)
   {
     write(channel_data);
     channel_data = (channel_data<<1)|(channel_data>>15);
@@ -107,10 +107,10 @@ void tlc5925::shiftUp(uint16_t shift_quantity , uint16_t channel_data)
 // Writes channel data to TLC5925
 void tlc5925::write(uint16_t channel_data)
 {
-  spi.risingEdge();
+  tlc_spi.risingEdge();
   outputDisable();
-  spi.write((channel_data >> 8) & 0xFF);
-  spi.write(channel_data & 0xFF);
+  tlc_spi.write((channel_data >> 8) & 0xFF);
+  tlc_spi.write(channel_data & 0xFF);
   latch();
   outputEnable();
 }
