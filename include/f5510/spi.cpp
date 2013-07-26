@@ -54,9 +54,9 @@ const msp_pin_t spi::spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS] = {
   }
 };
 
-void spi::init(spi_usci_t spi)
+void spi::init(spi_usci_t usci)
 {
-  spi_usci = spi;
+  spi_usci = usci;
 
   // Which USCI are we initializing?
   switch (spi_usci)

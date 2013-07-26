@@ -52,7 +52,7 @@ typedef enum
 class spi
 {
 public:
-  spi(spi_usci_t spi) : spi_usci(spi) {
+  spi(spi_usci_t usci) : spi_usci(usci) {
     // Only initialize this USCI if it hasn't already been initialized
     // (useful if multiple libraries initialize the same SPI USCI)
     if (!is_init[spi_usci])
@@ -70,7 +70,7 @@ public:
   void write(uint8_t byte);
 
 private:
-  void init(spi_usci_t spi);
+  void init(spi_usci_t usci);
   spi_usci_t spi_usci;
   static bool is_init[NUM_SPI_USCIs];
   static const msp_pin_t spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS];
