@@ -52,7 +52,9 @@ typedef enum
 class spi
 {
 public:
-  spi(spi_usci_t spi);
+  spi(spi_usci_t spi) : spi_usci(spi) {
+    init(spi_usci);
+  }
   uint16_t getPrescaler(void);
   void pulseClk(void);
   void fallingEdge(void);
