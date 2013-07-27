@@ -50,6 +50,12 @@ void tlc5925::channelScanUp(uint16_t scan_quantity)
   }
 }
 
+// Retrieve the instance start_ch value
+tlc5925_ch_t inline getStartCh(void)
+{
+  return start_ch;
+}
+
 // Pulses the provided channel data for the specified pulse quantity
 void tlc5925::flash(uint16_t pulse_quantity, uint16_t channel_data)
 {
@@ -80,6 +86,12 @@ void tlc5925::outputDisable(void)
 void tlc5925::outputEnable(void)
 {
   pinOff(oe);
+}
+
+// Re-configure start channel
+void inline setStartCh(tlc5925_ch_t ch)
+{
+  start_ch = ch;
 }
 
 // Rotates the specified TLC5925 channel data up (left shift with carry) the

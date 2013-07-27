@@ -80,10 +80,12 @@ public:
   };
   void channelScanDown(uint16_t scan_quantity);
   void channelScanUp(uint16_t scan_quantity);
+  tlc5925_ch_t inline getStartCh(void);
   void flash(uint16_t pulse_quantity, uint16_t channel_data);
   void latch(void);
   void outputDisable(void);
   void outputEnable(void);
+  void inline setStartCh(tlc5925_ch_t ch);
   void shiftDown(uint16_t shift_quantity, uint16_t channel_data);
   void shiftUp(uint16_t shift_quantity, uint16_t channel_data);
   void write(uint16_t channel_data);
