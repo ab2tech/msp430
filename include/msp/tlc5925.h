@@ -25,26 +25,29 @@
 #include "../clock.h"
 
 // Channel preset definitions (channel 0 referenced)
-#define BOLD_CURSOR                     (CH00|CH01)
-#define BOTTOM_LEFT_QUADRANT            (CH00|CH01|CH02|CH03|CH04)
-#define BOTTOM_RIGHT_QUADRANT           (CH00|CH12|CH13|CH14|CH15)
-#define CH0_15                          (CH00|CH01|CH02|CH03|CH04|CH05|CH06| \
-                                         CH07|CH08|CH09|CH10|CH11|CH12|CH13| \
-                                         CH14|CH15)
-#define CH5555                          (CH00|CH02|CH04|CH06|CH08|CH10|CH12| \
-                                         CH14)
-#define CHAAAA                          (CH01|CH03|CH05|CH07|CH09|CH11|CH13| \
-                                         CH15)
-#define CRASH_DUMMY_LEFT                (CH00|CH04|CH05|CH06|CH07|CH08|CH12| \
-                                         CH13|CH14|CH15)
-#define CRASH_DUMMY_RIGHT               (CH00|CH01|CH02|CH03|CH04|CH08|CH09| \
-                                         CH10|CH11|CH12)
-#define RIGHT_HALF                      (CH00|CH08|CH09|CH10|CH11|CH12|CH13| \
-                                         CH14|CH15)
-#define LEFT_HALF                       (CH00|CH01|CH02|CH03|CH04|CH05|CH06| \
-                                         CH07|CH08)
+#define TLC5925_BOLD_CURSOR            (CH00|CH01)
+#define TLC5925_BOTTOM_LEFT_QUADRANT   (CH00|CH01|CH02|CH03|CH04)
+#define TLC5925_BOTTOM_RIGHT_QUADRANT  (CH00|CH12|CH13|CH14|CH15)
+#define TLC5925_CH0_15                 (CH00|CH01|CH02|CH03|CH04|CH05|CH06| \
+                                        CH07|CH08|CH09|CH10|CH11|CH12|CH13| \
+                                        CH14|CH15)
+#define TLC5925_CH5555                 (CH00|CH02|CH04|CH06|CH08|CH10|CH12| \
+                                        CH14)
+#define TLC5925_CHAAAA                 (CH01|CH03|CH05|CH07|CH09|CH11|CH13| \
+                                        CH15)
+#define TLC5925_CRASH_DUMMY_LEFT       (CH00|CH04|CH05|CH06|CH07|CH08|CH12| \
+                                        CH13|CH14|CH15)
+#define TLC5925_CRASH_DUMMY_RIGHT      (CH00|CH01|CH02|CH03|CH04|CH08|CH09| \
+                                        CH10|CH11|CH12)
+#define TLC5925_RIGHT_HALF             (CH00|CH08|CH09|CH10|CH11|CH12|CH13| \
+                                        CH14|CH15)
+#define TLC5925_LEFT_HALF              (CH00|CH01|CH02|CH03|CH04|CH05|CH06| \
+                                        CH07|CH08)
+
+#define TLC5925_NUM_CHANNELS           16
+
 // Channel definitions
-typedef enum _tlc5925_ch_t
+typedef enum
 {
   CH00 = BIT0,
   CH01 = BIT1,
@@ -74,7 +77,7 @@ public:
     : clk(clk), le(le), oe(oe), anim_delay(anim_delay),
       start_ch(start_ch), tlc_spi(spi_usci) {
       // SPI was initialized using the initialization list...
-      if(oe != MSP_PIN_SIZE)
+      if (oe != MSP_PIN_SIZE)
       {
         pinOutput(oe);
       }
@@ -86,9 +89,9 @@ public:
   void channelScanUp(uint16_t scan_quantity);
   tlc5925_ch_t inline getStartCh(void);
   void flash(uint16_t pulse_quantity, uint16_t channel_data);
-  void latch(void);
-  void outputDisable(void);
-  void outputEnable(void);
+  void inline latch(void);
+  void inline outputDisable(void);
+  void inline outputEnable(void);
   void inline setStartCh(tlc5925_ch_t ch);
   void shiftDown(uint16_t shift_quantity, uint16_t channel_data);
   void shiftUp(uint16_t shift_quantity, uint16_t channel_data);
