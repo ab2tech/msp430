@@ -27,7 +27,7 @@ void tlc5925::channelScanDown(uint16_t scan_quantity)
     for(i=17; i>0; i--)
     {
       write((uint16_t) next_ch);
-      next_ch = (tlc5925_ch_t) rrc(next_ch);
+      next_ch = (tlc5925_ch_t) rlc(next_ch);
       clk->delayMS(anim_delay);
     }
   }
@@ -44,7 +44,7 @@ void tlc5925::channelScanUp(uint16_t scan_quantity)
     for(i=17; i>0; i--)
     {
       write((uint16_t) next_ch);
-      next_ch = (tlc5925_ch_t) rlc(next_ch);
+      next_ch = (tlc5925_ch_t) rrc(next_ch);
       clk->delayMS(anim_delay);
     }
   }
@@ -53,7 +53,7 @@ void tlc5925::channelScanUp(uint16_t scan_quantity)
 // Retrieve the instance start_ch value
 tlc5925_ch_t inline getStartCh(void)
 {
-  return start_ch;
+  //return start_ch;
 }
 
 // Pulses the provided channel data for the specified pulse quantity
@@ -91,7 +91,7 @@ void tlc5925::outputEnable(void)
 // Re-configure start channel
 void inline setStartCh(tlc5925_ch_t ch)
 {
-  start_ch = ch;
+  //start_ch = ch;
 }
 
 // Rotates the specified TLC5925 channel data up (left shift with carry) the
@@ -106,7 +106,7 @@ void tlc5925::shiftDown(uint16_t shift_quantity, uint16_t channel_data)
   }
 }
 
-// Rotates the specified TLC5925 channel data up (left shift with carry) the
+// Rotates the specified TLC5925 channel data up (right shift with carry) the
 // channels
 void tlc5925::shiftUp(uint16_t shift_quantity , uint16_t channel_data)
 {
