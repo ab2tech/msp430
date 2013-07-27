@@ -21,13 +21,13 @@
 void tlc5925::channelScanDown(uint16_t scan_quantity)
 {
   uint8_t i;
-  uint16_t next_ch = start_ch;
+  pres_channel_data = start_ch;
   for(scan_quantity; scan_quantity > 0; scan_quantity--)
   {
     for(i=17; i>0; i--)
     {
-      write((uint16_t) next_ch);
-      next_ch = (tlc5925_ch_t) rlc(next_ch);
+      write(pres_channel_data);
+      pres_channel_data = rlc(pres_channel_data);
       clk->delayMS(anim_delay);
     }
   }
@@ -38,13 +38,13 @@ void tlc5925::channelScanDown(uint16_t scan_quantity)
 void tlc5925::channelScanUp(uint16_t scan_quantity)
 {
   uint8_t i;
-  uint16_t next_ch = start_ch;
+  pres_channel_data = start_ch;
   for(scan_quantity; scan_quantity > 0; scan_quantity--)
   {
     for(i=17; i>0; i--)
     {
-      write((uint16_t) next_ch);
-      next_ch = (tlc5925_ch_t) rrc(next_ch);
+      write(pres_channel_data);
+      pres_channel_data = rrc(pres_channel_data);
       clk->delayMS(anim_delay);
     }
   }
@@ -60,7 +60,8 @@ tlc5925_ch_t inline getStartCh(void)
 void tlc5925::flash(uint16_t pulse_quantity, uint16_t channel_data)
 {
   outputDisable();
-  write(channel_data);
+  pres_channel_data = channel_data;
+  write(pres_channel_data);
   for(pulse_quantity;pulse_quantity>0;pulse_quantity--)
   {
     outputEnable();
@@ -79,13 +80,15 @@ void tlc5925::latch(void)
 // Sets TLC5925 output enable bit high (active low)
 void tlc5925::outputDisable(void)
 {
-  pinOn(oe);
+  if(oe != MSP_PIN_SIZE) pinOn(oe);
+  else write(0);
 }
 
 // Sets TLC5925 output enable bit low (active low)
 void tlc5925::outputEnable(void)
 {
-  pinOff(oe);
+  if(oe != MSP_PIN_SIZE) pinOff(oe);
+  else write(pres_channel_data);
 }
 
 // Re-configure start channel
@@ -98,10 +101,11 @@ void inline setStartCh(tlc5925_ch_t ch)
 // channels
 void tlc5925::shiftDown(uint16_t shift_quantity, uint16_t channel_data)
 {
+  pres_channel_data = channel_data;
   for(shift_quantity; shift_quantity>0; shift_quantity--)
   {
-    write(channel_data);
-    channel_data = rlc(channel_data);
+    write(pres_channel_data);
+    pres_channel_data = rlc(pres_channel_data);
     clk->delayMS(anim_delay);
   }
 }
@@ -110,10 +114,11 @@ void tlc5925::shiftDown(uint16_t shift_quantity, uint16_t channel_data)
 // channels
 void tlc5925::shiftUp(uint16_t shift_quantity , uint16_t channel_data)
 {
+  pres_channel_data = channel_data;
   for(shift_quantity; shift_quantity>0; shift_quantity--)
   {
-    write(channel_data);
-    channel_data = rrc(channel_data);
+    write(pres_channel_data);
+    pres_channel_data = rrc(pres_channel_data);
     clk->delayMS(anim_delay);
   }
 }
@@ -122,10 +127,10 @@ void tlc5925::shiftUp(uint16_t shift_quantity , uint16_t channel_data)
 void tlc5925::write(uint16_t channel_data)
 {
   tlc_spi.risingEdge();
-  outputDisable();
+  if(oe != MSP_PIN_SIZE) outputDisable();
   tlc_spi.write((channel_data >> 8) & 0xFF);
   tlc_spi.write(channel_data & 0xFF);
   latch();
-  outputEnable();
+  if(oe != MSP_PIN_SIZE) outputEnable();
 }
 

@@ -25,9 +25,9 @@
 #include "../clock.h"
 
 // Channel preset definitions (channel 0 referenced)
-#define BOLD_CURSOR                     (CH03|CH04)
-#define BOTTOM_LEFT_QUADRANT            (CH03|CH04|CH05|CH06|CH07)
-#define BOTTOM_RIGHT_QUADRANT           (CH00|CH01|CH02|CH03|CH15)
+#define BOLD_CURSOR                     (CH00|CH01)
+#define BOTTOM_LEFT_QUADRANT            (CH00|CH01|CH02|CH03|CH04)
+#define BOTTOM_RIGHT_QUADRANT           (CH00|CH12|CH13|CH14|CH15)
 #define CH0_15                          (CH00|CH01|CH02|CH03|CH04|CH05|CH06| \
                                          CH07|CH08|CH09|CH10|CH11|CH12|CH13| \
                                          CH14|CH15)
@@ -35,14 +35,14 @@
                                          CH14)
 #define CHAAAA                          (CH01|CH03|CH05|CH07|CH09|CH11|CH13| \
                                          CH15)
-#define CRASH_DUMMY_LEFT                (CH00|CH01|CH02|CH03|CH07|CH08|CH09| \
-                                         CH10|CH11|CH15)
-#define CRASH_DUMMY_RIGHT               (CH03|CH04|CH05|CH06|CH07|CH11|CH12| \
+#define CRASH_DUMMY_LEFT                (CH00|CH04|CH05|CH06|CH07|CH08|CH12| \
                                          CH13|CH14|CH15)
-#define RIGHT_HALF                      (CH03|CH04|CH05|CH06|CH07|CH08|CH09| \
-                                         CH10|CH11)
-#define LEFT_HALF                       (CH11|CH12|CH13|CH14|CH15|CH00|CH01| \
-                                         CH02|CH03)
+#define CRASH_DUMMY_RIGHT               (CH00|CH01|CH02|CH03|CH04|CH08|CH09| \
+                                         CH10|CH11|CH12)
+#define RIGHT_HALF                      (CH00|CH08|CH09|CH10|CH11|CH12|CH13| \
+                                         CH14|CH15)
+#define LEFT_HALF                       (CH00|CH01|CH02|CH03|CH04|CH05|CH06| \
+                                         CH07|CH08)
 // Channel definitions
 typedef enum _tlc5925_ch_t
 {
@@ -68,12 +68,16 @@ typedef enum _tlc5925_ch_t
 class tlc5925
 {
 public:
-  tlc5925(clock *clk, msp_pin_t oe, msp_pin_t le, uint16_t anim_delay,
-          tlc5925_ch_t start_ch = CH03, spi_usci_t spi_usci = SPI_B1)
-    : clk(clk), oe(oe), le(le), anim_delay(anim_delay),
+  tlc5925(clock *clk, msp_pin_t le, msp_pin_t oe = MSP_PIN_SIZE,
+          uint16_t anim_delay = 100, tlc5925_ch_t start_ch = CH00,
+          spi_usci_t spi_usci = SPI_B1)
+    : clk(clk), le(le), oe(oe), anim_delay(anim_delay),
       start_ch(start_ch), tlc_spi(spi_usci) {
       // SPI was initialized using the initialization list...
-      pinOutput(oe);
+      if(oe != MSP_PIN_SIZE)
+      {
+        pinOutput(oe);
+      }
       pinOutput(le);
       pinOff(le);
       outputDisable();
@@ -91,12 +95,13 @@ public:
   void write(uint16_t channel_data);
 private:
   // Animation delay (loop/pulse)
-  uint16_t     anim_delay;
-  clock       *clk;
-  msp_pin_t    oe;
-  msp_pin_t    le;
-  spi          tlc_spi;
+  uint16_t            anim_delay;
+  clock              *clk;
+  msp_pin_t           le;
+  msp_pin_t           oe;
+  spi                 tlc_spi;
 
   // Allows modification of effective channel 0 index
-  const tlc5925_ch_t start_ch;
+  const tlc5925_ch_t  start_ch;
+  uint16_t            pres_channel_data;
 };
