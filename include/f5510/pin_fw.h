@@ -71,7 +71,7 @@
 #define INT_PORT_MAX (PORT2+1)
 #define SEL_PORT_MAX (PORT6+1)
 
-extern const uint8_t msp_pin_bit[MSP_PIN_SIZE];
+extern const uint8_t  msp_pin_bit[MSP_PIN_SIZE];
 extern const uint16_t msp_pin_in[MSP_PIN_SIZE];
 extern const uint16_t msp_pin_out[MSP_PIN_SIZE];
 extern const uint16_t msp_pin_dir[MSP_PIN_SIZE];
@@ -156,7 +156,9 @@ extern const uint16_t msp_pin_ifg[INT_PORT_MAX];
   // pinIeDisable - disable the given pin's interrupt
   #define pinIeDisable(pin) off(ie((pin)), bit((pin)))
 #endif
-#ifndef DISABLE_PFS_IFG
+#ifndef DISABLE_PFW_IFG
+  // pinIfgRead - read the pin's interrupt flag
+  #define pinIfgRead(pin) read(ifg((pin)), bit((pin)))
   // pinIfgClear - clear the given pin's interrupt flag
   #define pinIfgClear(pin) off(ifg((pin)), bit((pin)))
 #endif
