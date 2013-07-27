@@ -102,6 +102,6 @@ private:
   spi                 tlc_spi;
 
   // Allows modification of effective channel 0 index
-  const tlc5925_ch_t  start_ch;
+  tlc5925_ch_t        start_ch;
   uint16_t            pres_channel_data;
 };
