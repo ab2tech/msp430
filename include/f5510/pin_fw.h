@@ -87,7 +87,7 @@ extern const uint16_t msp_pin_ifg[INT_PORT_MAX];
 #define out(pin) (REG8(msp_pin_out[(pin)]))
 #define dir(pin) (REG8(msp_pin_dir[(pin)]))
 #ifndef DISABLE_PFW_REN
-#define ren(pin) (REG8(msp_pin_ren[(pin)])
+#define ren(pin) (REG8(msp_pin_ren[(pin)]))
 #endif
 #ifndef DISABLE_PFW_DS
 #define ds(pin)  (REG8(msp_pin_ds[(pin)]))
