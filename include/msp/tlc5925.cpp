@@ -52,6 +52,15 @@ void tlc5925::channelScanUp(uint16_t scan_quantity)
   }
 }
 
+// Clear the TLC5925 by writing zeros
+void tlc5925::clear(void)
+{
+  tlc_spi.risingEdge();
+  tlc_spi.write(0);
+  tlc_spi.write(0);
+  latch();
+}
+
 // Retrieve the instance start_ch value
 tlc5925_ch_t inline tlc5925::getStartCh(void)
 {
@@ -84,7 +93,7 @@ void inline tlc5925::outputDisable(void)
   if (oe != MSP_PIN_SIZE)
     pinOn(oe);
   else
-    write(0);
+    clear();
 }
 
 // Sets TLC5925 output enable bit low (active low)
