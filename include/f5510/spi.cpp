@@ -54,274 +54,162 @@ const msp_pin_t spi::spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS] = {
   }
 };
 
-void spi::init(void)
+// Configure SPI for LSB-first transfers
+void inline spi::cfgLSB(void)
 {
-  // Which USCI are we initializing?
-  switch (spi_usci)
+  off(UC_CTL1(spi_base_addr), UCMSB);
+}
+
+// Configure SPI for MSB-first transfers
+void inline spi::cfgMSB(void)
+{
+  on (UC_CTL1(spi_base_addr), UCMSB);
+}
+
+// Disable the SOMI pin if it's needed for something else
+void inline spi::disableSOMI(void)
+{
+  pinSelOff(spi_pins[spi_usci][SPI_USCI_SOMI]);
+}
+
+// Disable the SIMO pin if it's needed for something else
+void inline spi::disableSIMO(void)
+{
+  pinSelOff(spi_pins[spi_usci][SPI_USCI_SIMO]);
+}
+
+// Configure SPI for falling edge
+void inline spi::fallingEdge(void)
+{
+  off(UC_CTL0(spi_base_addr), UCCKPH);
+}
+
+// Read a byte from the SPI slave
+uint8_t inline spi::get(void)
+{
+  return (write(dummy_char));
+}
+
+void spi::getFrame(uint8_t *buf, uint16_t size)
+{
+  uint16_t i = 0;
+  for (i=0; i<size; i++)
   {
-#ifdef MSP430F5510_EXT
-    case SPI_A0:
-      // Enable spi using the A0 Port SEL register
-      pinSelOn(spi_pins[spi_usci][SPI_USCI_CLK]);
-      pinSelOn(spi_pins[spi_usci][SPI_USCI_SIMO]);
-
-      // Put state machine in reset
-      on(UCA0CTL1, UCSWRST);
-
-      // 3-pin, 8-bit SPI master
-      // Clock polarity high, MSB
-      on(UCA0CTL0, (UCMST | UCSYNC | UCCKPH | UCMSB));
-
-      // SMCLK
-      on(UCA0CTL1, UCSSEL_2);
-
-      // Set the prescaler to max (2) initially
-      setMaxPrescaler();
-
-      // Initialize USCI state machine
-      off(UCA0CTL1, UCSWRST);
-
-      break;
-
-    case SPI_B0:
-      // Enable spi using the B0 Port SEL register
-      pinSelOn(spi_pins[spi_usci][SPI_USCI_CLK]);
-      pinSelOn(spi_pins[spi_usci][SPI_USCI_SIMO]);
-
-      // Put state machine in reset
-      on(UCB0CTL1, UCSWRST);
-
-      // 3-pin, 8-bit SPI master
-      // Clock polarity high, MSB
-      on(UCB0CTL0, (UCMST | UCSYNC | UCCKPH | UCMSB));
-
-      // SMCLK
-      on(UCB0CTL1, UCSSEL_2);
-
-      // Set the prescaler to max (2) initially
-      setMaxPrescaler();
-
-      // Initialize USCI state machine
-      off(UCB0CTL1, UCSWRST);
-
-      break;
-#endif
-
-    case SPI_A1:
-      // Enable spi using the A1 Port SEL register
-      pinSelOn(spi_pins[spi_usci][SPI_USCI_CLK]);
-      pinSelOn(spi_pins[spi_usci][SPI_USCI_SIMO]);
-
-      // Put state machine in reset
-      on(UCA1CTL1, UCSWRST);
-
-      // 3-pin, 8-bit SPI master
-      // Clock polarity high, MSB
-      on(UCA1CTL0, (UCMST | UCSYNC | UCCKPH | UCMSB));
-
-      // SMCLK
-      on(UCA1CTL1, UCSSEL_2);
-
-      // Set the prescaler to max (2) initially
-      setMaxPrescaler();
-
-      // Initialize USCI state machine
-      off(UCA1CTL1, UCSWRST);
-
-      break;
-
-    case SPI_B1:
-      // Enable spi using the B1 Port SEL register
-      pinSelOn(spi_pins[spi_usci][SPI_USCI_CLK]);
-      pinSelOn(spi_pins[spi_usci][SPI_USCI_SIMO]);
-
-      // Put state machine in reset
-      on(UCB1CTL1, UCSWRST);
-
-      // 3-pin, 8-bit SPI master
-      // Clock polarity high, MSB
-      on(UCB1CTL0, (UCMST | UCSYNC | UCCKPH | UCMSB));
-
-      // SMCLK
-      on(UCB1CTL1, UCSSEL_2);
-
-      // Set the prescaler to max (2) initially
-      setMaxPrescaler();
-
-      // Initialize USCI state machine
-      off(UCB1CTL1, UCSWRST);
-
-      break;
-
-    default:
-      return; // uh-oh...
+    // Write the dummy char to the TXBUF
+    set(UC_TXBUF(spi_base_addr), dummy_char);
+    // Wait for the transaction to complete
+    while (read(UC_IFG(spi_base_addr), UCRXIFG) == 0);
+    // Store the received value in the buffer
+    set(buf[i], UC_RXBUF(spi_base_addr));
   }
 }
 
+// Get the current SPI prescaler
 uint16_t spi::getPrescaler(void)
 {
-  switch (spi_usci)
-  {
-#ifdef MSP430F5510_EXT
-    case SPI_A0:
-      return ((UCA0BR1 << BYTE_SIZE) | UCA0BR0);
-    case SPI_B0:
-      return ((UCB0BR1 << BYTE_SIZE) | UCB0BR0);
-#endif
-    case SPI_A1:
-      return ((UCA1BR1 << BYTE_SIZE) | UCA1BR0);
-    case SPI_B1:
-      return ((UCB1BR1 << BYTE_SIZE) | UCB1BR0);
-    default:
-      return 0;
-  }
+  return (UC_BRW(spi_base_addr));
 }
 
-void spi::pulseClk(void)
+// Initialize SPI
+void spi::init(void)
 {
+  // Enable spi using the SEL register for each pin
+  pinSelOn(spi_pins[spi_usci][SPI_USCI_CLK]);
+  pinSelOn(spi_pins[spi_usci][SPI_USCI_SIMO]);
+  pinSelOn(spi_pins[spi_usci][SPI_USCI_SOMI]);
+
+  // Put state machine in reset
+  on(UC_CTL1(spi_base_addr), UCSWRST);
+
+  // 3-pin, 8-bit SPI master
+  // Clock polarity low, rising edge, MSB
+  on(UC_CTL0(spi_base_addr), (UCMST | UCSYNC | UCCKPH | UCMSB));
+
+  // SMCLK
+  on(UC_CTL1(spi_base_addr), UCSSEL_2);
+
+  // Set the prescaler to min (2) initially
+  setMinPrescaler();
+
+  // Initialize USCI state machine
+  off(UC_CTL1(spi_base_addr), UCSWRST);
+}
+
+// Pulse the SPI CLK pin
+void spi::pulseClk(uint8_t times)
+{
+  uint8_t i;
+
   // Need to first disable the SPI functionality of the pin
   pinSelOff(spi_pins[spi_usci][SPI_USCI_CLK]);
   // Now make sure it's an output
   pinOutput(spi_pins[spi_usci][SPI_USCI_CLK]);
-  // Now pulse the pin
-  pinPulse(spi_pins[spi_usci][SPI_USCI_CLK]);
+  for (i=0; i<times; i++)
+  {
+    // Now pulse the pin
+    pinPulse(spi_pins[spi_usci][SPI_USCI_CLK]);
+  }
   // Now turn the SPI functionality back on
   pinSelOn(spi_pins[spi_usci][SPI_USCI_CLK]);
 }
 
-void spi::fallingEdge(void)
+// Configure SPI for rising edge
+void inline spi::risingEdge(void)
 {
-  switch (spi_usci)
-  {
-#ifdef MSP430F5510_EXT
-    case SPI_A0:
-      off(UCA0CTL0, UCCKPH);
-      break;
-    case SPI_B0:
-      off(UCB0CTL0, UCCKPH);
-      break;
-#endif
-    case SPI_A1:
-      off(UCA1CTL0, UCCKPH);
-      break;
-    case SPI_B1:
-      off(UCB1CTL0, UCCKPH);
-      break;
-    default:
-      return; // bad news
-  }
+  on (UC_CTL0(spi_base_addr), UCCKPH);
 }
 
-void spi::risingEdge(void)
+// Set the dummy character to something other than default
+void inline spi::setDummyChar(uint8_t byte)
 {
-  switch (spi_usci)
-  {
-#ifdef MSP430F5510_EXT
-    case SPI_A0:
-      on(UCA0CTL0, UCCKPH);
-      break;
-    case SPI_B0:
-      on(UCB0CTL0, UCCKPH);
-      break;
-#endif
-    case SPI_A1:
-      on(UCA1CTL0, UCCKPH);
-      break;
-    case SPI_B1:
-      on(UCB1CTL0, UCCKPH);
-      break;
-    default:
-      return; // crap
-  }
+  set(dummy_char, byte);
 }
 
-void spi::setMaxPrescaler(void)
+// Configure the minimum prescaler value (maximum frequency)
+void inline spi::setMinPrescaler(void)
 {
-  switch (spi_usci)
-  {
-#ifdef MSP430F5510_EXT
-    case SPI_A0:
-      // Set the prescaler to 2 (max)
-      set(UCA0BR0, 0x02);
-      set(UCA0BR1, 0);
-      break;
-    case SPI_B0:
-      // Set the prescaler to 2 (max)
-      set(UCB0BR0, 0x02);
-      set(UCB0BR1, 0);
-      break;
-#endif
-    case SPI_A1:
-      // Set the prescaler to 2 (max)
-      set(UCA1BR0, 0x02);
-      set(UCA1BR1, 0);
-      break;
-    case SPI_B1:
-      // Set the prescaler to 2 (max)
-      set(UCB1BR0, 0x02);
-      set(UCB1BR1, 0);
-      break;
-    default:
-      return; // for the very last time...
-   }
+  set(UC_BRW(spi_base_addr), 0x02);
+  // OR
+  // setPrescaler(0x02);
 }
 
-void spi::setPrescaler(uint16_t prescaler)
+// Set the SPI clock prescaler value
+void inline spi::setPrescaler(uint16_t prescaler)
 {
-  switch (spi_usci)
-  {
-#ifdef MSP430F5510_EXT
-    case SPI_A0:
-      // Set the prescaler based on the prescaler input
-      set(UCA0BR0,  (prescaler & 0x00FF));
-      set(UCA0BR1, ((prescaler >> BYTE_SIZE) & 0x00FF));
-      break;
-    case SPI_B0:
-      // Set the prescaler based on the prescaler input
-      set(UCB0BR0,  (prescaler & 0x00FF));
-      set(UCB0BR1, ((prescaler >> BYTE_SIZE) & 0x00FF));
-      break;
-#endif
-    case SPI_A1:
-      // Set the prescaler based on the prescaler input
-      set(UCA1BR0,  (prescaler & 0x00FF));
-      set(UCA1BR1, ((prescaler >> BYTE_SIZE) & 0x00FF));
-      break;
-    case SPI_B1:
-      // Set the prescaler based on the prescaler input
-      set(UCB1BR0,  (prescaler & 0x00FF));
-      set(UCB1BR1, ((prescaler >> BYTE_SIZE) & 0x00FF));
-      break;
-    default:
-      return; // sheesh
-  }
+  set(UC_BRW(prescaler), prescaler);
 }
 
-void spi::write(uint8_t byte)
+// Write a byte to SPI -- read return byte as well
+uint8_t spi::write(uint8_t byte)
 {
-  // Which USCI to write to?
-  switch (spi_usci)
+  // Write a byte to TXBUF
+  set(UC_TXBUF(spi_base_addr), byte);
+  // Wait for the transaction to complete
+  while (read(UC_IFG(spi_base_addr), UCRXIFG) == 0);
+
+  // Return any data that might have been returned by the slave
+  return (UC_RXBUF(spi_base_addr));
+}
+
+// Write a series of bytes to SPI
+void spi::writeFrame(uint8_t *buf, uint16_t size)
+{
+  uint16_t i = 0;
+  volatile uint8_t tmpVar;
+
+  // Send the buffer one byte at a time
+  for (i=0; i<size; i++)
   {
-#ifdef MSP430F5510_EXT
-    case SPI_A0:
-      UCA0TXBUF = byte;
-      while ((UCA0STAT & UCBUSY));
-      break;
-    case SPI_B0:
-      UCB0TXBUF = byte;
-      while ((UCB0STAT & UCBUSY));
-      break;
-#endif
-    case SPI_A1:
-      UCA1TXBUF = byte;
-      while ((UCA1STAT & UCBUSY));
-      break;
-    case SPI_B1:
-      UCB1TXBUF = byte;
-      while ((UCB1STAT & UCBUSY));
-      break;
-    default:
-      return; // wrong
+    // Write the TX buffer with the i-th byte
+    set(UC_TXBUF(spi_base_addr), buf[i]);
+
+    // Wait for the TX buffer to be ready
+    while (read(UC_IFG(spi_base_addr), UCTXIFG) == 0);
   }
+
+  // Wait for the transaction to complete
+  while (read(UC_STAT(spi_base_addr), UCBUSY) == 0);
+  // Dummy read to clear the RX IFG flag
+  set(tmpVar, UC_RXBUF(spi_base_addr));
 }
 
