@@ -27,7 +27,7 @@
 typedef enum _enc_dir_t
 {
   CW = 1,
-  CCW = 0,
+  CCW = 0
 } enc_dir_t;
 
 // Rotary Encoder w/ Switch class declaration
@@ -73,7 +73,7 @@ public:
       pinIfgClear(sw);
 
       // Enable Global Interrupt
-      _BIS_SR(GIE)
+      _EINT();
   };
 private:
   msp_pin_t           a;
