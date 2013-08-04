@@ -215,8 +215,6 @@ public:
   void delayS(uint32_t s);
   void delayMS(uint32_t ms);
 
-  void inline delayISR(void);
-
   void inline disableSMCLK(void);
   void inline enableSMCLK(void);
 

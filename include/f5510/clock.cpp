@@ -582,6 +582,8 @@ clk_ret_t clock::cfgXT1(uint32_t cfg_xt1_freq,
      off(UCSCTL6, (XTS | XCAP_3 | XT1BYPASS));
      // Enable XCAP as specified
      on (UCSCTL6, (cfg_xt1_cap << XT1_CAP_OFFSET));
+     // Enable XT1
+     off(UCSCTL6, XT1OFF);
   }
   else
   {
@@ -597,13 +599,14 @@ clk_ret_t clock::cfgXT1(uint32_t cfg_xt1_freq,
     on (UCSCTL6, (XT1BYPASS | XT1OFF));
   }
 
-  while (UCSCTL7 & XT1LFOFFG)
+  do
   {
     // Clear XT1 fault flag
     off(UCSCTL7, XT1LFOFFG);
     // CLear OFIFG fault flag
     off(SFRIFG1, OFIFG);
-  }
+  } while (UCSCTL7 & XT1LFOFFG);
+
 
   // Now that the the oscillator is stabilized, enable XT1 if we're not trying
   // to go into bypass
@@ -619,9 +622,6 @@ clk_ret_t clock::cfgXT1(uint32_t cfg_xt1_freq,
       set(UCSCTL6, (drive << XT1_DRIVE_OFFSET) |
                    (UCSCTL6 & ~(CLK_XT_DRIVE_3)));
     }
-
-    // Enable XT1
-    off(UCSCTL6, XT1OFF);
   }
 
   xt1_freq = cfg_xt1_freq;
@@ -632,6 +632,10 @@ clk_ret_t clock::cfgXT1(uint32_t cfg_xt1_freq,
 clk_ret_t clock::cfgXT2(uint32_t       cfg_xt2_freq,
                         clk_xt_drive_t cfg_xt2_drive)
 {
+  // Configure the XT2 pin SEL bits
+  pinSelOn(CLK_XT2IN_PIN);
+  pinSelOn(CLK_XT2OUT_PIN);
+
   // Configure proper mode - XT2 or BYPASS
   if (cfg_xt2_drive != CLK_XT_DRIVE_BYPASS)
   {
@@ -642,6 +646,10 @@ clk_ret_t clock::cfgXT2(uint32_t       cfg_xt2_freq,
       disableXT2();
       return CLK_INVALID_PARAMETER;
     }
+
+    // Configure highest drive to start
+    on (UCSCTL6, ((uint16_t)CLK_XT_DRIVE_3 << XT2_DRIVE_OFFSET));
+
     // Check if automatic drive selection was requested
     if (cfg_xt2_drive == CLK_XT_DRIVE_AUTO)
     {
@@ -665,13 +673,11 @@ clk_ret_t clock::cfgXT2(uint32_t       cfg_xt2_freq,
         return CLK_INVALID_PARAMETER;
       }
     }
-    // Configure the XT2 drive
-    if ((UCSCTL6 & CLK_XT_DRIVE_3) != cfg_xt2_drive)
-    {
-      on (UCSCTL6, ((uint16_t)CLK_XT_DRIVE_3 << XT2_DRIVE_OFFSET));
-    }
+
     // Disable BYPASS
     off(UCSCTL6, XT2BYPASS);
+    // Enable XT2
+    off(UCSCTL6, XT2OFF);
   }
   else
   {
@@ -687,18 +693,21 @@ clk_ret_t clock::cfgXT2(uint32_t       cfg_xt2_freq,
     on (UCSCTL6, (XT2BYPASS | XT2OFF));
   }
 
-  while (UCSCTL7 & XT2OFFG)
+  do
   {
     // Clear XT2 fault flag
     off(UCSCTL7, XT2OFFG);
-    // CLear OFIFG fault flag
+    // Clear OFIFG fault flag
     off(SFRIFG1, OFIFG);
-  }
+  } while (read(UCSCTL7, XT2OFFG));
 
   if (cfg_xt2_drive != CLK_XT_DRIVE_BYPASS)
   {
-    // Enable XT2
-    off(UCSCTL6, XT2OFF);
+    // Configure the XT2 drive
+    if ((read(UCSCTL6, XT2DRIVE_3) != (cfg_xt2_drive << XT2_DRIVE_OFFSET)))
+    {
+      set(UCSCTL6, (read(UCSCTL6, ~(XT2DRIVE_3)) | ((uint16_t)cfg_xt2_drive << XT2_DRIVE_OFFSET)));
+    }
   }
 
   xt2_freq = cfg_xt2_freq;
