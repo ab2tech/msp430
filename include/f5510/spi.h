@@ -89,7 +89,7 @@ public:
   void             getFrame(uint8_t *buf, uint16_t size);
   uint16_t inline  getPrescaler(void);
   void             pulseClk(uint8_t times);
-  void inline      risingEdge(void);
+  void             risingEdge(void);
   void inline      setDummyChar(uint8_t byte);
   void inline      setMinPrescaler(void);
   void inline      setPrescaler(uint16_t prescaler);

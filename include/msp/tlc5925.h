@@ -91,7 +91,7 @@ public:
   tlc5925_ch_t inline getStartCh(void);
   void flash(uint16_t pulse_quantity, uint16_t channel_data);
   void inline latch(void);
-  void inline outputDisable(void);
+  void outputDisable(void);
   void inline outputEnable(void);
   void inline setStartCh(tlc5925_ch_t ch);
   void shiftDown(uint16_t shift_quantity, uint16_t channel_data);

@@ -154,7 +154,7 @@ void spi::pulseClk(uint8_t times)
 }
 
 // Configure SPI for rising edge
-void inline spi::risingEdge(void)
+void spi::risingEdge(void)
 {
   on (UC_CTL0(spi_base_addr), UCCKPH);
 }
