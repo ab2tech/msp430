@@ -77,13 +77,13 @@ void inline spi::cfgMSB(void)
 }
 
 // Disable the SOMI pin if it's needed for something else
-void inline spi::disableSOMI(void)
+void spi::disableSOMI(void)
 {
   pinSelOff(spi_pins[spi_usci][SPI_USCI_SOMI]);
 }
 
 // Disable the SIMO pin if it's needed for something else
-void inline spi::disableSIMO(void)
+void spi::disableSIMO(void)
 {
   pinSelOff(spi_pins[spi_usci][SPI_USCI_SIMO]);
 }

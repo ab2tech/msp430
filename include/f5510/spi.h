@@ -83,8 +83,8 @@ public:
 
   void inline      cfgLSB(void);
   void inline      cfgMSB(void);
-  void inline      disableSIMO(void);
-  void inline      disableSOMI(void);
+  void             disableSIMO(void);
+  void             disableSOMI(void);
   void inline      enterReset(void);
   void inline      exitReset(void);
   void inline      fallingEdge(void);
