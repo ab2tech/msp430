@@ -24,6 +24,10 @@
 #include "../clock.h"
 #include "shift_r.h"
 
+#define DRV8825_HOME       0
+#define DRV8825_DIR_OFFSET 5
+#define DEGREES_PER_REV    360
+
 typedef enum
 {
   DRV8825_M2     = BIT0,
@@ -49,28 +53,57 @@ typedef enum
   DRV8825_MODE_32 = (DRV8825_M0 | DRV8825_M2)
 } drv8825_mode_t;
 
+typedef enum
+{
+  DRV8825_DIR_CW = 0,
+  DRV8825_DIR_CCW = 1
+} drv8825_dir_t;
+
 class drv8825
 {
 public:
-  drv8825(clock *clk, spi spi_usci, msp_pin_t latch, drv8825_mode_t mode = DRV8825_MODE_1) :
-    clk(clk), sr(spi_usci, latch), step_data(mode) {
+  drv8825(clock *clk, spi spi_usci, msp_pin_t latch,
+          uint16_t steps_per_rev, drv8825_mode_t mode = DRV8825_MODE_1) :
+    clk(clk), sr(spi_usci, latch), steps_per_rev(steps_per_rev), location(0) {
     init();
+    mode_steps_per_rev = (steps_per_rev * (getModeDiv(mode)));
+    setMode(mode);
   }
 
-  void cw(void);
-  void ccw(void);
-  void disable(void);
-  void enable(void);
-  drv8825_mode_t getMode(void);
-  void init(void);
-  void reset(void);
-  void setMode(drv8825_mode_t mode);
-  void sleep(void);
-  void step(void);
-  void update(void);
-  void wake(void);
+  uint16_t        cw(uint16_t angle);
+  uint16_t        ccw(uint16_t angle);
+  void            disable(void);
+  void            enable(void);
+  drv8825_dir_t   getDir(void);
+  uint16_t inline getLocation(void);
+  drv8825_mode_t  getMode(void);
+  uint8_t         getModeDiv(drv8825_mode_t mode);
+  uint16_t inline getStepsPerRev(void);
+  uint8_t inline  getStepData(void);
+  uint16_t        go(uint16_t index);
+  uint16_t        goCrazy(uint16_t index);
+  uint16_t        goCrazyHome(void);
+  uint16_t        goEasy(uint16_t index);
+  uint16_t        goEasyHome(void);
+  uint16_t        goHome(void);
+  void            init(void);
+  drv8825_mode_t  modeDown(void);
+  drv8825_mode_t  modeUp(void);
+  void            reset(void);
+  void            reverseDir(void);
+  uint16_t        rotate(uint16_t angle);
+  void            setDir(drv8825_dir_t dir);
+  void inline     setHome(void);
+  void            setMode(drv8825_mode_t mode);
+  void            sleep(void);
+  uint16_t        step(void);
+  void            update(void);
+  void            wake(void);
 private:
-  clock  *clk;
-  shift_r sr;
-  uint8_t step_data;
+  clock          *clk;
+  uint16_t        location;
+  uint16_t        mode_steps_per_rev;
+  shift_r         sr;
+  uint8_t         step_data;
+  const uint16_t  steps_per_rev;
 };
