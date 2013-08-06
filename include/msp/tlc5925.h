@@ -85,12 +85,14 @@ public:
       pinOff(le);
       outputDisable();
   };
+  void inline andWrite(uint16_t channel_data);
   void channelScanDown(uint16_t scan_quantity);
   void channelScanUp(uint16_t scan_quantity);
   void clear(void);
   tlc5925_ch_t inline getStartCh(void);
   void flash(uint16_t pulse_quantity, uint16_t channel_data);
   void inline latch(void);
+  void inline orWrite(uint16_t channel_data);
   void outputDisable(void);
   void inline outputEnable(void);
   void inline setStartCh(tlc5925_ch_t ch);

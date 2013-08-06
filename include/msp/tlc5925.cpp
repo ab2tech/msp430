@@ -16,6 +16,12 @@
 
 #include "tlc5925.h"
 
+// Logical AND with existing channel data written to the TLC
+void inline tlc5925::andWrite(uint16_t channel_data)
+{
+  write((pres_channel_data & channel_data));
+}
+
 // Scans through all TLC5925 channels from high to low beginning with the
 // specified channel for the specified number of scans
 void tlc5925::channelScanDown(uint16_t scan_quantity)
@@ -85,6 +91,12 @@ void tlc5925::flash(uint16_t pulse_quantity, uint16_t channel_data)
 void inline tlc5925::latch(void)
 {
   pinPulse(le);
+}
+
+// Logical OR with existing channel data written to the TLC
+void inline tlc5925::orWrite(uint16_t channel_data)
+{
+  write((pres_channel_data | channel_data));
 }
 
 // Sets TLC5925 output enable bit high (active low)
