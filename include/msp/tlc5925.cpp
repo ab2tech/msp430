@@ -109,7 +109,7 @@ void tlc5925::outputDisable(void)
 }
 
 // Sets TLC5925 output enable bit low (active low)
-void inline tlc5925::outputEnable(void)
+void tlc5925::outputEnable(void)
 {
   if (oe != MSP_PIN_SIZE)
     pinOff(oe);

@@ -94,7 +94,7 @@ public:
   void inline latch(void);
   void inline orWrite(uint16_t channel_data);
   void outputDisable(void);
-  void inline outputEnable(void);
+  void outputEnable(void);
   void inline setStartCh(tlc5925_ch_t ch);
   void shiftDown(uint16_t shift_quantity, uint16_t channel_data);
   void shiftUp(uint16_t shift_quantity, uint16_t channel_data);
