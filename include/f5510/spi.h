@@ -26,6 +26,7 @@
 #include "usci.h"
 
 #define DEFAULT_DUMMY_SPI_CHAR 0xFF
+#define SPI_MIN_PRESCALER      1
 
 // Define the various SPI USCIs available on the 5510
 typedef enum

@@ -152,7 +152,7 @@ void spi::init(void)
   // SMCLK
   on(UC_CTL1(spi_base_addr), UCSSEL_2);
 
-  // Set the prescaler to min (2) initially
+  // Set the prescaler to min (1) initially
   setMinPrescaler();
 
   // Initialize USCI state machine
@@ -193,12 +193,11 @@ void inline spi::setDummyChar(uint8_t byte)
   set(dummy_char, byte);
 }
 
-// Configure the minimum prescaler value (maximum frequency)
+// Configure the minimum prescaler value (maximum frequency). For MSP430F55xx
+// devices, this is equal to the system frequency (prescaler == 1).
 void inline spi::setMinPrescaler(void)
 {
-  set(UC_BRW(spi_base_addr), 0x02);
-  // OR
-  // setPrescaler(0x02);
+  setPrescaler(SPI_MIN_PRESCALER);
 }
 
 // Set the SPI clock prescaler value
