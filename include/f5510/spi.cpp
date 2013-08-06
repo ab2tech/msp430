@@ -174,9 +174,9 @@ void inline spi::setMinPrescaler(void)
 }
 
 // Set the SPI clock prescaler value
-void inline spi::setPrescaler(uint16_t prescaler)
+void spi::setPrescaler(uint16_t prescaler)
 {
-  set(UC_BRW(prescaler), prescaler);
+  set(UC_BRW(spi_base_addr), prescaler);
 }
 
 // Write a byte to SPI -- read return byte as well

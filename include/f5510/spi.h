@@ -92,7 +92,7 @@ public:
   void             risingEdge(void);
   void inline      setDummyChar(uint8_t byte);
   void inline      setMinPrescaler(void);
-  void inline      setPrescaler(uint16_t prescaler);
+  void             setPrescaler(uint16_t prescaler);
   uint8_t          write(uint8_t byte);
   void             writeFrame(uint8_t *buf, uint16_t size);
 
