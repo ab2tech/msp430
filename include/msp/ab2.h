@@ -35,7 +35,10 @@
 #define F_16MHz 16000000UL
 #define F_20MHz 20000000UL
 #define F_24MHz 24000000UL
-#define F_25MHz 25000000UL
+// Don't go all the way to 25MHz because the clock library rounds up and we're
+// unstable beyond 25MHz. The value below is calculated by:
+// ((32768 * 762) - 1) == 24969215 (MAX FREQ F55xx)
+#define F_25MHz 24969215UL
 #define F_32MHz 32000000UL
 
 // Define a boolean type that can be used in all AB2 C software
