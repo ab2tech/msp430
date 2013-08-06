@@ -84,6 +84,8 @@ public:
   void inline      cfgMSB(void);
   void inline      disableSIMO(void);
   void inline      disableSOMI(void);
+  void inline      enterReset(void);
+  void inline      exitReset(void);
   void inline      fallingEdge(void);
   uint8_t          get(void);
   void             getFrame(uint8_t *buf, uint16_t size);

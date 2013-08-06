@@ -57,13 +57,23 @@ const msp_pin_t spi::spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS] = {
 // Configure SPI for LSB-first transfers
 void inline spi::cfgLSB(void)
 {
+  // Put state machine in reset
+  on(UC_CTL1(spi_base_addr), UCSWRST);
+  // Turn the MSB bit off
   off(UC_CTL1(spi_base_addr), UCMSB);
+  // Initialize USCI state machine
+  off(UC_CTL1(spi_base_addr), UCSWRST);
 }
 
 // Configure SPI for MSB-first transfers
 void inline spi::cfgMSB(void)
 {
+  // Put state machine in reset
+  on(UC_CTL1(spi_base_addr), UCSWRST);
+  // Turn the MSB bit on
   on (UC_CTL1(spi_base_addr), UCMSB);
+  // Initialize USCI state machine
+  off(UC_CTL1(spi_base_addr), UCSWRST);
 }
 
 // Disable the SOMI pin if it's needed for something else
@@ -78,10 +88,24 @@ void inline spi::disableSIMO(void)
   pinSelOff(spi_pins[spi_usci][SPI_USCI_SIMO]);
 }
 
+// Release the state machine from reset
+void inline spi::exitReset(void)
+{
+  off(UC_CTL1(spi_base_addr), UCSWRST);
+}
+
+// Put the state machine in reset
+void inline spi::enterReset(void)
+{
+  on (UC_CTL1(spi_base_addr), UCSWRST);
+}
+
 // Configure SPI for falling edge
 void inline spi::fallingEdge(void)
 {
+  enterReset();
   off(UC_CTL0(spi_base_addr), UCCKPH);
+  exitReset();
 }
 
 // Read a byte from the SPI slave
@@ -119,7 +143,7 @@ void spi::init(void)
   pinSelOn(spi_pins[spi_usci][SPI_USCI_SOMI]);
 
   // Put state machine in reset
-  on(UC_CTL1(spi_base_addr), UCSWRST);
+  enterReset();
 
   // 3-pin, 8-bit SPI master
   // Clock polarity low, rising edge, MSB
@@ -132,7 +156,9 @@ void spi::init(void)
   setMinPrescaler();
 
   // Initialize USCI state machine
-  off(UC_CTL1(spi_base_addr), UCSWRST);
+  // Not necessary -- done in setMinPrescaler
+  // We'll do it again anyway
+  exitReset();
 }
 
 // Pulse the SPI CLK pin
@@ -156,7 +182,9 @@ void spi::pulseClk(uint8_t times)
 // Configure SPI for rising edge
 void spi::risingEdge(void)
 {
+  enterReset();
   on (UC_CTL0(spi_base_addr), UCCKPH);
+  exitReset();
 }
 
 // Set the dummy character to something other than default
@@ -176,7 +204,9 @@ void inline spi::setMinPrescaler(void)
 // Set the SPI clock prescaler value
 void spi::setPrescaler(uint16_t prescaler)
 {
+  enterReset();
   set(UC_BRW(spi_base_addr), prescaler);
+  exitReset();
 }
 
 // Write a byte to SPI -- read return byte as well
