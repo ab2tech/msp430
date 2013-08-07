@@ -26,11 +26,13 @@
         (*((volatile uint8_t *)((uint16_t)(x))))
 		
 // Register Macros
+#define addeq(reg, bits)  ((reg) += (bits))
 #define andeq(reg, bits)  ((reg) &= (bits))
 #define eq(reg, bits)     ((reg)  = (bits))
 #define lsheq(reg, bits)  ((reg) <<= (bits))
 #define oreq(reg, bits)   ((reg) |= (bits))
 #define rsheq(reg, bits)  ((reg) >>= (bits))
+#define subeq(reg, bits)  ((reg) -= (bits))
 #define xoreq(reg, bits)  ((reg) ^= (bits))
 
 #define on(reg, bits)     (oreq((reg), (bits)))
