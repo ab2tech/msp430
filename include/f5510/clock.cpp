@@ -734,7 +734,7 @@ void clock::clk2PinEnable(clk_pin_t pin)
   pinSelOn(pin);
 }
 
-clk_div_t inline clock::clk2PinGetAclkDivider(void)
+clk_div_t clock::clk2PinGetAclkDivider(void)
 {
   return ((clk_div_t)((UCSCTL5 &
           (CLK_DIVSEL_MAX << DIVPA_OFFSET)) >> DIVPA_OFFSET));
@@ -772,12 +772,12 @@ void clock::delayMS(uint32_t ms)
   LPM0;
 }
 
-void inline clock::disableSMCLK(void)
+void clock::disableSMCLK(void)
 {
   on (UCSCTL6, SMCLKOFF);
 }
 
-void inline clock::enableSMCLK(void)
+void clock::enableSMCLK(void)
 {
   off(UCSCTL6, SMCLKOFF);
 }
@@ -837,42 +837,42 @@ void clock::disableXT2(void)
   pinSelOff(CLK_XT2OUT_PIN);
 }
 
-clk_div_t inline clock::getCLKDiv(clk_t clk)
+clk_div_t clock::getCLKDiv(clk_t clk)
 {
   return ((clk_div_t)((UCSCTL5 &
           (CLK_DIVSEL_MAX << clk)) >> clk));
 }
 
-clk_sel_t inline clock::getCLKSel(clk_t clk)
+clk_sel_t clock::getCLKSel(clk_t clk)
 {
   return ((clk_sel_t)((UCSCTL4 &
           (CLK_DIVSEL_MAX << clk)) >> clk));
 }
 
-uint32_t inline clock::getFLLFreq(void)
+uint32_t clock::getFLLFreq(void)
 {
   return (fll_freq);
 }
 
-clk_div_t inline clock::getFLLRefDiv(void)
+clk_div_t clock::getFLLRefDiv(void)
 {
   return ((clk_div_t)((UCSCTL3 &
           (CLK_DIVSEL_MAX << FLL_REFDIV_OFFSET)) >> FLL_REFDIV_OFFSET));
 }
 
-clk_sel_t inline clock::getFLLSelRef(void)
+clk_sel_t clock::getFLLSelRef(void)
 {
   return ((clk_sel_t)((UCSCTL3 &
           (CLK_DIVSEL_MAX << FLL_SELREF_OFFSET)) >> FLL_SELREF_OFFSET));
 }
 
-clk_div_t inline clock::getFLLD(void)
+clk_div_t clock::getFLLD(void)
 {
   return ((clk_div_t)((UCSCTL2 & 
           (CLK_DIVSEL_MAX << FLLD_OFFSET)) >> FLLD_OFFSET));
 }
 
-uint16_t inline clock::getFLLN(void)
+uint16_t clock::getFLLN(void)
 {
   return ((uint16_t)((UCSCTL2 & FLLN_MASK) >> FLLN_OFFSET));
 }
@@ -882,7 +882,7 @@ uint16_t clock::getMSTicks(void)
   return (ticks_in_a_ms);
 }
 
-uint32_t inline clock::getSysFreq(void)
+uint32_t clock::getSysFreq(void)
 {
   return (sys_freq);
 }

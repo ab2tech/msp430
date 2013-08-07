@@ -208,32 +208,32 @@ public:
 
   void             clk2PinDisable(clk_pin_t pin);
   void             clk2PinEnable(clk_pin_t pin);
-  clk_div_t inline clk2PinGetAclkDivider(void);
+  clk_div_t        clk2PinGetAclkDivider(void);
   void             clk2PinSetAclkDivider(clk_div_t div);
 
   static void      delayS(uint32_t s);
   static void      delayMS(uint32_t ms);
 
-  void inline      disableSMCLK(void);
-  void inline      enableSMCLK(void);
+  void             disableSMCLK(void);
+  void             enableSMCLK(void);
 
-  void inline      disableUptime(void);
+  void             disableUptime(void);
 
   void             disableWDT(void);
 
   void             disableXT1(void);
   void             disableXT2(void);
 
-  clk_div_t inline getCLKDiv(clk_t clk);
-  clk_sel_t inline getCLKSel(clk_t clk);
+  clk_div_t        getCLKDiv(clk_t clk);
+  clk_sel_t        getCLKSel(clk_t clk);
 
-  uint32_t  inline getFLLFreq(void);
-  clk_div_t inline getFLLRefDiv(void);
-  clk_sel_t inline getFLLSelRef(void);
-  clk_div_t inline getFLLD(void);
-  uint16_t  inline getFLLN(void);
+  uint32_t         getFLLFreq(void);
+  clk_div_t        getFLLRefDiv(void);
+  clk_sel_t        getFLLSelRef(void);
+  clk_div_t        getFLLD(void);
+  uint16_t         getFLLN(void);
 
-  uint32_t  inline getSysFreq(void);
+  uint32_t         getSysFreq(void);
 
   static uint16_t  getMSTicks(void);
 
