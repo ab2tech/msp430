@@ -17,9 +17,14 @@
 #include "clock.h"
 
 // Static class variable initialization
+uint32_t clock::ms_count = 0;
+uint32_t clock::s_count = 0;
+uint16_t clock::ticks_in_a_ms = 0;
 uint32_t clock::uptime_count = 0;
 uint16_t clock::uptime_interval = 0;
 uint16_t clock::uptime_interval_count = 0;
+// Commit Timer A0 CCR0 to the clock library
+msp_timerA_t clock::timer = ta0_0;
 
 // Configure CLK sel and divider -> ACLK, MCLK, SMCLK
 clk_ret_t clock::cfgCLK(clk_t clk, clk_sel_t sel, clk_div_t div)
@@ -118,12 +123,12 @@ void clock::cfgDelay(void)
   // Calculate the number of ticks in a ms
   ticks_in_a_ms = (sys_freq / CLK_MS_IN_S);
 
-  // Configure the clock's timerA for up mode and assign SMCLK as its source
-  set(tactl(timer), (TASSEL__SMCLK | MC__UP | TACLR));
-  // Make sure the timerA in use does not have its interrupt enabled (we only
-  // want to use the IFG, don't need an ISR)
-  off(tacctl(timer), CCIE);
-  // Disable the timerA
+  // Configure the clock's timerA for continuous mode and assign SMCLK as its
+  // source
+  set(tactl(timer), (TASSEL__SMCLK | MC__CONTINUOUS | TACLR));
+  // Enable the timer interrupt (ISR ignores anything not a delay)
+  on (tacctl(timer), CCIE);
+  // Set the CCR at 0 to start
   set(taccr(timer), 0);
 }
 
@@ -253,7 +258,7 @@ clk_ret_t clock::cfgSysFreq(uint32_t  cfg_sys_freq,
 
   // Allow the FLL to stabilize
   // Make sure the timerA in use does not have its interrupt enabled (we only
-  // want to use the IFG, don't need an ISR)
+  // want to use the IFG for DCO stabilization, don't need an ISR)
   off(tacctl(timer), CCIE);
   // Configure the clock's timerA for continuous mode and assign ACLK as its
   // source -- we'll assume REFO is sourcing ACLK for the moment
@@ -746,7 +751,7 @@ void clock::clk2PinSetAclkDivider(clk_div_t div)
 // Delay for the number of seconds specified as an argument
 void clock::delayS(uint32_t s)
 {
-  s_count=s;
+  s_count = s;
   while (s_count > 0)
   {
     delayMS(1000);
@@ -758,17 +763,13 @@ void clock::delayS(uint32_t s)
 // Delay for the number of milliseconds specified as an argument
 void clock::delayMS(uint32_t ms)
 {
-  // Set the TACCR to the number of ticks in a ms
-  set(taccr(timer), ticks_in_a_ms);
-  for (ms_count=(ms + 1); ms_count>0; ms_count--)
-  {
-    // Loop until CCIFG is set
-    while (!read(tacctl(timer), CCIFG));
-    // Reset CCIFG
-    off(tacctl(timer), CCIFG);
-  }
-  // Reset and disable the timer since we're done with it
-  set(taccr(timer), 0);
+  // Set the TACCR to the number of ticks in a ms plus the current timer value
+  set(taccr(timer), (ticks_in_a_ms + tar(timer)));
+  // Configure the number of milliseconds to delay
+  ms_count = ms;
+  // Enter LPM0 -- clocks stay enabled, disables CPU
+  // GIE bit is already enabled by clock initialization
+  LPM0;
 }
 
 void inline clock::disableSMCLK(void)
@@ -876,12 +877,17 @@ uint16_t inline clock::getFLLN(void)
   return ((uint16_t)((UCSCTL2 & FLLN_MASK) >> FLLN_OFFSET));
 }
 
+uint16_t clock::getMSTicks(void)
+{
+  return (ticks_in_a_ms);
+}
+
 uint32_t inline clock::getSysFreq(void)
 {
   return (sys_freq);
 }
 
-uint32_t inline clock::getUpTime(void)
+uint32_t clock::getUpTime(void)
 {
   if (uptime_is_enabled)
     return (uptime_count);
@@ -915,4 +921,19 @@ __interrupt void clock::uptime_increment(void)
     uptime_count++;
     uptime_interval_count = 0;
   }
+}
+
+#pragma vector=TIMER0_A0_VECTOR
+__interrupt void clock::delayISR(void)
+{
+  // Ignore interrupts when a MS delay is not in progress
+  if (ms_count == 0)
+    return;
+  // Subtract one from our delay count
+  ms_count--;
+  // If we're done delaying, exit LPM0
+  if (ms_count == 0)
+    LPM0_EXIT;
+  else // Add ticks_in_a_ms to the timer CCR
+    addeq(taccr(timer), ticks_in_a_ms);
 }
