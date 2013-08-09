@@ -214,12 +214,7 @@ public:
   static void      delayS(uint32_t s);
   static void      delayMS(uint32_t ms);
 
-  void             disableSMCLK(void);
-  void             enableSMCLK(void);
-
   void             disableUptime(void);
-
-  void             disableWDT(void);
 
   void             disableXT1(void);
   void             disableXT2(void);
@@ -227,17 +222,23 @@ public:
   clk_div_t        getCLKDiv(clk_t clk);
   clk_sel_t        getCLKSel(clk_t clk);
 
-  uint32_t         getFLLFreq(void);
   clk_div_t        getFLLRefDiv(void);
   clk_sel_t        getFLLSelRef(void);
   clk_div_t        getFLLD(void);
   uint16_t         getFLLN(void);
 
-  uint32_t         getSysFreq(void);
-
-  static uint16_t  getMSTicks(void);
-
   uint32_t         getUpTime(void);
+
+  void inline      disableSMCLK(void)     { on (UCSCTL6, SMCLKOFF); };
+  void inline      enableSMCLK(void)      { off(UCSCTL6, SMCLKOFF); };
+
+  void inline      disableWDT(void)       { set(WDTCTL, (WDTPW | WDTHOLD)); };
+
+  uint32_t         getFLLFreq(void)       { return fll_freq; };
+  uint32_t         getSysFreq(void)       { return sys_freq; };
+
+  static uint16_t inline getMSTicks(void) { return ticks_in_a_ms; };
+
 private:
   uint32_t         sys_freq;
   uint32_t         fll_freq;

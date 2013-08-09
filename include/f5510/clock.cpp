@@ -772,21 +772,6 @@ void clock::delayMS(uint32_t ms)
   LPM0;
 }
 
-void clock::disableSMCLK(void)
-{
-  on (UCSCTL6, SMCLKOFF);
-}
-
-void clock::enableSMCLK(void)
-{
-  off(UCSCTL6, SMCLKOFF);
-}
-
-void clock::disableWDT(void)
-{
-  set(WDTCTL, (WDTPW | WDTHOLD));
-}
-
 void clock::disableXT1(void)
 {
   // We have to re-configure the FLL source selection if XT1 is currently in
@@ -849,11 +834,6 @@ clk_sel_t clock::getCLKSel(clk_t clk)
           (CLK_DIVSEL_MAX << clk)) >> clk));
 }
 
-uint32_t clock::getFLLFreq(void)
-{
-  return (fll_freq);
-}
-
 clk_div_t clock::getFLLRefDiv(void)
 {
   return ((clk_div_t)((UCSCTL3 &
@@ -875,16 +855,6 @@ clk_div_t clock::getFLLD(void)
 uint16_t clock::getFLLN(void)
 {
   return ((uint16_t)((UCSCTL2 & FLLN_MASK) >> FLLN_OFFSET));
-}
-
-uint16_t clock::getMSTicks(void)
-{
-  return (ticks_in_a_ms);
-}
-
-uint32_t clock::getSysFreq(void)
-{
-  return (sys_freq);
 }
 
 uint32_t clock::getUpTime(void)
