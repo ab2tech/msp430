@@ -17,10 +17,14 @@ int main (void)
     clk.delayMS(500);
     stepper.cw(90);
     clk.delayMS(500);
-    stepper.rotate(3600);
+    stepper.rotate(720);
     clk.delayMS(2000);
 
-    if (stepper.modeUp() == DRV8825_MODE_1)
+    // Don't go past MODE_16 (too slow)
+    if (stepper.modeUp() == DRV8825_MODE_32)
+    {
+      stepper.setMode(DRV8825_MODE_1);
       stepper.reverseDir();
+    }
   }
 }
