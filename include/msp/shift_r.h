@@ -23,17 +23,19 @@
 #include "../spi.h"
 #include "../clock.h"
 
-class shift_r
+class shift_r : public spi
 {
 public:
-  shift_r(spi spi_usci, msp_pin_t latch_pin) :
-    latch_pin(latch_pin), shift_spi(spi_usci) {
+  shift_r(spi_usci_t spi_usci, msp_pin_t latch_pin) :
+    latch_pin(latch_pin), spi(spi_usci) {
     pinOutput(latch_pin);
   };
   void latch(void);
+  using spi::write;
   void write(uint8_t byte);
+  using spi::writeFrame;
+  void writeFrame(uint8_t *buf, uint16_t size);
 private:
   msp_pin_t latch_pin;
-  spi shift_spi;
 };
 

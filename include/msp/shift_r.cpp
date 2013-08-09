@@ -22,6 +22,17 @@ void shift_r::latch(void)
 
 void shift_r::write(uint8_t byte)
 {
-  shift_spi.write(byte);
+  spi::write(byte);
   latch();
 }
+
+// Write a series of bytes to the shift register
+void shift_r::writeFrame(uint8_t *buf, uint16_t size)
+{
+  uint16_t i = 0;
+
+  // Send the buffer one byte at a time
+  for (i=0; i<size; i++)
+    spi::write(buf[i]);
+}
+
