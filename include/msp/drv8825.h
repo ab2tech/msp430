@@ -62,7 +62,7 @@ typedef enum
 class drv8825
 {
 public:
-  drv8825(clock *clk, spi spi_usci, msp_pin_t latch,
+  drv8825(clock *clk, spi_usci_t spi_usci, msp_pin_t latch,
           uint16_t steps_per_rev, drv8825_mode_t mode = DRV8825_MODE_1) :
     clk(clk), sr(spi_usci, latch), steps_per_rev(steps_per_rev), location(0) {
     init();
