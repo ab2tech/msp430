@@ -16,12 +16,6 @@
 
 #include "tlc5925.h"
 
-// Logical AND with existing channel data written to the TLC
-void inline tlc5925::andWrite(uint16_t channel_data)
-{
-  write((pres_channel_data & channel_data));
-}
-
 // Scans through all TLC5925 channels from high to low beginning with the
 // specified channel for the specified number of scans
 void tlc5925::channelScanDown(uint16_t scan_quantity)
@@ -61,66 +55,33 @@ void tlc5925::channelScanUp(uint16_t scan_quantity)
 // Clear the TLC5925 by writing zeros
 void tlc5925::clear(void)
 {
-  tlc_spi.risingEdge();
-  tlc_spi.write(0);
-  tlc_spi.write(0);
-  latch();
-}
-
-// Retrieve the instance start_ch value
-tlc5925_ch_t inline tlc5925::getStartCh(void)
-{
-  return (start_ch);
+  spi::risingEdge();
+  spi::write(0);
+  spi::write(0);
+  shift_r::latch();
 }
 
 // Pulses the provided channel data for the specified pulse quantity
 void tlc5925::flash(uint16_t pulse_quantity, uint16_t channel_data)
 {
-  outputDisable();
+  if (oe != MSP_PIN_SIZE)
+    outputDisable();
+  else
+    clear();
   write(channel_data);
   for ( ; pulse_quantity>0; pulse_quantity--)
   {
-    outputEnable();
+    if (oe != MSP_PIN_SIZE)
+      outputEnable();
+    else
+      restore();
     clk->delayMS(anim_delay);
-    outputDisable();
+    if (oe != MSP_PIN_SIZE)
+      outputDisable();
+    else
+      clear();
     clk->delayMS(anim_delay);
   }
-}
-
-// Toggles TLC5925 latch bit high
-void inline tlc5925::latch(void)
-{
-  pinPulse(le);
-}
-
-// Logical OR with existing channel data written to the TLC
-void inline tlc5925::orWrite(uint16_t channel_data)
-{
-  write((pres_channel_data | channel_data));
-}
-
-// Sets TLC5925 output enable bit high (active low)
-void tlc5925::outputDisable(void)
-{
-  if (oe != MSP_PIN_SIZE)
-    pinOn(oe);
-  else
-    clear();
-}
-
-// Sets TLC5925 output enable bit low (active low)
-void tlc5925::outputEnable(void)
-{
-  if (oe != MSP_PIN_SIZE)
-    pinOff(oe);
-  else
-    write(pres_channel_data);
-}
-
-// Re-configure start channel
-void inline tlc5925::setStartCh(tlc5925_ch_t ch)
-{
-  set(start_ch, ch);
 }
 
 // Rotates the specified TLC5925 channel data up (left shift with carry) the
@@ -152,13 +113,11 @@ void tlc5925::write(uint16_t channel_data)
 {
   pres_channel_data = channel_data;
 
-  tlc_spi.risingEdge();
-  if (oe != MSP_PIN_SIZE)
-    outputDisable();
-  tlc_spi.write((pres_channel_data >> 8) & 0xFF);
-  tlc_spi.write(pres_channel_data & 0xFF);
-  latch();
-  if (oe != MSP_PIN_SIZE)
-    outputEnable();
+  spi::risingEdge();
+  outputDisable();
+  spi::write((pres_channel_data >> 8) & 0xFF);
+  spi::write(pres_channel_data & 0xFF);
+  shift_r::latch();
+  outputEnable();
 }
 

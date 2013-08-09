@@ -22,6 +22,7 @@
 // Steal our MSP include from pin_fw to make this a generic library
 #include "../pin_fw.h"
 #include "../spi.h"
+#include "shift_r.h"
 #include "../clock.h"
 
 // Channel preset definitions (channel 0 referenced)
@@ -68,44 +69,45 @@ typedef enum
 } tlc5925_ch_t;
 
 // TLC5925 class declaration
-class tlc5925
+class tlc5925 : public shift_r
 {
 public:
   tlc5925(clock *clk, msp_pin_t le, msp_pin_t oe = MSP_PIN_SIZE,
           uint16_t anim_delay = 100, tlc5925_ch_t start_ch = TLC5925_CH00,
           spi_usci_t spi_usci = SPI_B1)
-    : clk(clk), le(le), oe(oe), anim_delay(anim_delay),
-      start_ch(start_ch), tlc_spi(spi_usci) {
-      // SPI was initialized using the initialization list...
-      if (oe != MSP_PIN_SIZE)
-      {
-        pinOutput(oe);
-      }
-      pinOutput(le);
-      pinOff(le);
-      outputDisable();
-  };
-  void inline andWrite(uint16_t channel_data);
+    : clk(clk), anim_delay(anim_delay),
+      start_ch(start_ch), shift_r(spi_usci, le, oe) {};
+
+  using shift_r::clear;
+  using shift_r::restore;
+  using shift_r::write;
+
   void channelScanDown(uint16_t scan_quantity);
   void channelScanUp(uint16_t scan_quantity);
   void clear(void);
-  tlc5925_ch_t inline getStartCh(void);
   void flash(uint16_t pulse_quantity, uint16_t channel_data);
-  void inline latch(void);
-  void inline orWrite(uint16_t channel_data);
-  void outputDisable(void);
-  void outputEnable(void);
-  void inline setStartCh(tlc5925_ch_t ch);
   void shiftDown(uint16_t shift_quantity, uint16_t channel_data);
   void shiftUp(uint16_t shift_quantity, uint16_t channel_data);
   void write(uint16_t channel_data);
+
+  // Logical AND with existing channel data written to the TLC
+  void inline andWrite(uint16_t channel_data) {
+    write((pres_channel_data & channel_data)); };
+  // Retrieve the instance start_ch value
+  tlc5925_ch_t inline getStartCh(void) { return start_ch; };
+  // Logical OR with existing channel data written to the TLC
+  void inline orWrite(uint16_t channel_data) {
+    write((pres_channel_data | channel_data)); };
+  // Restores pres_channel_data to the TLC
+  void inline restore(void) { write(pres_channel_data); };
+  // Re-configures the animation delay
+  void inline setAnimDelay(uint16_t delay) { set(anim_delay, delay); };
+  // Re-configure start channel
+  void inline setStartCh(tlc5925_ch_t ch)  { set(start_ch, ch); };
 private:
   // Animation delay (loop/pulse)
   uint16_t            anim_delay;
   clock              *clk;
-  msp_pin_t           le;
-  msp_pin_t           oe;
-  spi                 tlc_spi;
 
   // Allows modification of effective channel 0 index
   tlc5925_ch_t        start_ch;

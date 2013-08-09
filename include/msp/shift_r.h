@@ -26,16 +26,31 @@
 class shift_r : public spi
 {
 public:
-  shift_r(spi_usci_t spi_usci, msp_pin_t latch_pin) :
-    latch_pin(latch_pin), spi(spi_usci) {
-    pinOutput(latch_pin);
+  shift_r(spi_usci_t spi_usci, msp_pin_t le,
+          msp_pin_t oe = MSP_PIN_SIZE) :
+          le(le), spi(spi_usci), sr_data(0) {
+    if (oe != MSP_PIN_SIZE)
+      pinOutput(oe);
+    outputDisable();
+    pinOff(le);
+    pinOutput(le);
   };
-  void latch(void);
-  using spi::write;
-  void write(uint8_t byte);
-  using spi::writeFrame;
-  void writeFrame(uint8_t *buf, uint16_t size);
+
+  using       spi::write;
+
+  void        write(uint8_t byte);
+
+  void inline clear(void)         { spi::write(0); latch(); };
+  void inline latch(void)         { pinPulse(le); };
+  void inline outputDisable(void) { if (oe != MSP_PIN_SIZE) pinOn (oe); };
+  void inline outputEnable(void)  { if (oe != MSP_PIN_SIZE) pinOff(oe); };
+  void inline restore(void)       { write(sr_data); };
+
+protected:
+  msp_pin_t   oe;
+
 private:
-  msp_pin_t latch_pin;
+  msp_pin_t   le;
+  uint8_t     sr_data;
 };
 

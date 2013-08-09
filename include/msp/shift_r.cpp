@@ -15,24 +15,13 @@
 // MSP430 Shift Register Library
 #include "shift_r.h"
 
-void shift_r::latch(void)
-{
-  pinPulse(latch_pin);
-}
-
 void shift_r::write(uint8_t byte)
 {
+  if (oe != MSP_PIN_SIZE)
+    outputDisable();
   spi::write(byte);
   latch();
+  if (oe != MSP_PIN_SIZE)
+    outputEnable();
+  sr_data = byte;
 }
-
-// Write a series of bytes to the shift register
-void shift_r::writeFrame(uint8_t *buf, uint16_t size)
-{
-  uint16_t i = 0;
-
-  // Send the buffer one byte at a time
-  for (i=0; i<size; i++)
-    spi::write(buf[i]);
-}
-
