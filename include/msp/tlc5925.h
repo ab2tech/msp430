@@ -49,22 +49,22 @@
 // Channel definitions
 typedef enum
 {
-  CH00 = BIT0,
-  CH01 = BIT1,
-  CH02 = BIT2,
-  CH03 = BIT3,
-  CH04 = BIT4,
-  CH05 = BIT5,
-  CH06 = BIT6,
-  CH07 = BIT7,
-  CH08 = BIT8,
-  CH09 = BIT9,
-  CH10 = BITA,
-  CH11 = BITB,
-  CH12 = BITC,
-  CH13 = BITD,
-  CH14 = BITE,
-  CH15 = BITF
+  TLC5925_CH00 = BIT0,
+  TLC5925_CH01 = BIT1,
+  TLC5925_CH02 = BIT2,
+  TLC5925_CH03 = BIT3,
+  TLC5925_CH04 = BIT4,
+  TLC5925_CH05 = BIT5,
+  TLC5925_CH06 = BIT6,
+  TLC5925_CH07 = BIT7,
+  TLC5925_CH08 = BIT8,
+  TLC5925_CH09 = BIT9,
+  TLC5925_CH10 = BITA,
+  TLC5925_CH11 = BITB,
+  TLC5925_CH12 = BITC,
+  TLC5925_CH13 = BITD,
+  TLC5925_CH14 = BITE,
+  TLC5925_CH15 = BITF
 } tlc5925_ch_t;
 
 // TLC5925 class declaration
@@ -72,7 +72,7 @@ class tlc5925
 {
 public:
   tlc5925(clock *clk, msp_pin_t le, msp_pin_t oe = MSP_PIN_SIZE,
-          uint16_t anim_delay = 100, tlc5925_ch_t start_ch = CH00,
+          uint16_t anim_delay = 100, tlc5925_ch_t start_ch = TLC5925_CH00,
           spi_usci_t spi_usci = SPI_B1)
     : clk(clk), le(le), oe(oe), anim_delay(anim_delay),
       start_ch(start_ch), tlc_spi(spi_usci) {
