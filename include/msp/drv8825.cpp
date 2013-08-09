@@ -138,29 +138,9 @@ uint16_t drv8825::goEasy(uint16_t index)
   return location;
 }
 
-uint16_t drv8825::goCrazyHome(void)
-{
-  return(goCrazy(0));
-}
-
-uint16_t drv8825::goEasyHome(void)
-{
-  return(goCrazy(0));
-}
-
-uint16_t drv8825::goHome(void)
-{
-  return(go(0));
-}
-
 drv8825_dir_t drv8825::getDir(void)
 {
   return ((drv8825_dir_t) (read(step_data, DRV8825_DIR) >> DRV8825_DIR_OFFSET));
-}
-
-uint16_t inline drv8825::getLocation(void)
-{
-  return (location);
 }
 
 drv8825_mode_t drv8825::getMode(void)
@@ -189,16 +169,6 @@ uint8_t drv8825::getModeDiv(drv8825_mode_t mode)
     default:
       return 0xFF; // This shouldn't happen
   }
-}
-
-uint16_t drv8825::getStepsPerRev(void)
-{
-  return (mode_steps_per_rev);
-}
-
-uint8_t inline drv8825::getStepData(void)
-{
-  return (step_data);
 }
 
 void drv8825::init(void)
@@ -308,12 +278,6 @@ void drv8825::setDir(drv8825_dir_t dir)
     on (step_data, DRV8825_DIR);
 
   update();
-}
-
-void inline drv8825::setHome()
-{
-  // New home index location is where we are now
-  location = DRV8825_HOME;
 }
 
 void drv8825::setMode(drv8825_mode_t mode)

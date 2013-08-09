@@ -75,17 +75,11 @@ public:
   void            disable(void);
   void            enable(void);
   drv8825_dir_t   getDir(void);
-  uint16_t inline getLocation(void);
   drv8825_mode_t  getMode(void);
   uint8_t         getModeDiv(drv8825_mode_t mode);
-  uint16_t inline getStepsPerRev(void);
-  uint8_t inline  getStepData(void);
   uint16_t        go(uint16_t index);
   uint16_t        goCrazy(uint16_t index);
-  uint16_t        goCrazyHome(void);
   uint16_t        goEasy(uint16_t index);
-  uint16_t        goEasyHome(void);
-  uint16_t        goHome(void);
   void            init(void);
   drv8825_mode_t  modeDown(void);
   drv8825_mode_t  modeUp(void);
@@ -93,12 +87,21 @@ public:
   void            reverseDir(void);
   uint16_t        rotate(uint16_t angle);
   void            setDir(drv8825_dir_t dir);
-  void inline     setHome(void);
   void            setMode(drv8825_mode_t mode);
   void            sleep(void);
   uint16_t        step(void);
   void            update(void);
   void            wake(void);
+
+  uint16_t inline getLocation(void)    { return location; };
+  uint16_t inline getModeSteps(void)   { return mode_steps_per_rev; };
+  uint16_t inline getStepsPerRev(void) { return steps_per_rev; };
+  uint8_t  inline getStepData(void)    { return step_data; };
+  uint16_t inline goCrazyHome(void)    { return goCrazy(DRV8825_HOME); };
+  uint16_t inline goEasyHome(void)     { return goEasy(DRV8825_HOME); };
+  uint16_t inline goHome(void)         { return go(DRV8825_HOME); };
+  void inline     setHome(void)        { location = DRV8825_HOME; };
+
 private:
   clock          *clk;
   uint16_t        location;
