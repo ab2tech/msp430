@@ -55,25 +55,21 @@ const msp_pin_t spi::spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS] = {
 };
 
 // Configure SPI for LSB-first transfers
-void inline spi::cfgLSB(void)
+void spi::cfgLSB(void)
 {
-  // Put state machine in reset
-  on(UC_CTL1(spi_base_addr), UCSWRST);
+  enterReset();
   // Turn the MSB bit off
   off(UC_CTL1(spi_base_addr), UCMSB);
-  // Initialize USCI state machine
-  off(UC_CTL1(spi_base_addr), UCSWRST);
+  exitReset();
 }
 
 // Configure SPI for MSB-first transfers
-void inline spi::cfgMSB(void)
+void spi::cfgMSB(void)
 {
-  // Put state machine in reset
-  on(UC_CTL1(spi_base_addr), UCSWRST);
+  enterReset();
   // Turn the MSB bit on
   on (UC_CTL1(spi_base_addr), UCMSB);
-  // Initialize USCI state machine
-  off(UC_CTL1(spi_base_addr), UCSWRST);
+  exitReset();
 }
 
 // Disable the SOMI pin if it's needed for something else
@@ -88,30 +84,12 @@ void spi::disableSIMO(void)
   pinSelOff(spi_pins[spi_usci][SPI_USCI_SIMO]);
 }
 
-// Release the state machine from reset
-void inline spi::exitReset(void)
-{
-  off(UC_CTL1(spi_base_addr), UCSWRST);
-}
-
-// Put the state machine in reset
-void inline spi::enterReset(void)
-{
-  on (UC_CTL1(spi_base_addr), UCSWRST);
-}
-
 // Configure SPI for falling edge
-void inline spi::fallingEdge(void)
+void spi::fallingEdge(void)
 {
   enterReset();
   off(UC_CTL0(spi_base_addr), UCCKPH);
   exitReset();
-}
-
-// Read a byte from the SPI slave
-uint8_t inline spi::get(void)
-{
-  return (write(dummy_char));
 }
 
 void spi::getFrame(uint8_t *buf, uint16_t size)
@@ -185,19 +163,6 @@ void spi::risingEdge(void)
   enterReset();
   on (UC_CTL0(spi_base_addr), UCCKPH);
   exitReset();
-}
-
-// Set the dummy character to something other than default
-void inline spi::setDummyChar(uint8_t byte)
-{
-  set(dummy_char, byte);
-}
-
-// Configure the minimum prescaler value (maximum frequency). For MSP430F55xx
-// devices, this is equal to the system frequency (prescaler == 1).
-void inline spi::setMinPrescaler(void)
-{
-  setPrescaler(SPI_MIN_PRESCALER);
 }
 
 // Set the SPI clock prescaler value

@@ -81,32 +81,39 @@ public:
     }
   }
 
-  void inline      cfgLSB(void);
-  void inline      cfgMSB(void);
-  void             disableSIMO(void);
-  void             disableSOMI(void);
-  void inline      enterReset(void);
-  void inline      exitReset(void);
-  void inline      fallingEdge(void);
-  uint8_t          get(void);
-  void             getFrame(uint8_t *buf, uint16_t size);
-  uint16_t inline  getPrescaler(void);
-  void             pulseClk(uint8_t times);
-  void             risingEdge(void);
-  void inline      setDummyChar(uint8_t byte);
-  void inline      setMinPrescaler(void);
-  void             setPrescaler(uint16_t prescaler);
-  uint8_t          write(uint8_t byte);
-  void             writeFrame(uint8_t *buf, uint16_t size);
+  void           cfgLSB(void);
+  void           cfgMSB(void);
+  void           disableSIMO(void);
+  void           disableSOMI(void);
+  void           fallingEdge(void);
+  void           getFrame(uint8_t *buf, uint16_t size);
+  uint16_t       getPrescaler(void);
+  void           pulseClk(uint8_t times);
+  void           risingEdge(void);
+  void           setPrescaler(uint16_t prescaler);
+  uint8_t        write(uint8_t byte);
+  void           writeFrame(uint8_t *buf, uint16_t size);
 
+  // Put the state machine in reset
+  void inline    enterReset(void) { on (UC_CTL1(spi_base_addr), UCSWRST); };
+  // Release the state machine from reset
+  void inline    exitReset(void)  { off(UC_CTL1(spi_base_addr), UCSWRST); };
+  // Read a byte from the SPI slave
+  uint8_t inline get(void) { return (write(dummy_char)); };
+  // Set the dummy character to something other than default
+  void inline    setDummyChar(uint8_t byte) { set(dummy_char, byte); };
+  // Configure the minimum prescaler value (maximum frequency). For MSP430F55xx
+  // devices, this is equal to the system frequency (prescaler == 1).
+  void inline    setMinPrescaler(void) { setPrescaler(SPI_MIN_PRESCALER); };
+
+  static const   msp_pin_t spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS];
 private:
-  void             init(void);
+  void           init(void);
 
-  uint8_t          dummy_char;
+  uint8_t        dummy_char;
 
-  static bool      is_init[NUM_SPI_USCIs];
-  static const     msp_pin_t spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS];
+  static bool    is_init[NUM_SPI_USCIs];
 
-  uint16_t         spi_base_addr;
-  spi_usci_t       spi_usci;
+  uint16_t       spi_base_addr;
+  spi_usci_t     spi_usci;
 };
