@@ -72,37 +72,38 @@
 #define SEL_PORT_MAX (PORT6+1)
 
 extern const uint8_t  msp_pin_bit[MSP_PIN_SIZE];
-extern const uint16_t msp_pin_in[MSP_PIN_SIZE];
-extern const uint16_t msp_pin_out[MSP_PIN_SIZE];
-extern const uint16_t msp_pin_dir[MSP_PIN_SIZE];
-extern const uint16_t msp_pin_ren[MSP_PIN_SIZE];
-extern const uint16_t msp_pin_ds[MSP_PIN_SIZE];
-extern const uint16_t msp_pin_sel[SEL_PORT_MAX];
-extern const uint16_t msp_pin_ies[INT_PORT_MAX];
-extern const uint16_t msp_pin_ie[INT_PORT_MAX];
-extern const uint16_t msp_pin_ifg[INT_PORT_MAX];
+extern const uint16_t msp_pin_base[MSP_PIN_SIZE];
 
 #define bit(pin) (msp_pin_bit[(pin)])
-#define in(pin)  (REG8(msp_pin_in[(pin)]))
-#define out(pin) (REG8(msp_pin_out[(pin)]))
-#define dir(pin) (REG8(msp_pin_dir[(pin)]))
+#define PIN_OFFSET  0x00
+#define in(pin)  (REG8(msp_pin_base[(pin)] + PIN_OFFSET))
+#define POUT_OFFSET 0x02
+#define out(pin) (REG8(msp_pin_base[(pin)] + POUT_OFFSET))
+#define PDIR_OFFSET 0x04
+#define dir(pin) (REG8(msp_pin_base[(pin)] + PDIR_OFFSET))
 #ifndef DISABLE_PFW_REN
-#define ren(pin) (REG8(msp_pin_ren[(pin)]))
+#define PREN_OFFSET 0x06
+#define ren(pin) (REG8(msp_pin_base[(pin)] + PREN_OFFSET))
 #endif
 #ifndef DISABLE_PFW_DS
-#define ds(pin)  (REG8(msp_pin_ds[(pin)]))
+#define PDS_OFFSET  0x08
+#define ds(pin)  (REG8(msp_pin_base[(pin)] + PDS_OFFSET))
 #endif
 #ifndef DISABLE_PFW_SEL
-#define sel(pin) (REG8(msp_pin_sel[(pin)]))
+#define PSEL_OFFSET 0x10
+#define sel(pin) (REG8(msp_pin_base[(pin)] + PSEL_OFFSET))
 #endif
 #ifndef DISABLE_PFW_IES
-#define ies(pin) (REG8(msp_pin_ies[(pin)]))
+#define PIES_OFFSET 0x18
+#define ies(pin) (REG8(msp_pin_base[(pin)] + PIES_OFFSET))
 #endif
 #ifndef DISABLE_PFW_IE
-#define ie(pin)  (REG8(msp_pin_ie[(pin)]))
+#define PIE_OFFSET  0x1A
+#define ie(pin)  (REG8(msp_pin_base[(pin)] + PIE_OFFSET))
 #endif
 #ifndef DISABLE_PFW_IFG
-#define ifg(pin) (REG8(msp_pin_ifg[(pin)]))
+#define PIFG_OFFSET 0x1C
+#define ifg(pin) (REG8(msp_pin_base[(pin)] + PIFG_OFFSET))
 #endif
 
 // Pin Macros
