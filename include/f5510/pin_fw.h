@@ -90,7 +90,7 @@ extern const uint16_t msp_pin_base[MSP_PIN_SIZE];
 #define ds(pin)  (REG8(msp_pin_base[(pin)] + PDS_OFFSET))
 #endif
 #ifndef DISABLE_PFW_SEL
-#define PSEL_OFFSET 0x10
+#define PSEL_OFFSET 0x0A
 #define sel(pin) (REG8(msp_pin_base[(pin)] + PSEL_OFFSET))
 #endif
 #ifndef DISABLE_PFW_IES
@@ -108,6 +108,8 @@ extern const uint16_t msp_pin_base[MSP_PIN_SIZE];
 
 // Pin Macros
 //
+// pinRead - reads a given pin's in bit
+#define pinRead(pin) read(in((pin)), bit((pin)))
 // pinOn - turns a given pin's corresponding dir bit on
 #define pinOn(pin) on(out((pin)), bit((pin)))
 // pinOff - turns a given pin's corresponding dir bit off
