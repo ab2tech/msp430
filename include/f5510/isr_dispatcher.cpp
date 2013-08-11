@@ -35,6 +35,97 @@ void isr_d::installISR(isr_vector_t vect,
   obj[vect] = pObject;
 }
 
+isr_vector_t isr_d::pinVector(msp_pin_t pin)
+{
+  switch (pin)
+  {
+    #if !defined(DISABLE_PORT1_VECTOR) && !defined(DISABLE_PORT1_VECT)
+    case p1_0:
+      return PORT1_0_VECT;
+    case p1_1:
+      return PORT1_1_VECT;
+    case p1_2:
+      return PORT1_2_VECT;
+    case p1_3:
+      return PORT1_3_VECT;
+    case p1_4:
+      return PORT1_4_VECT;
+    case p1_5:
+      return PORT1_5_VECT;
+    case p1_6:
+      return PORT1_6_VECT;
+    case p1_7:
+      return PORT1_7_VECT;
+    #endif
+
+    #if !defined(DISABLE_PORT2_VECTOR) && !defined(DISABLE_PORT2_VECT)
+    case p2_0:
+      return PORT2_0_VECT;
+#ifdef MSP430F5510_EXT
+    case p2_1:
+      return PORT2_1_VECT;
+    case p2_2:
+      return PORT2_2_VECT;
+    case p2_3:
+      return PORT2_3_VECT;
+    case p2_4:
+      return PORT2_4_VECT;
+    case p2_5:
+      return PORT2_5_VECT;
+    case p2_6:
+      return PORT2_6_VECT;
+    case p2_7:
+      return PORT2_7_VECT;
+#endif
+    #endif
+    default:
+      return NUM_ISR_VECTORS;
+  }
+}
+
+isr_vector_t isr_d::taVector(msp_timerA_t timer)
+{
+  switch (timer)
+  {
+    #if !defined(DISABLE_TA0_0_VECTOR) && !defined(DISABLE_TA0_0_VECT)
+    case ta0_0:
+      return TA0_0_VECT;
+    #endif
+    #if !defined(DISABLE_TA0_1_VECTOR) && !defined(DISABLE_TA0_1_VECT)
+    case ta0_1:
+      return TA0_1_VECT;
+    case ta0_2:
+      return TA0_2_VECT;
+    case ta0_3:
+      return TA0_3_VECT;
+    case ta0_4:
+      return TA0_4_VECT;
+    #endif
+    #if !defined(DISABLE_TA1_0_VECTOR) && !defined(DISABLE_TA1_0_VECT)
+    case ta1_0:
+      return TA1_0_VECT;
+    #endif
+    #if !defined(DISABLE_TA1_1_VECTOR) && !defined(DISABLE_TA1_1_VECT)
+    case ta1_1:
+      return TA1_1_VECT;
+    case ta1_2:
+      return TA1_2_VECT;
+    #endif
+    #if !defined(DISABLE_TA2_0_VECTOR) && !defined(DISABLE_TA2_0_VECT)
+    case ta2_0:
+      return TA2_0_VECT;
+    #endif
+    #if !defined(DISABLE_TA2_1_VECTOR) && !defined(DISABLE_TA2_1_VECT)
+    case ta2_1:
+      return TA2_1_VECT;
+    case ta2_2:
+      return TA2_2_VECT;
+    #endif
+    default:
+      return NUM_ISR_VECTORS;
+  }
+}
+
 void isr_d::uninstallISR(isr_vector_t vect)
 {
   isr[vect] = &defaultHandler;

@@ -238,6 +238,12 @@ public:
   static void installISR(isr_vector_t vect,
       void *pObject, isr_t (*pCallback)(void* pObj));
 
+  // Return the Pin interrupt vector corresponding to the given pin
+  static isr_vector_t pinVector(msp_pin_t pin);
+
+  // Return the TA interrupt vector corresponding to the given timer
+  static isr_vector_t taVector(msp_timerA_t timer);
+
   // Uninstall ISR -- remove installed ISR for a given ISR vector
   static void uninstallISR(isr_vector_t vect);
 
