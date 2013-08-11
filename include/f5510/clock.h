@@ -22,6 +22,7 @@
 #include "msp/ab2.h"
 #include "pin_fw.h"
 #include "timerA_fw.h"
+#include "isr_dispatcher.h"
 
 // Define the maximum value for a 3-bit div or sel configuration
 #define CLK_DIVSEL_MAX                 7
@@ -188,6 +189,11 @@ public:
     // SMCLK  -> DCO
     // MCLK   -> DCO
     cfgSysFreq(sys_freq);
+    // Install our ISRs for delay and uptime -- since the functions created for
+    // these ISRs don't use any non-static members (created as static
+    // functions), no need to pass the "this" pointer for the installation call
+    isr_d::installISR(isr_d::taVector(timer), (void *) 0, &(clock::delayISR));
+    isr_d::installISR(WDT_VECT, (void *) 0, &(clock::uptimeIncrement));
     cfgCLK(CLK_ACLK, CLK_SEL_REFO, CLK_DIV_1);
     cfgCLK(CLK_MCLK, CLK_SEL_DCO, CLK_DIV_1);
     cfgCLK(CLK_SMCLK, CLK_SEL_DCO, CLK_DIV_1);
@@ -283,6 +289,6 @@ private:
 
   clk_t            getUpTimeClk(void);
 
-  static void __interrupt delayISR(void);
-  static void __interrupt uptime_increment(void);
+  static isr_t     delayISR(void *ptr);
+  static isr_t     uptimeIncrement(void *ptr);
 };

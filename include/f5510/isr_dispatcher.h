@@ -220,6 +220,12 @@ typedef enum
 class isr_d
 {
 public:
+  // Emulate the compiler intrinsics by allowing installed ISRs to modify the
+  // SR register on exit
+#ifndef DISABLE_SR_CHECKING
+  static void clr_sr_on_exit(uint16_t mask);
+  static void set_sr_on_exit(uint16_t mask);
+#endif
   // Install ISR -- callback method must be static if a class member, or else a
   // non-member function.
   //
@@ -248,6 +254,21 @@ public:
   static void uninstallISR(isr_vector_t vect);
 
 private:
+  // We need to check for any potential SR changes before exiting each ISR.
+  // This will unfortunately add some additional latency, but it's the only way
+  // to allow callbacks to modify the SR (for example, exiting from LPM). Since
+  // the SR _on_exit intrinsics must be called from a fully qualified ISR, not
+  // even an inlined function can be used for this purpose. Thus, code
+  // duplication will result. Also adding a compilation flag to disable all SR
+  // handling by the ISR dispatcher since it adds substantial code size and
+  // lower latency might be prioritized in some situations.
+#ifndef DISABLE_SR_CHECKING
+  static bool     clr_sr;
+  static bool     set_sr;
+  static uint16_t clr_sr_bits;
+  static uint16_t set_sr_bits;
+#endif
+
   static isr_t  defaultHandler(void *pObj);
   static isr_t (*isr[NUM_ISR_VECTORS])(void *);
   static void  (*obj[NUM_ISR_VECTORS]);

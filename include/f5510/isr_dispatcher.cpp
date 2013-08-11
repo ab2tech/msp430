@@ -20,8 +20,20 @@
 
 #include "isr_dispatcher.h"
 
+// Initialize static variables
+bool     isr_d::clr_sr = false;
+uint16_t isr_d::clr_sr_bits = 0;
+bool     isr_d::set_sr = false;
+uint16_t isr_d::set_sr_bits = 0;
+
 isr_t (*isr_d::isr[NUM_ISR_VECTORS])(void *) = { &(isr_d::defaultHandler) };
 void  (*isr_d::obj[NUM_ISR_VECTORS])         = { (void *) 0 };
+
+void isr_d::clr_sr_on_exit(uint16_t mask)
+{
+  clr_sr = true;
+  clr_sr_bits = mask;
+}
 
 isr_t isr_d::defaultHandler(void *pObj)
 {
@@ -83,6 +95,12 @@ isr_vector_t isr_d::pinVector(msp_pin_t pin)
   }
 }
 
+void isr_d::set_sr_on_exit(uint16_t mask)
+{
+  set_sr = true;
+  set_sr_bits = mask;
+}
+
 isr_vector_t isr_d::taVector(msp_timerA_t timer)
 {
   switch (timer)
@@ -140,6 +158,19 @@ void __interrupt isr_d::isrRTC(void)
   return;
 #else
   (*isr[RTC_VECT])(obj[RTC_VECT]);
+
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -196,6 +227,18 @@ void __interrupt isr_d::isrPORT2(void)
     default:
       _never_executed();
   }
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -228,6 +271,18 @@ void __interrupt isr_d::isrTA2_1(void)
     default:
       _never_executed();
   }
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -240,6 +295,18 @@ void __interrupt isr_d::isrTA2_0(void)
   return;
 #else
   (*isr[TA2_0_VECT])(obj[TA2_0_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -252,6 +319,18 @@ void __interrupt isr_d::isrUSCI_B1(void)
   return;
 #else
   (*isr[USCI_B1_VECT])(obj[USCI_B1_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -264,6 +343,18 @@ void __interrupt isr_d::isrUSCI_A1(void)
   return;
 #else
   (*isr[USCI_A1_VECT])(obj[USCI_A1_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -306,6 +397,18 @@ void __interrupt isr_d::isrPORT1(void)
     default:
       _never_executed();
   }
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -338,6 +441,18 @@ void __interrupt isr_d::isrTA1_1(void)
     default:
       _never_executed();
   }
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -350,6 +465,18 @@ void __interrupt isr_d::isrTA1_0(void)
   return;
 #else
   (*isr[TA1_0_VECT])(obj[TA1_0_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -362,6 +489,18 @@ void __interrupt isr_d::isrDMA(void)
   return;
 #else
   (*isr[DMA_VECT])(obj[DMA_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -374,6 +513,18 @@ void __interrupt isr_d::isrUSB_UBM(void)
   return;
 #else
   (*isr[USB_UBM_VECT])(obj[USB_UBM_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -410,6 +561,18 @@ void __interrupt isr_d::isrTA0_1(void)
     default:
       _never_executed();
   }
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -422,6 +585,18 @@ void __interrupt isr_d::isrTA0_0(void)
   return;
 #else
   (*isr[TA0_0_VECT])(obj[TA0_0_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -434,6 +609,18 @@ void __interrupt isr_d::isrADC10(void)
   return;
 #else
   (*isr[ADC10_VECT])(obj[ADC10_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -446,6 +633,18 @@ void __interrupt isr_d::isrUSCI_B0(void)
   return;
 #else
   (*isr[USCI_B0_VECT])(obj[USCI_B0_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -458,6 +657,18 @@ void __interrupt isr_d::isrUSCI_A0(void)
   return;
 #else
   (*isr[USCI_A0_VECT])(obj[USCI_A0_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -470,6 +681,18 @@ void __interrupt isr_d::isrWDT(void)
   return;
 #else
   (*isr[WDT_VECT])(obj[WDT_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -509,6 +732,18 @@ void __interrupt isr_d::isrTB0_1(void)
     default:
       _never_executed();
   }
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -521,6 +756,18 @@ void __interrupt isr_d::isrTB0_0(void)
   return;
 #else
   (*isr[TB0_0_VECT])(obj[TB0_0_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -533,6 +780,18 @@ void __interrupt isr_d::isrCOMP_B(void)
   return;
 #else
   (*isr[COMP_B_VECT])(obj[COMP_B_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -545,6 +804,18 @@ void __interrupt isr_d::isrUNMI(void)
   return;
 #else
   (*isr[UNMI_VECT])(obj[UNMI_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -557,6 +828,18 @@ void __interrupt isr_d::isrSYSNMI(void)
   return;
 #else
   (*isr[SYSNMI_VECT])(obj[SYSNMI_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 #endif
 }
 #endif
@@ -566,5 +849,17 @@ void __interrupt isr_d::isrSYSNMI(void)
 void __interrupt isr_d::isrRESET(void)
 {
   (*isr[RESET_VECT])(obj[RESET_VECT]);
+  #ifndef DISABLE_SR_CHECKING
+  if (clr_sr)
+  {
+    __bic_SR_register_on_exit(clr_sr_bits);
+    clr_sr = false;
+  }
+  if (set_sr)
+  {
+    __bis_SR_register_on_exit(set_sr_bits);
+    set_sr = false;
+  }
+  #endif
 }
 #endif

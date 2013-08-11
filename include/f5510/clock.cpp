@@ -759,7 +759,6 @@ void clock::delayS(uint32_t s)
   }
 }
 
-
 // Delay for the number of milliseconds specified as an argument
 void clock::delayMS(uint32_t ms)
 {
@@ -770,6 +769,20 @@ void clock::delayMS(uint32_t ms)
   // Enter LPM0 -- clocks stay enabled, disables CPU
   // GIE bit is already enabled by clock initialization
   LPM0;
+}
+
+isr_t clock::delayISR(void *ptr)
+{
+  // Ignore interrupts when a MS delay is not in progress
+  if (ms_count == 0)
+    return;
+  // Subtract one from our delay count
+  ms_count--;
+  // If we're done delaying, exit LPM0
+  if (ms_count == 0)
+    isr_d::clr_sr_on_exit(LPM0_bits);
+  else // Add ticks_in_a_ms to the timer CCR
+    addeq(taccr(timer), ticks_in_a_ms);
 }
 
 void clock::disableXT1(void)
@@ -882,8 +895,7 @@ clk_t clock::getUpTimeClk(void)
   }
 }
 
-#pragma vector=WDT_VECTOR
-__interrupt void clock::uptime_increment(void)
+isr_t clock::uptimeIncrement(void *ptr)
 {
   uptime_interval_count++;
   if (uptime_interval_count >= uptime_interval)
@@ -891,19 +903,4 @@ __interrupt void clock::uptime_increment(void)
     uptime_count++;
     uptime_interval_count = 0;
   }
-}
-
-#pragma vector=TIMER0_A0_VECTOR
-__interrupt void clock::delayISR(void)
-{
-  // Ignore interrupts when a MS delay is not in progress
-  if (ms_count == 0)
-    return;
-  // Subtract one from our delay count
-  ms_count--;
-  // If we're done delaying, exit LPM0
-  if (ms_count == 0)
-    LPM0_EXIT;
-  else // Add ticks_in_a_ms to the timer CCR
-    addeq(taccr(timer), ticks_in_a_ms);
 }
