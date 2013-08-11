@@ -28,18 +28,21 @@ typedef const enum
   MSP_TIMERA_SIZE
 } msp_timerA_t;
 
-extern const uint16_t msp_timerA_tar[MSP_TIMERA_SIZE];
+// Base address of each timerA's registers
+extern const uint16_t msp_timerA_base[MSP_TIMERA_SIZE];
+// CCTL register for each timerA
 extern const uint16_t msp_timerA_cctl[MSP_TIMERA_SIZE];
-extern const uint16_t msp_timerA_ctl[MSP_TIMERA_SIZE];
+// CCR register for each timerA
 extern const uint16_t msp_timerA_ccr[MSP_TIMERA_SIZE];
-extern const uint16_t msp_timerA_iv[MSP_TIMERA_SIZE];
-extern const uint16_t msp_timerA_ex[MSP_TIMERA_SIZE];
 
-inline bool msp_timerA_isZero(msp_timerA_t timer);
+#define TACTL_OFFSET 0x00
+#define tactl(timer)  (REG16(msp_timerA_base[(timer)] + TACTL_OFFSET))
+#define TAR_OFFSET   0x10
+#define tar(timer)    (REG16(msp_timerA_base[(timer)] + TAR_OFFSET))
+#define TAIV_OFFSET  0x2E
+#define taiv(timer)   (REG16(msp_timerA_base[(timer)] + TAIV_OFFSET))
+#define TAEX_OFFSET  0x20
+#define taex(timer)   (REG16(msp_timerA_base[(timer)] + TAEX_OFFSET))
 
-#define tar(timer)    (REG16(msp_timerA_tar[(timer)]))
-#define tactl(timer)  (REG16(msp_timerA_ctl[(timer)]))
 #define tacctl(timer) (REG16(msp_timerA_cctl[(timer)]))
 #define taccr(timer)  (REG16(msp_timerA_ccr[(timer)]))
-#define taiv(timer)   (REG16(msp_timerA_iv[(timer)]))
-#define taex(timer)   (REG16(msp_timerA_ex[(timer)]))

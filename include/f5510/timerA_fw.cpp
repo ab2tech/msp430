@@ -14,13 +14,7 @@
 
 #include "timerA_fw.h"
 
-const uint16_t msp_timerA_tar[MSP_TIMERA_SIZE] = {
-  (uint16_t) &TA0R, (uint16_t) &TA0R, (uint16_t) &TA0R, \
-    (uint16_t) &TA0R, (uint16_t) &TA0R,
-  (uint16_t) &TA1R, (uint16_t) &TA1R, (uint16_t) &TA1R,
-  (uint16_t) &TA2R, (uint16_t) &TA2R, (uint16_t) &TA2R
-};
-const uint16_t msp_timerA_ctl[MSP_TIMERA_SIZE] = {
+const uint16_t msp_timerA_base[MSP_TIMERA_SIZE] = {
   (uint16_t) &TA0CTL, (uint16_t) &TA0CTL, (uint16_t) &TA0CTL, \
     (uint16_t) &TA0CTL, (uint16_t) &TA0CTL,
   (uint16_t) &TA1CTL, (uint16_t) &TA1CTL, (uint16_t) &TA1CTL,
@@ -38,28 +32,3 @@ const uint16_t msp_timerA_ccr[MSP_TIMERA_SIZE] = {
   (uint16_t) &TA1CCR0, (uint16_t) &TA1CCR1, (uint16_t) &TA1CCR2,
   (uint16_t) &TA2CCR0, (uint16_t) &TA2CCR1, (uint16_t) &TA2CCR2
 };
-const uint16_t msp_timerA_iv[MSP_TIMERA_SIZE] = {
-  (uint16_t) &TA0IV, (uint16_t) &TA0IV, (uint16_t) &TA0IV, \
-    (uint16_t) &TA0IV, (uint16_t) &TA0IV,
-  (uint16_t) &TA1IV, (uint16_t) &TA1IV, (uint16_t) &TA1IV,
-  (uint16_t) &TA2IV, (uint16_t) &TA2IV, (uint16_t) &TA2IV
-};
-const uint16_t msp_timerA_ex[MSP_TIMERA_SIZE] = {
-  (uint16_t) &TA0EX0, (uint16_t) &TA0EX0, (uint16_t) &TA0EX0, \
-    (uint16_t) &TA0EX0, (uint16_t) &TA0EX0,
-  (uint16_t) &TA1EX0, (uint16_t) &TA1EX0, (uint16_t) &TA1EX0,
-  (uint16_t) &TA2EX0, (uint16_t) &TA2EX0, (uint16_t) &TA2EX0
-};
-
-inline bool msp_timerA_isZero(msp_timerA_t timer)
-{
-  switch (timer)
-  {
-    case ta0_0:
-    case ta1_0:
-    case ta2_0:
-      return true;
-    default:
-      return false;
-  }
-}
