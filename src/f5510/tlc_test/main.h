@@ -7,4 +7,4 @@
 #include "clock.h"
 #include "spi.h"
 #include "msp/tlc5925.h"
-#include "msp/rot_enc_w_sw_int.h"
+//#include "msp/rot_enc_w_sw_int.h"
