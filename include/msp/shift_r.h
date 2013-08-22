@@ -28,7 +28,7 @@ class shift_r : public spi
 public:
   shift_r(spi_usci_t spi_usci, msp_pin_t le,
           msp_pin_t oe = MSP_PIN_SIZE) :
-          le(le), spi(spi_usci), sr_data(0) {
+          le(le), spi(spi_usci), sr_data(0), oe(oe) {
     if (oe != MSP_PIN_SIZE)
       pinOutput(oe);
     outputDisable();
