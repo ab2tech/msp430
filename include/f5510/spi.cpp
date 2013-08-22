@@ -112,7 +112,6 @@ void spi::init(void)
   // Enable spi using the SEL register for each pin
   pinSelOn(spi_pins[spi_usci][SPI_USCI_CLK]);
   pinSelOn(spi_pins[spi_usci][SPI_USCI_SIMO]);
-  pinSelOn(spi_pins[spi_usci][SPI_USCI_SOMI]);
 
   // Put state machine in reset
   enterReset();

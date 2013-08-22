@@ -27,6 +27,7 @@
 
 #define DEFAULT_DUMMY_SPI_CHAR 0xFF
 #define SPI_MIN_PRESCALER      1
+#define SPI_INPUT_ENABLED      true
 
 // Define the various SPI USCIs available on the 5510
 typedef enum
@@ -52,7 +53,9 @@ typedef enum
 class spi
 {
 public:
-  spi(spi_usci_t usci) : spi_usci(usci), dummy_char(DEFAULT_DUMMY_SPI_CHAR) {
+  spi(spi_usci_t usci, bool io = false) : spi_usci(usci), io(io),
+    dummy_char(DEFAULT_DUMMY_SPI_CHAR)
+  {
     // Configure the base address depending on which USCI this is
     switch (spi_usci)
     {
@@ -79,6 +82,12 @@ public:
     {
       is_init[spi_usci] = true;
       init();
+    }
+    // Initialize the SOMI pin if I/O is enabled -- do this every time because
+    // an I/O instance might get enabled after an output-only instance.
+    if (io)
+    {
+      pinSelOn(spi_pins[spi_usci][SPI_USCI_SOMI]);
     }
   }
 
@@ -108,6 +117,8 @@ public:
 
   static const   msp_pin_t spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS];
 private:
+  bool           io;
+
   void           init(void);
 
   uint8_t        dummy_char;
