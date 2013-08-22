@@ -70,7 +70,8 @@ public:
       case SPI_B1:
         spi_base_addr = USCI_B1_BASE;
         break;
-      //default: ...asplode
+      default:
+       _never_executed();
     }
     // Only initialize this USCI if it hasn't already been initialized
     // (useful if multiple libraries initialize the same SPI USCI)
