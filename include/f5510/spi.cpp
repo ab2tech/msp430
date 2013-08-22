@@ -78,12 +78,6 @@ void spi::disableSOMI(void)
   pinSelOff(spi_pins[spi_usci][SPI_USCI_SOMI]);
 }
 
-// Disable the SIMO pin if it's needed for something else
-void spi::disableSIMO(void)
-{
-  pinSelOff(spi_pins[spi_usci][SPI_USCI_SIMO]);
-}
-
 // Configure SPI for falling edge
 void spi::fallingEdge(void)
 {

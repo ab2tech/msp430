@@ -83,7 +83,6 @@ public:
 
   void           cfgLSB(void);
   void           cfgMSB(void);
-  void           disableSIMO(void);
   void           disableSOMI(void);
   void           fallingEdge(void);
   void           getFrame(uint8_t *buf, uint16_t size);
