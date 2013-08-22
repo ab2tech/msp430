@@ -38,16 +38,22 @@
 // #define DISABLE_DMA_VECT
 // #define DISABLE_USB_UBM_VECT
 // #define DISABLE_TA0_1_VECT
-// #define DISABLE_TA0_0_VECT
 // #define DISABLE_ADC10_VECT
 // #define DISABLE_USCI_B0_VECT
 // #define DISABLE_USCI_A0_VECT
-// #define DISABLE_WDT_VECT
 // #define DISABLE_TB0_1_VECT
 // #define DISABLE_TB0_0_VECT
 // #define DISABLE_COMP_B_VECT
 // #define DISABLE_UNMI_VECT
 // #define DISABLE_SYSNMI_VECT
+
+// The following interrupt vectors are allocated to the clock library that is
+// always used with AB2 components. Since these have no need to be dynamically
+// allocated, they are not enabled by default. Fully enabling support for these
+// vectors will require definition of both the corresponding VECT and VECTOR
+// for that vector.
+// #define ENABLE_TA0_0_VECT
+// #define ENABLE_WDT_VECT
 
 // The reset vector is disabled by default from the ISR dispatcher. The
 // following definition will enable it (though it's likely not useful).
@@ -69,16 +75,22 @@
 // #define DISABLE_DMA_VECTOR
 // #define DISABLE_USB_UBM_VECTOR
 // #define DISABLE_TA0_1_VECTOR
-// #define DISABLE_TA0_0_VECTOR
 // #define DISABLE_ADC10_VECTOR
 // #define DISABLE_USCI_B0_VECTOR
 // #define DISABLE_USCI_A0_VECTOR
-// #define DISABLE_WDT_VECTOR
 // #define DISABLE_TB0_1_VECTOR
 // #define DISABLE_TB0_0_VECTOR
 // #define DISABLE_COMP_B_VECTOR
 // #define DISABLE_UNMI_VECTOR
 // #define DISABLE_SYSNMI_VECTOR
+
+// The following interrupt vectors are allocated to the clock library that is
+// always used with AB2 components. Since these have no need to be dynamically
+// allocated, they are not enabled by default. Fully enabling support for these
+// vectors will require definition of both the corresponding VECT and VECTOR
+// for that vector.
+// #define ENABLE_TA0_0_VECTOR
+// #define ENABLE_WDT_VECTOR
 
 // Since a default RESET handler is already installed, the ISR dispatcher won't
 // (and shouldn't) install one
@@ -163,7 +175,7 @@ typedef enum
   TA0_1_VECT,        // TIMER0_A1_VECTOR
 #endif
 
-#if !defined(DISABLE_TA0_0_VECTOR) && !defined(DISABLE_TA0_0_VECT)
+#if defined(ENABLE_TA0_0_VECTOR) || defined(ENABLE_TA0_0_VECT)
   TA0_0_VECT,        // TIMER0_A0_VECTOR
 #endif
 
@@ -179,7 +191,7 @@ typedef enum
   USCI_A0_VECT,      // USCI_A0_VECTOR
 #endif
 
-#if !defined(DISABLE_WDT_VECTOR) && !defined(DISABLE_WDT_VECT)
+#if defined(ENABLE_WDT_VECTOR) || defined(ENABLE_WDT_VECT)
   WDT_VECT,          // WDT_VECTOR
 #endif
 
@@ -222,7 +234,7 @@ class isr_d
 public:
   // Emulate the compiler intrinsics by allowing installed ISRs to modify the
   // SR register on exit
-#ifndef DISABLE_SR_CHECKING
+#ifdef ENABLE_SR_CHECKING
   static void clr_sr_on_exit(uint16_t mask);
   static void set_sr_on_exit(uint16_t mask);
 #endif
@@ -262,7 +274,7 @@ private:
   // duplication will result. Also adding a compilation flag to disable all SR
   // handling by the ISR dispatcher since it adds substantial code size and
   // lower latency might be prioritized in some situations.
-#ifndef DISABLE_SR_CHECKING
+#ifdef ENABLE_SR_CHECKING
   static bool     clr_sr;
   static bool     set_sr;
   static uint16_t clr_sr_bits;
@@ -309,7 +321,7 @@ private:
 #ifndef DISABLE_TA0_1_VECTOR
   static void __interrupt isrTA0_1(void);
 #endif
-#ifndef DISABLE_TA0_0_VECTOR
+#ifdef ENABLE_TA0_0_VECTOR
   static void __interrupt isrTA0_0(void);
 #endif
 #ifndef DISABLE_ADC10_VECTOR
@@ -321,7 +333,7 @@ private:
 #ifndef DISABLE_USCI_A0_VECTOR
   static void __interrupt isrUSCI_A0(void);
 #endif
-#ifndef DISABLE_WDT_VECTOR
+#ifdef ENABLE_WDT_VECTOR
   static void __interrupt isrWDT(void);
 #endif
 #ifndef DISABLE_TB0_1_VECTOR

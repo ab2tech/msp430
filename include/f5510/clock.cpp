@@ -771,20 +771,6 @@ void clock::delayMS(uint32_t ms)
   LPM0;
 }
 
-isr_t clock::delayISR(void *ptr)
-{
-  // Ignore interrupts when a MS delay is not in progress
-  if (ms_count == 0)
-    return;
-  // Subtract one from our delay count
-  ms_count--;
-  // If we're done delaying, exit LPM0
-  if (ms_count == 0)
-    isr_d::clr_sr_on_exit(LPM0_bits);
-  else // Add ticks_in_a_ms to the timer CCR
-    addeq(taccr(timer), ticks_in_a_ms);
-}
-
 void clock::disableXT1(void)
 {
   // We have to re-configure the FLL source selection if XT1 is currently in
@@ -895,7 +881,8 @@ clk_t clock::getUpTimeClk(void)
   }
 }
 
-isr_t clock::uptimeIncrement(void *ptr)
+#pragma vector=WDT_VECTOR
+__interrupt void clock::uptime_increment(void)
 {
   uptime_interval_count++;
   if (uptime_interval_count >= uptime_interval)
@@ -903,4 +890,19 @@ isr_t clock::uptimeIncrement(void *ptr)
     uptime_count++;
     uptime_interval_count = 0;
   }
+}
+
+#pragma vector=TIMER0_A0_VECTOR
+__interrupt void clock::delayISR(void)
+{
+  // Ignore interrupts when a MS delay is not in progress
+  if (ms_count == 0)
+    return;
+  // Subtract one from our delay count
+  ms_count--;
+  // If we're done delaying, exit LPM0
+  if (ms_count == 0)
+    LPM0_EXIT;
+  else // Add ticks_in_a_ms to the timer CCR
+    addeq(taccr(timer), ticks_in_a_ms);
 }
