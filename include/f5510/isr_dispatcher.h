@@ -26,38 +26,38 @@
 #include "timerA_fw.h"
 
 // Definitions that can be used to disable dispatching for various interrupts
-// #define DISABLE_RTC_VECT
-// #define DISABLE_PORT2_VECT
-// #define DISABLE_TA2_1_VECT
-// #define DISABLE_TA2_0_VECT
-// #define DISABLE_USCI_B1_VECT
-// #define DISABLE_USCI_A1_VECT
-// #define DISABLE_PORT1_VECT
-// #define DISABLE_TA1_1_VECT
-// #define DISABLE_TA1_0_VECT
-// #define DISABLE_DMA_VECT
-// #define DISABLE_USB_UBM_VECT
-// #define DISABLE_TA0_1_VECT
-// #define DISABLE_ADC10_VECT
-// #define DISABLE_USCI_B0_VECT
-// #define DISABLE_USCI_A0_VECT
-// #define DISABLE_TB0_1_VECT
-// #define DISABLE_TB0_0_VECT
-// #define DISABLE_COMP_B_VECT
-// #define DISABLE_UNMI_VECT
-// #define DISABLE_SYSNMI_VECT
+// #define DISABLE_RTC_ID
+// #define DISABLE_PORT2_ID
+// #define DISABLE_TA2_1_ID
+// #define DISABLE_TA2_0_ID
+// #define DISABLE_USCI_B1_ID
+// #define DISABLE_USCI_A1_ID
+// #define DISABLE_PORT1_ID
+// #define DISABLE_TA1_1_ID
+// #define DISABLE_TA1_0_ID
+// #define DISABLE_DMA_ID
+// #define DISABLE_USB_UBM_ID
+// #define DISABLE_TA0_1_ID
+// #define DISABLE_ADC10_ID
+// #define DISABLE_USCI_B0_ID
+// #define DISABLE_USCI_A0_ID
+// #define DISABLE_TB0_1_ID
+// #define DISABLE_TB0_0_ID
+// #define DISABLE_COMP_B_ID
+// #define DISABLE_UNMI_ID
+// #define DISABLE_SYSNMI_ID
 
 // The following interrupt vectors are allocated to the clock library that is
 // always used with AB2 components. Since these have no need to be dynamically
 // allocated, they are not enabled by default. Fully enabling support for these
-// vectors will require definition of both the corresponding VECT and VECTOR
+// vectors will require definition of both the corresponding ID and VECTOR
 // for that vector.
-// #define ENABLE_TA0_0_VECT
-// #define ENABLE_WDT_VECT
+// #define ENABLE_TA0_0_ID
+// #define ENABLE_WDT_ID
 
 // The reset vector is disabled by default from the ISR dispatcher. The
 // following definition will enable it (though it's likely not useful).
-// #define ENABLE_RESET_VECT
+// #define ENABLE_RESET_ID
 
 // Definition of the above will disable dispatching, but will still result in a
 // default handler being created for that interrupt. To disable both
@@ -87,7 +87,7 @@
 // The following interrupt vectors are allocated to the clock library that is
 // always used with AB2 components. Since these have no need to be dynamically
 // allocated, they are not enabled by default. Fully enabling support for these
-// vectors will require definition of both the corresponding VECT and VECTOR
+// vectors will require definition of both the corresponding ID and VECTOR
 // for that vector.
 // #define ENABLE_TA0_0_VECTOR
 // #define ENABLE_WDT_VECTOR
@@ -103,126 +103,126 @@ typedef void isr_t;
 
 typedef enum
 {
-#if !defined(DISABLE_RTC_VECTOR) && !defined(DISABLE_RTC_VECT)
-  RTC_VECT,          // RTC_VECTOR
+#if !defined(DISABLE_RTC_VECTOR) && !defined(DISABLE_RTC_ID)
+  RTC_ID,          // RTC_VECTOR
 #endif
 
-#if !defined(DISABLE_PORT2_VECTOR) && !defined(DISABLE_PORT2_VECT)
+#if !defined(DISABLE_PORT2_VECTOR) && !defined(DISABLE_PORT2_ID)
 #ifdef MSP430F5510_EXT
-  PORT2_7_VECT,
-  PORT2_6_VECT,
-  PORT2_5_VECT,
-  PORT2_4_VECT,
-  PORT2_3_VECT,
-  PORT2_2_VECT,
-  PORT2_1_VECT,
+  PORT2_7_ID,
+  PORT2_6_ID,
+  PORT2_5_ID,
+  PORT2_4_ID,
+  PORT2_3_ID,
+  PORT2_2_ID,
+  PORT2_1_ID,
 #endif
-  PORT2_0_VECT,      // PORT2_VECTOR
-#endif
-
-#if !defined(DISABLE_TA2_1_VECTOR) && !defined(DISABLE_TA2_1_VECT)
-  TA2_IFG_VECT,
-  TA2_2_VECT,
-  TA2_1_VECT,        // TIMER2_A1_VECTOR
+  PORT2_0_ID,      // PORT2_VECTOR
 #endif
 
-#if !defined(DISABLE_TA2_0_VECTOR) && !defined(DISABLE_TA2_0_VECT)
-  TA2_0_VECT,        // TIMER2_A0_VECTOR
+#if !defined(DISABLE_TA2_1_VECTOR) && !defined(DISABLE_TA2_1_ID)
+  TA2_IFG_ID,
+  TA2_2_ID,
+  TA2_1_ID,        // TIMER2_A1_VECTOR
 #endif
 
-#if !defined(DISABLE_USCI_B1_VECTOR) && !defined(DISABLE_USCI_B1_VECT)
-  USCI_B1_VECT,      // USCI_B1_VECTOR
+#if !defined(DISABLE_TA2_0_VECTOR) && !defined(DISABLE_TA2_0_ID)
+  TA2_0_ID,        // TIMER2_A0_VECTOR
 #endif
 
-#if !defined(DISABLE_USCI_A1_VECTOR) && !defined(DISABLE_USCI_A1_VECT)
-  USCI_A1_VECT,      // USCI_A1_VECTOR
+#if !defined(DISABLE_USCI_B1_VECTOR) && !defined(DISABLE_USCI_B1_ID)
+  USCI_B1_ID,      // USCI_B1_VECTOR
 #endif
 
-#if !defined(DISABLE_PORT1_VECTOR) && !defined(DISABLE_PORT1_VECT)
-  PORT1_7_VECT,
-  PORT1_6_VECT,
-  PORT1_5_VECT,
-  PORT1_4_VECT,
-  PORT1_3_VECT,
-  PORT1_2_VECT,
-  PORT1_1_VECT,
-  PORT1_0_VECT,      // PORT1_VECTOR
+#if !defined(DISABLE_USCI_A1_VECTOR) && !defined(DISABLE_USCI_A1_ID)
+  USCI_A1_ID,      // USCI_A1_VECTOR
 #endif
 
-#if !defined(DISABLE_TA1_1_VECTOR) && !defined(DISABLE_TA1_1_VECT)
-  TA1_IFG_VECT,
-  TA1_2_VECT,
-  TA1_1_VECT,        // TIMER1_A1_VECTOR
+#if !defined(DISABLE_PORT1_VECTOR) && !defined(DISABLE_PORT1_ID)
+  PORT1_7_ID,
+  PORT1_6_ID,
+  PORT1_5_ID,
+  PORT1_4_ID,
+  PORT1_3_ID,
+  PORT1_2_ID,
+  PORT1_1_ID,
+  PORT1_0_ID,      // PORT1_VECTOR
 #endif
 
-#if !defined(DISABLE_TA1_0_VECTOR) && !defined(DISABLE_TA1_0_VECT)
-  TA1_0_VECT,        // TIMER1_A0_VECTOR
+#if !defined(DISABLE_TA1_1_VECTOR) && !defined(DISABLE_TA1_1_ID)
+  TA1_IFG_ID,
+  TA1_2_ID,
+  TA1_1_ID,        // TIMER1_A1_VECTOR
 #endif
 
-#if !defined(DISABLE_DMA_VECTOR) && !defined(DISABLE_DMA_VECT)
-  DMA_VECT,          // DMA_VECTOR
+#if !defined(DISABLE_TA1_0_VECTOR) && !defined(DISABLE_TA1_0_ID)
+  TA1_0_ID,        // TIMER1_A0_VECTOR
 #endif
 
-#if !defined(DISABLE_USB_UBM_VECTOR) && !defined(DISABLE_USB_UBM_VECT)
-  USB_UBM_VECT,      // USB_UBM_VECTOR
+#if !defined(DISABLE_DMA_VECTOR) && !defined(DISABLE_DMA_ID)
+  DMA_ID,          // DMA_VECTOR
 #endif
 
-#if !defined(DISABLE_TA0_1_VECTOR) && !defined(DISABLE_TA0_1_VECT)
-  TA0_IFG_VECT,
-  TA0_4_VECT,
-  TA0_3_VECT,
-  TA0_2_VECT,
-  TA0_1_VECT,        // TIMER0_A1_VECTOR
+#if !defined(DISABLE_USB_UBM_VECTOR) && !defined(DISABLE_USB_UBM_ID)
+  USB_UBM_ID,      // USB_UBM_VECTOR
 #endif
 
-#if defined(ENABLE_TA0_0_VECTOR) || defined(ENABLE_TA0_0_VECT)
-  TA0_0_VECT,        // TIMER0_A0_VECTOR
+#if !defined(DISABLE_TA0_1_VECTOR) && !defined(DISABLE_TA0_1_ID)
+  TA0_IFG_ID,
+  TA0_4_ID,
+  TA0_3_ID,
+  TA0_2_ID,
+  TA0_1_ID,        // TIMER0_A1_VECTOR
 #endif
 
-#if !defined(DISABLE_ADC10_VECTOR) && !defined(DISABLE_ADC10_VECT)
-  ADC10_VECT,        // ADC10_VECTOR
+#if defined(ENABLE_TA0_0_VECTOR) || defined(ENABLE_TA0_0_ID)
+  TA0_0_ID,        // TIMER0_A0_VECTOR
 #endif
 
-#if !defined(DISABLE_USCI_B0_VECTOR) && !defined(DISABLE_USCI_B0_VECT)
-  USCI_B0_VECT,      // USCI_B0_VECTOR
+#if !defined(DISABLE_ADC10_VECTOR) && !defined(DISABLE_ADC10_ID)
+  ADC10_ID,        // ADC10_VECTOR
 #endif
 
-#if !defined(DISABLE_USCI_A0_VECTOR) && !defined(DISABLE_USCI_A0_VECT)
-  USCI_A0_VECT,      // USCI_A0_VECTOR
+#if !defined(DISABLE_USCI_B0_VECTOR) && !defined(DISABLE_USCI_B0_ID)
+  USCI_B0_ID,      // USCI_B0_VECTOR
 #endif
 
-#if defined(ENABLE_WDT_VECTOR) || defined(ENABLE_WDT_VECT)
-  WDT_VECT,          // WDT_VECTOR
+#if !defined(DISABLE_USCI_A0_VECTOR) && !defined(DISABLE_USCI_A0_ID)
+  USCI_A0_ID,      // USCI_A0_VECTOR
 #endif
 
-#if !defined(DISABLE_TB0_1_VECTOR) && !defined(DISABLE_TB0_1_VECT)
-  TB0_IFG_VECT,
-  TB0_6_VECT,
-  TB0_5_VECT,
-  TB0_4_VECT,
-  TB0_3_VECT,
-  TB0_2_VECT,
-  TB0_1_VECT,        // TIMER0_B1_VECTOR
+#if defined(ENABLE_WDT_VECTOR) || defined(ENABLE_WDT_ID)
+  WDT_ID,          // WDT_VECTOR
 #endif
 
-#if !defined(DISABLE_TB0_0_VECTOR) && !defined(DISABLE_TB0_0_VECT)
-  TB0_0_VECT,        // TIMER0_B0_VECTOR
+#if !defined(DISABLE_TB0_1_VECTOR) && !defined(DISABLE_TB0_1_ID)
+  TB0_IFG_ID,
+  TB0_6_ID,
+  TB0_5_ID,
+  TB0_4_ID,
+  TB0_3_ID,
+  TB0_2_ID,
+  TB0_1_ID,        // TIMER0_B1_VECTOR
 #endif
 
-#if !defined(DISABLE_COMP_B_VECTOR) && !defined(DISABLE_COMP_B_VECT)
-  COMP_B_VECT,       // COMP_B_VECTOR
+#if !defined(DISABLE_TB0_0_VECTOR) && !defined(DISABLE_TB0_0_ID)
+  TB0_0_ID,        // TIMER0_B0_VECTOR
 #endif
 
-#if !defined(DISABLE_UNMI_VECTOR) && !defined(DISABLE_UNMI_VECT)
-  UNMI_VECT,         // UNMI_VECTOR
+#if !defined(DISABLE_COMP_B_VECTOR) && !defined(DISABLE_COMP_B_ID)
+  COMP_B_ID,       // COMP_B_VECTOR
 #endif
 
-#if !defined(DISABLE_SYSNMI_VECTOR) && !defined(DISABLE_SYSNMI_VECT)
-  SYSNMI_VECT,       // SYSNMI_VECTOR
+#if !defined(DISABLE_UNMI_VECTOR) && !defined(DISABLE_UNMI_ID)
+  UNMI_ID,         // UNMI_VECTOR
 #endif
 
-#ifdef ENABLE_RESET_VECT
-  RESET_VECT,        // RESET_VECTOR
+#if !defined(DISABLE_SYSNMI_VECTOR) && !defined(DISABLE_SYSNMI_ID)
+  SYSNMI_ID,       // SYSNMI_VECTOR
+#endif
+
+#ifdef ENABLE_RESET_ID
+  RESET_ID,        // RESET_VECTOR
 #endif
 
   NUM_ISR_VECTORS
@@ -351,7 +351,7 @@ private:
 #ifndef DISABLE_SYSNMI_VECTOR
   static void __interrupt isrSYSNMI(void);
 #endif
-#ifdef ENABLE_RESET_VECT
+#ifdef ENABLE_RESET_ID
   static void __interrupt isrRESET(void);
 #endif
 };

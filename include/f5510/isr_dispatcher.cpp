@@ -55,43 +55,43 @@ isr_vector_t isr_d::pinVector(msp_pin_t pin)
 {
   switch (pin)
   {
-    #if !defined(DISABLE_PORT1_VECTOR) && !defined(DISABLE_PORT1_VECT)
+    #if !defined(DISABLE_PORT1_VECTOR) && !defined(DISABLE_PORT1_ID)
     case p1_0:
-      return PORT1_0_VECT;
+      return PORT1_0_ID;
     case p1_1:
-      return PORT1_1_VECT;
+      return PORT1_1_ID;
     case p1_2:
-      return PORT1_2_VECT;
+      return PORT1_2_ID;
     case p1_3:
-      return PORT1_3_VECT;
+      return PORT1_3_ID;
     case p1_4:
-      return PORT1_4_VECT;
+      return PORT1_4_ID;
     case p1_5:
-      return PORT1_5_VECT;
+      return PORT1_5_ID;
     case p1_6:
-      return PORT1_6_VECT;
+      return PORT1_6_ID;
     case p1_7:
-      return PORT1_7_VECT;
+      return PORT1_7_ID;
     #endif
 
-    #if !defined(DISABLE_PORT2_VECTOR) && !defined(DISABLE_PORT2_VECT)
+    #if !defined(DISABLE_PORT2_VECTOR) && !defined(DISABLE_PORT2_ID)
     case p2_0:
-      return PORT2_0_VECT;
+      return PORT2_0_ID;
 #ifdef MSP430F5510_EXT
     case p2_1:
-      return PORT2_1_VECT;
+      return PORT2_1_ID;
     case p2_2:
-      return PORT2_2_VECT;
+      return PORT2_2_ID;
     case p2_3:
-      return PORT2_3_VECT;
+      return PORT2_3_ID;
     case p2_4:
-      return PORT2_4_VECT;
+      return PORT2_4_ID;
     case p2_5:
-      return PORT2_5_VECT;
+      return PORT2_5_ID;
     case p2_6:
-      return PORT2_6_VECT;
+      return PORT2_6_ID;
     case p2_7:
-      return PORT2_7_VECT;
+      return PORT2_7_ID;
 #endif
     #endif
     default:
@@ -111,39 +111,39 @@ isr_vector_t isr_d::taVector(msp_timerA_t timer)
 {
   switch (timer)
   {
-    #if defined(ENABLE_TA0_0_VECTOR) || defined(ENABLE_TA0_0_VECT)
+    #if defined(ENABLE_TA0_0_VECTOR) || defined(ENABLE_TA0_0_ID)
     case ta0_0:
-      return TA0_0_VECT;
+      return TA0_0_ID;
     #endif
-    #if !defined(DISABLE_TA0_1_VECTOR) && !defined(DISABLE_TA0_1_VECT)
+    #if !defined(DISABLE_TA0_1_VECTOR) && !defined(DISABLE_TA0_1_ID)
     case ta0_1:
-      return TA0_1_VECT;
+      return TA0_1_ID;
     case ta0_2:
-      return TA0_2_VECT;
+      return TA0_2_ID;
     case ta0_3:
-      return TA0_3_VECT;
+      return TA0_3_ID;
     case ta0_4:
-      return TA0_4_VECT;
+      return TA0_4_ID;
     #endif
-    #if !defined(DISABLE_TA1_0_VECTOR) && !defined(DISABLE_TA1_0_VECT)
+    #if !defined(DISABLE_TA1_0_VECTOR) && !defined(DISABLE_TA1_0_ID)
     case ta1_0:
-      return TA1_0_VECT;
+      return TA1_0_ID;
     #endif
-    #if !defined(DISABLE_TA1_1_VECTOR) && !defined(DISABLE_TA1_1_VECT)
+    #if !defined(DISABLE_TA1_1_VECTOR) && !defined(DISABLE_TA1_1_ID)
     case ta1_1:
-      return TA1_1_VECT;
+      return TA1_1_ID;
     case ta1_2:
-      return TA1_2_VECT;
+      return TA1_2_ID;
     #endif
-    #if !defined(DISABLE_TA2_0_VECTOR) && !defined(DISABLE_TA2_0_VECT)
+    #if !defined(DISABLE_TA2_0_VECTOR) && !defined(DISABLE_TA2_0_ID)
     case ta2_0:
-      return TA2_0_VECT;
+      return TA2_0_ID;
     #endif
-    #if !defined(DISABLE_TA2_1_VECTOR) && !defined(DISABLE_TA2_1_VECT)
+    #if !defined(DISABLE_TA2_1_VECTOR) && !defined(DISABLE_TA2_1_ID)
     case ta2_1:
-      return TA2_1_VECT;
+      return TA2_1_ID;
     case ta2_2:
-      return TA2_2_VECT;
+      return TA2_2_ID;
     #endif
     default:
       return NUM_ISR_VECTORS;
@@ -160,10 +160,10 @@ void isr_d::uninstallISR(isr_vector_t vect)
 #pragma vector=RTC_VECTOR
 void __interrupt isr_d::isrRTC(void)
 {
-#ifdef DISABLE_RTC_VECT
+#ifdef DISABLE_RTC_ID
   return;
 #else
-  (*isr[RTC_VECT])(obj[RTC_VECT]);
+  (*isr[RTC_ID])(obj[RTC_ID]);
 
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
@@ -185,48 +185,48 @@ void __interrupt isr_d::isrRTC(void)
 #pragma vector=PORT2_VECTOR
 void __interrupt isr_d::isrPORT2(void)
 {
-#ifdef DISABLE_PORT2_VECT
+#ifdef DISABLE_PORT2_ID
   return;
 #else
   switch (__even_in_range(P2IV, P2IV_P2IFG7))
   {
     case P2IV_P2IFG7:
     #ifdef MSP430F5510_EXT
-      (*isr[PORT2_7_VECT])(obj[PORT2_7_VECT]);
+      (*isr[PORT2_7_ID])(obj[PORT2_7_ID]);
     #endif
       break;
     case P2IV_P2IFG6:
     #ifdef MSP430F5510_EXT
-      (*isr[PORT2_6_VECT])(obj[PORT2_6_VECT]);
+      (*isr[PORT2_6_ID])(obj[PORT2_6_ID]);
     #endif
       break;
     case P2IV_P2IFG5:
     #ifdef MSP430F5510_EXT
-      (*isr[PORT2_5_VECT])(obj[PORT2_5_VECT]);
+      (*isr[PORT2_5_ID])(obj[PORT2_5_ID]);
     #endif
       break;
     case P2IV_P2IFG4:
     #ifdef MSP430F5510_EXT
-      (*isr[PORT2_4_VECT])(obj[PORT2_4_VECT]);
+      (*isr[PORT2_4_ID])(obj[PORT2_4_ID]);
     #endif
       break;
     case P2IV_P2IFG3:
     #ifdef MSP430F5510_EXT
-      (*isr[PORT2_3_VECT])(obj[PORT2_3_VECT]);
+      (*isr[PORT2_3_ID])(obj[PORT2_3_ID]);
     #endif
       break;
     case P2IV_P2IFG2:
     #ifdef MSP430F5510_EXT
-      (*isr[PORT2_2_VECT])(obj[PORT2_2_VECT]);
+      (*isr[PORT2_2_ID])(obj[PORT2_2_ID]);
     #endif
       break;
     case P2IV_P2IFG1:
     #ifdef MSP430F5510_EXT
-      (*isr[PORT2_1_VECT])(obj[PORT2_1_VECT]);
+      (*isr[PORT2_1_ID])(obj[PORT2_1_ID]);
     #endif
       break;
     case P2IV_P2IFG0:
-      (*isr[PORT2_0_VECT])(obj[PORT2_0_VECT]);
+      (*isr[PORT2_0_ID])(obj[PORT2_0_ID]);
       break;
     case P2IV_NONE:
       break;
@@ -253,13 +253,13 @@ void __interrupt isr_d::isrPORT2(void)
 #pragma vector=TIMER2_A1_VECTOR
 void __interrupt isr_d::isrTA2_1(void)
 {
-#ifdef DISABLE_TA2_1_VECT
+#ifdef DISABLE_TA2_1_ID
   return;
 #else
   switch (__even_in_range(TA2IV, TA2IV_TA2IFG))
   {
     case TA2IV_TA2IFG:
-      (*isr[TA2_IFG_VECT])(obj[TA2_IFG_VECT]);
+      (*isr[TA2_IFG_ID])(obj[TA2_IFG_ID]);
       break;
     case TA2IV_6:
     case TA2IV_5:
@@ -267,10 +267,10 @@ void __interrupt isr_d::isrTA2_1(void)
     case TA2IV_3:
       break;
     case TA2IV_TA1CCR2:
-      (*isr[TA2_2_VECT])(obj[TA2_2_VECT]);
+      (*isr[TA2_2_ID])(obj[TA2_2_ID]);
       break;
     case TA2IV_TA1CCR1:
-      (*isr[TA2_1_VECT])(obj[TA2_1_VECT]);
+      (*isr[TA2_1_ID])(obj[TA2_1_ID]);
       break;
     case TA2IV_NONE:
       break;
@@ -297,10 +297,10 @@ void __interrupt isr_d::isrTA2_1(void)
 #pragma vector=TIMER2_A0_VECTOR
 void __interrupt isr_d::isrTA2_0(void)
 {
-#ifdef DISABLE_TA2_0_VECT
+#ifdef DISABLE_TA2_0_ID
   return;
 #else
-  (*isr[TA2_0_VECT])(obj[TA2_0_VECT]);
+  (*isr[TA2_0_ID])(obj[TA2_0_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -321,10 +321,10 @@ void __interrupt isr_d::isrTA2_0(void)
 #pragma vector=USCI_B1_VECTOR
 void __interrupt isr_d::isrUSCI_B1(void)
 {
-#ifdef DISABLE_USCI_B1_VECT
+#ifdef DISABLE_USCI_B1_ID
   return;
 #else
-  (*isr[USCI_B1_VECT])(obj[USCI_B1_VECT]);
+  (*isr[USCI_B1_ID])(obj[USCI_B1_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -345,10 +345,10 @@ void __interrupt isr_d::isrUSCI_B1(void)
 #pragma vector=USCI_A1_VECTOR
 void __interrupt isr_d::isrUSCI_A1(void)
 {
-#ifdef DISABLE_USCI_A1_VECT
+#ifdef DISABLE_USCI_A1_ID
   return;
 #else
-  (*isr[USCI_A1_VECT])(obj[USCI_A1_VECT]);
+  (*isr[USCI_A1_ID])(obj[USCI_A1_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -369,34 +369,34 @@ void __interrupt isr_d::isrUSCI_A1(void)
 #pragma vector=PORT1_VECTOR
 void __interrupt isr_d::isrPORT1(void)
 {
-#ifdef DISABLE_PORT1_VECT
+#ifdef DISABLE_PORT1_ID
   return;
 #else
   switch (__even_in_range(P1IV, P1IV_P1IFG7))
   {
     case P1IV_P1IFG7:
-      (*isr[PORT1_7_VECT])(obj[PORT1_7_VECT]);
+      (*isr[PORT1_7_ID])(obj[PORT1_7_ID]);
       break;
     case P1IV_P1IFG6:
-      (*isr[PORT1_6_VECT])(obj[PORT1_6_VECT]);
+      (*isr[PORT1_6_ID])(obj[PORT1_6_ID]);
       break;
     case P1IV_P1IFG5:
-      (*isr[PORT1_5_VECT])(obj[PORT1_5_VECT]);
+      (*isr[PORT1_5_ID])(obj[PORT1_5_ID]);
       break;
     case P1IV_P1IFG4:
-      (*isr[PORT1_4_VECT])(obj[PORT1_4_VECT]);
+      (*isr[PORT1_4_ID])(obj[PORT1_4_ID]);
       break;
     case P1IV_P1IFG3:
-      (*isr[PORT1_3_VECT])(obj[PORT1_3_VECT]);
+      (*isr[PORT1_3_ID])(obj[PORT1_3_ID]);
       break;
     case P1IV_P1IFG2:
-      (*isr[PORT1_2_VECT])(obj[PORT1_2_VECT]);
+      (*isr[PORT1_2_ID])(obj[PORT1_2_ID]);
       break;
     case P1IV_P1IFG1:
-      (*isr[PORT1_1_VECT])(obj[PORT1_1_VECT]);
+      (*isr[PORT1_1_ID])(obj[PORT1_1_ID]);
       break;
     case P1IV_P1IFG0:
-      (*isr[PORT1_0_VECT])(obj[PORT1_0_VECT]);
+      (*isr[PORT1_0_ID])(obj[PORT1_0_ID]);
       break;
     case P1IV_NONE:
       break;
@@ -423,13 +423,13 @@ void __interrupt isr_d::isrPORT1(void)
 #pragma vector=TIMER1_A1_VECTOR
 void __interrupt isr_d::isrTA1_1(void)
 {
-#ifdef DISABLE_TA1_1_VECT
+#ifdef DISABLE_TA1_1_ID
   return;
 #else
   switch (__even_in_range(TA1IV, TA1IV_TA1IFG))
   {
     case TA1IV_TA1IFG:
-      (*isr[TA1_IFG_VECT])(obj[TA1_IFG_VECT]);
+      (*isr[TA1_IFG_ID])(obj[TA1_IFG_ID]);
       break;
     case TA1IV_6:
     case TA1IV_5:
@@ -437,10 +437,10 @@ void __interrupt isr_d::isrTA1_1(void)
     case TA1IV_3:
       break;
     case TA1IV_TA1CCR2:
-      (*isr[TA1_2_VECT])(obj[TA1_2_VECT]);
+      (*isr[TA1_2_ID])(obj[TA1_2_ID]);
       break;
     case TA1IV_TA1CCR1:
-      (*isr[TA1_1_VECT])(obj[TA1_1_VECT]);
+      (*isr[TA1_1_ID])(obj[TA1_1_ID]);
       break;
     case TA1IV_NONE:
       break;
@@ -467,10 +467,10 @@ void __interrupt isr_d::isrTA1_1(void)
 #pragma vector=TIMER1_A0_VECTOR
 void __interrupt isr_d::isrTA1_0(void)
 {
-#ifdef DISABLE_TA1_0_VECT
+#ifdef DISABLE_TA1_0_ID
   return;
 #else
-  (*isr[TA1_0_VECT])(obj[TA1_0_VECT]);
+  (*isr[TA1_0_ID])(obj[TA1_0_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -491,10 +491,10 @@ void __interrupt isr_d::isrTA1_0(void)
 #pragma vector=DMA_VECTOR
 void __interrupt isr_d::isrDMA(void)
 {
-#ifdef DISABLE_DMA_VECT
+#ifdef DISABLE_DMA_ID
   return;
 #else
-  (*isr[DMA_VECT])(obj[DMA_VECT]);
+  (*isr[DMA_ID])(obj[DMA_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -515,10 +515,10 @@ void __interrupt isr_d::isrDMA(void)
 #pragma vector=USB_UBM_VECTOR
 void __interrupt isr_d::isrUSB_UBM(void)
 {
-#ifdef DISABLE_USB_UBM_VECT
+#ifdef DISABLE_USB_UBM_ID
   return;
 #else
-  (*isr[USB_UBM_VECT])(obj[USB_UBM_VECT]);
+  (*isr[USB_UBM_ID])(obj[USB_UBM_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -539,28 +539,28 @@ void __interrupt isr_d::isrUSB_UBM(void)
 #pragma vector=TIMER0_A1_VECTOR
 void __interrupt isr_d::isrTA0_1(void)
 {
-#ifdef DISABLE_TA0_1_VECT
+#ifdef DISABLE_TA0_1_ID
   return;
 #else
   switch (__even_in_range(TA0IV, TA0IV_TA0IFG))
   {
     case TA0IV_TA0IFG:
-      (*isr[TA0_IFG_VECT])(obj[TA0_IFG_VECT]);
+      (*isr[TA0_IFG_ID])(obj[TA0_IFG_ID]);
       break;
     case TA0IV_6:
     case TA0IV_5:
       break;
     case TA0IV_TA0CCR4:
-      (*isr[TA0_4_VECT])(obj[TA0_4_VECT]);
+      (*isr[TA0_4_ID])(obj[TA0_4_ID]);
       break;
     case TA0IV_TA0CCR3:
-      (*isr[TA0_3_VECT])(obj[TA0_3_VECT]);
+      (*isr[TA0_3_ID])(obj[TA0_3_ID]);
       break;
     case TA0IV_TA0CCR2:
-      (*isr[TA0_2_VECT])(obj[TA0_2_VECT]);
+      (*isr[TA0_2_ID])(obj[TA0_2_ID]);
       break;
     case TA0IV_TA0CCR1:
-      (*isr[TA0_1_VECT])(obj[TA0_1_VECT]);
+      (*isr[TA0_1_ID])(obj[TA0_1_ID]);
       break;
     case TA0IV_NONE:
       break;
@@ -587,10 +587,10 @@ void __interrupt isr_d::isrTA0_1(void)
 #pragma vector=TIMER0_A0_VECTOR
 void __interrupt isr_d::isrTA0_0(void)
 {
-#ifndef ENABLE_TA0_0_VECT
+#ifndef ENABLE_TA0_0_ID
   return;
 #else
-  (*isr[TA0_0_VECT])(obj[TA0_0_VECT]);
+  (*isr[TA0_0_ID])(obj[TA0_0_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -611,10 +611,10 @@ void __interrupt isr_d::isrTA0_0(void)
 #pragma vector=ADC10_VECTOR
 void __interrupt isr_d::isrADC10(void)
 {
-#ifdef DISABLE_ADC10_VECT
+#ifdef DISABLE_ADC10_ID
   return;
 #else
-  (*isr[ADC10_VECT])(obj[ADC10_VECT]);
+  (*isr[ADC10_ID])(obj[ADC10_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -635,10 +635,10 @@ void __interrupt isr_d::isrADC10(void)
 #pragma vector=USCI_B0_VECTOR
 void __interrupt isr_d::isrUSCI_B0(void)
 {
-#ifdef DISABLE_USCI_B0_VECT
+#ifdef DISABLE_USCI_B0_ID
   return;
 #else
-  (*isr[USCI_B0_VECT])(obj[USCI_B0_VECT]);
+  (*isr[USCI_B0_ID])(obj[USCI_B0_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -659,10 +659,10 @@ void __interrupt isr_d::isrUSCI_B0(void)
 #pragma vector=USCI_A0_VECTOR
 void __interrupt isr_d::isrUSCI_A0(void)
 {
-#ifdef DISABLE_USCI_A0_VECT
+#ifdef DISABLE_USCI_A0_ID
   return;
 #else
-  (*isr[USCI_A0_VECT])(obj[USCI_A0_VECT]);
+  (*isr[USCI_A0_ID])(obj[USCI_A0_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -683,10 +683,10 @@ void __interrupt isr_d::isrUSCI_A0(void)
 #pragma vector=WDT_VECTOR
 void __interrupt isr_d::isrWDT(void)
 {
-#ifndef ENABLE_WDT_VECT
+#ifndef ENABLE_WDT_ID
   return;
 #else
-  (*isr[WDT_VECT])(obj[WDT_VECT]);
+  (*isr[WDT_ID])(obj[WDT_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -707,31 +707,31 @@ void __interrupt isr_d::isrWDT(void)
 #pragma vector=TIMER0_B1_VECTOR
 void __interrupt isr_d::isrTB0_1(void)
 {
-#ifdef DISABLE_TB0_1_VECT
+#ifdef DISABLE_TB0_1_ID
   return;
 #else
   switch (__even_in_range(TB0IV, TB0IV_TB0IFG))
   {
     case TB0IV_TB0IFG:
-      (*isr[TB0_IFG_VECT])(obj[TB0_IFG_VECT]);
+      (*isr[TB0_IFG_ID])(obj[TB0_IFG_ID]);
       break;
     case TB0IV_6:
-      (*isr[TB0_6_VECT])(obj[TB0_6_VECT]);
+      (*isr[TB0_6_ID])(obj[TB0_6_ID]);
       break;
     case TB0IV_5:
-      (*isr[TB0_5_VECT])(obj[TB0_5_VECT]);
+      (*isr[TB0_5_ID])(obj[TB0_5_ID]);
       break;
     case TB0IV_4:
-      (*isr[TB0_4_VECT])(obj[TB0_4_VECT]);
+      (*isr[TB0_4_ID])(obj[TB0_4_ID]);
       break;
     case TB0IV_3:
-      (*isr[TB0_3_VECT])(obj[TB0_3_VECT]);
+      (*isr[TB0_3_ID])(obj[TB0_3_ID]);
       break;
     case TB0IV_TB1CCR2:
-      (*isr[TB0_2_VECT])(obj[TB0_2_VECT]);
+      (*isr[TB0_2_ID])(obj[TB0_2_ID]);
       break;
     case TB0IV_TB1CCR1:
-      (*isr[TB0_1_VECT])(obj[TB0_1_VECT]);
+      (*isr[TB0_1_ID])(obj[TB0_1_ID]);
       break;
     case TB0IV_NONE:
       break;
@@ -758,10 +758,10 @@ void __interrupt isr_d::isrTB0_1(void)
 #pragma vector=TIMER0_B0_VECTOR
 void __interrupt isr_d::isrTB0_0(void)
 {
-#ifdef DISABLE_TB0_0_VECT
+#ifdef DISABLE_TB0_0_ID
   return;
 #else
-  (*isr[TB0_0_VECT])(obj[TB0_0_VECT]);
+  (*isr[TB0_0_ID])(obj[TB0_0_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -782,10 +782,10 @@ void __interrupt isr_d::isrTB0_0(void)
 #pragma vector=COMP_B_VECTOR
 void __interrupt isr_d::isrCOMP_B(void)
 {
-#ifdef DISABLE_COMP_B_VECT
+#ifdef DISABLE_COMP_B_ID
   return;
 #else
-  (*isr[COMP_B_VECT])(obj[COMP_B_VECT]);
+  (*isr[COMP_B_ID])(obj[COMP_B_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -806,10 +806,10 @@ void __interrupt isr_d::isrCOMP_B(void)
 #pragma vector=UNMI_VECTOR
 void __interrupt isr_d::isrUNMI(void)
 {
-#ifdef DISABLE_UNMI_VECT
+#ifdef DISABLE_UNMI_ID
   return;
 #else
-  (*isr[UNMI_VECT])(obj[UNMI_VECT]);
+  (*isr[UNMI_ID])(obj[UNMI_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -830,10 +830,10 @@ void __interrupt isr_d::isrUNMI(void)
 #pragma vector=SYSNMI_VECTOR
 void __interrupt isr_d::isrSYSNMI(void)
 {
-#ifdef DISABLE_SYSNMI_VECT
+#ifdef DISABLE_SYSNMI_ID
   return;
 #else
-  (*isr[SYSNMI_VECT])(obj[SYSNMI_VECT]);
+  (*isr[SYSNMI_ID])(obj[SYSNMI_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
@@ -850,11 +850,11 @@ void __interrupt isr_d::isrSYSNMI(void)
 }
 #endif
 
-#ifdef ENABLE_RESET_VECT
+#ifdef ENABLE_RESET_ID
 #pragma vector=RESET_VECTOR
 void __interrupt isr_d::isrRESET(void)
 {
-  (*isr[RESET_VECT])(obj[RESET_VECT]);
+  (*isr[RESET_ID])(obj[RESET_ID]);
   #ifdef ENABLE_SR_CHECKING
   if (clr_sr)
   {
