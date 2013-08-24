@@ -76,6 +76,13 @@
 // Define the number of cycles to delay for DCO settling @32kHz -- worst case
 #define DCO_SETTLE_CYCLES_32K          (32 * 32)
 
+// Define the timer we're going to allocate to the clock...this is important
+// because the other CCRs for this TA are going to be available for allocation
+// by other libraries
+#define CLK_TIMERA                     ta0_0
+// Total number of CCRs for this timerA (excluding CCR0)
+#define CLK_AUX_TIMERS                 4
+
 // Default return type for clock module functions
 typedef enum _clk_ret_t
 {
@@ -193,6 +200,8 @@ public:
     cfgCLK(CLK_SMCLK, CLK_SEL_DCO, CLK_DIV_1);
   };
 
+  msp_timerA_t     allocTimer(void);
+
   clk_ret_t cfgCLK(clk_t clk, clk_sel_t sel, clk_div_t div);
   clk_ret_t cfgSysFreq(uint32_t  cfg_sys_freq,
                        clk_sel_t cfg_fll_selref = CLK_SEL_REFO,
@@ -239,12 +248,16 @@ public:
 
   static uint16_t inline getMSTicks(void) { return ticks_in_a_ms; };
 
+  bool             releaseTimer(msp_timerA_t timer);
+
 private:
   uint32_t         sys_freq;
   uint32_t         fll_freq;
 
   // TimerA used with the clock library
   static msp_timerA_t timer;
+  static const msp_timerA_t aux_timer[CLK_AUX_TIMERS];
+  static bool               aux_timer_in_use[CLK_AUX_TIMERS];
 
   // Number of ticks in a ms
   static uint16_t  ticks_in_a_ms;

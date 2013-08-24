@@ -23,8 +23,34 @@ uint16_t clock::ticks_in_a_ms = 0;
 uint32_t clock::uptime_count = 0;
 uint16_t clock::uptime_interval = 0;
 uint16_t clock::uptime_interval_count = 0;
-// Commit Timer A0 CCR0 to the clock library
-msp_timerA_t clock::timer = ta0_0;
+// Commit a timerA CCR0 to the clock library
+msp_timerA_t clock::timer = CLK_TIMERA;
+
+const msp_timerA_t clock::aux_timer[CLK_AUX_TIMERS] = {
+  ta0_1, ta0_2, ta0_3, ta0_4 };
+bool clock::aux_timer_in_use[CLK_AUX_TIMERS] = {
+  false, false, false, false };
+
+// Allocate one of the auxiliary CCRs for use by another library
+msp_timerA_t clock::allocTimer(void)
+{
+  uint8_t i;
+  // Loop through the timer CCRs
+  for (i=(CLK_AUX_TIMERS-1); i>0; --i)
+  {
+    // If one isn't in use
+    if (!aux_timer_in_use[i])
+    {
+      // Mark it used
+      aux_timer_in_use[i] = true;
+      // Return it
+      return aux_timer[i];
+    }
+  }
+
+  // Unable to return a valid timer -- none are available
+  return MSP_TIMERA_SIZE;
+}
 
 // Configure CLK sel and divider -> ACLK, MCLK, SMCLK
 clk_ret_t clock::cfgCLK(clk_t clk, clk_sel_t sel, clk_div_t div)
@@ -879,6 +905,26 @@ clk_t clock::getUpTimeClk(void)
     default:
       return ((clk_t) 0xDEAD);
   }
+}
+
+// Release a timer that was previously allocated from the clock's CCR pool
+bool clock::releaseTimer(msp_timerA_t timer)
+{
+  uint8_t i;
+  // Loop through all the CCRs
+  for (i=(CLK_AUX_TIMERS-1); i>0; --i)
+  {
+    // If we find the timer to release
+    if (aux_timer[i] == timer)
+    {
+      // Release it
+      aux_timer_in_use[i] = false;
+      // Return true to indicate the timer was properly released
+      return true;
+    }
+  }
+  // Failed to release the timer
+  return false;
 }
 
 #pragma vector=WDT_VECTOR
