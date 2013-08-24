@@ -48,7 +48,7 @@ public:
     pinIfgClear(pin);
     pinIeEnable(pin);
     // Install the switch ISR
-    isr_d::installISR(isr_d::pinVector(pin), this, &ISR);
+    isr_d::install(isr_d::pinVector(pin), this, &ISR);
   };
 private:
   void       (*callback)(void);

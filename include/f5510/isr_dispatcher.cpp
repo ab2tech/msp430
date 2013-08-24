@@ -44,7 +44,7 @@ isr_t isr_d::defaultHandler(void *pObj)
   return;
 }
 
-void isr_d::installISR(isr_vector_t vect,
+void isr_d::install(isr_vector_t vect,
     void *pObject, isr_t (*pCallback)(void* pObj))
 {
   isr[vect] = pCallback;
@@ -150,7 +150,7 @@ isr_vector_t isr_d::taVector(msp_timerA_t timer)
   }
 }
 
-void isr_d::uninstallISR(isr_vector_t vect)
+void isr_d::uninstall(isr_vector_t vect)
 {
   isr[vect] = &defaultHandler;
   obj[vect] = (void *) 0;

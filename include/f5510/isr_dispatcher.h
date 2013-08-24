@@ -253,7 +253,7 @@ public:
   // object pointer to the proper type. The reason for this limitation is due
   // to the structure of static versus non-static function calls and the
   // dependency of various callbacks on their respective object.
-  static void installISR(isr_vector_t vect,
+  static void install(isr_vector_t vect,
       void *pObject, isr_t (*pCallback)(void* pObj));
 
   // Return the Pin interrupt vector corresponding to the given pin
@@ -263,7 +263,7 @@ public:
   static isr_vector_t taVector(msp_timerA_t timer);
 
   // Uninstall ISR -- remove installed ISR for a given ISR vector
-  static void uninstallISR(isr_vector_t vect);
+  static void uninstall(isr_vector_t vect);
 
 private:
   // We need to check for any potential SR changes before exiting each ISR.

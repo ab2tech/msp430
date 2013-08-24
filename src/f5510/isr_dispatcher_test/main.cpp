@@ -16,7 +16,7 @@ int main (void)
   // Make the LED PIN and output
   pinOutput(LED_PIN);
   // Install the TA1_0 ISR to toggle the LED
-  isr_d::installISR(isr_d::taVector(ta1_0), (void *) 0, &toggleLED);
+  isr_d::install(isr_d::taVector(ta1_0), (void *) 0, &toggleLED);
   // Configure timerA for up mode and assign ACLK as its source
   set(tactl(timer), (TASSEL__ACLK | MC__UP | TACLR));
   // Enable the timer interrupt
