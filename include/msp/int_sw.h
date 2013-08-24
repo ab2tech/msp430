@@ -57,5 +57,6 @@ private:
 
   void inline  clearIFG(void) { pinIfgClear(pin); };
   void inline  event(void) { (*callback)(); };
+  void inline  installCallback(void (*func)(void)) { callback = func; };
   static isr_t ISR(void *sw);
 };
