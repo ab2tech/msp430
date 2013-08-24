@@ -186,6 +186,11 @@ void inline pinIesHighToLow(msp_pin_t pin) {
 // WARNING: Does nothing for pins that don't have IES
 void inline pinIesLowToHigh(msp_pin_t pin) {
   if (pin < INT_PORT_MAX) off(ies(pin), bit(pin)); }
+// pinIes - change the interrupt edge as specified
+// WARNING: Does nothing for pins that don't have IES
+void inline pinIes(msp_pin_t pin, bool edge) {
+  if (edge) pinIesHighToLow(pin);
+  else pinIesLowToHigh(pin); }
 #endif
 #ifndef DISABLE_PFW_IE
 // pinIeEnable - enable the given pin's interrupt

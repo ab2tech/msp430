@@ -38,11 +38,7 @@ public:
     // For high-to-low detection, we want the pin to have its pullup enabled
     // Use the pinPull API for this to make the source cleaner :)
     pinPull(pin, edge);
-    // Configure the interrupt edge as appropriate
-    if (edge == INT_EDGE_H2L)
-      pinIesHighToLow(pin);
-    else
-      pinIesLowToHigh(pin);
+    pinIes(pin, edge);
 
     // Enable the pin's interrupt and clear its interrupt flag
     pinIfgClear(pin);
