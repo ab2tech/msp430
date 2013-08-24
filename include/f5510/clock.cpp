@@ -724,14 +724,14 @@ void clock::clk2PinDisable(clk_pin_t pin)
 {
   // Turn the PXSEL bit off for this pin, but don't change other settings (we
   // don't know what the user might be expecting)
-  pinSelOff(pin);
+  pinSelOff((msp_pin_t) pin);
 }
 
 void clock::clk2PinEnable(clk_pin_t pin)
 {
   // Enable the pin as an output and enable its corresponding PXSEL bit
-  pinOutput(pin);
-  pinSelOn(pin);
+  pinOutput((msp_pin_t) pin);
+  pinSelOn((msp_pin_t) pin);
 }
 
 clk_div_t clock::clk2PinGetAclkDivider(void)
