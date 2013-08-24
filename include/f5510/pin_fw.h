@@ -168,26 +168,43 @@ void inline pinDsReduced(msp_pin_t pin) { off(ds(pin), bit(pin)); }
 #endif
 #ifndef DISABLE_PFW_SEL
 // pinSelOn - enable the given pin's corresponding sel bit
-void inline pinSelOn(msp_pin_t pin) { on(sel(pin), bit(pin)); }
+// WARNING: Does nothing for pins that don't have SEL
+void inline pinSelOn(msp_pin_t pin) {
+  if (pin < SEL_PORT_MAX) on(sel(pin), bit(pin)); }
 // pinSelOff - disable the given pin's corresponding sel bit
-void inline pinSelOff(msp_pin_t pin) { off(sel(pin), bit(pin)); }
+// WARNING: Does nothing for pins that don't have SEL
+void inline pinSelOff(msp_pin_t pin) {
+  if (pin < SEL_PORT_MAX) off(sel(pin), bit(pin)); }
 #endif
 #ifndef DISABLE_PFW_IES
 // pinIesHighToLow - make the interrupt edge high-to-low
-void inline pinIesHighToLow(msp_pin_t pin) { on(ies(pin), bit(pin)); }
+// WARNING: Does nothing for pins that don't have IES
+void inline pinIesHighToLow(msp_pin_t pin) {
+  if (pin < INT_PORT_MAX) on(ies(pin), bit(pin)); }
 // pinIesLowToHigh - make the interrupt edge low-to-high
-void inline pinIesLowToHigh(msp_pin_t pin) { off(ies(pin), bit(pin)); }
+// WARNING: Does nothing for pins that don't have IES
+void inline pinIesLowToHigh(msp_pin_t pin) {
+  if (pin < INT_PORT_MAX) off(ies(pin), bit(pin)); }
 #endif
 #ifndef DISABLE_PFW_IE
 // pinIeEnable - enable the given pin's interrupt
-void inline pinIeEnable(msp_pin_t pin) { on(ie(pin), bit(pin)); }
+// WARNING: Does nothing for pins that don't have IE
+void inline pinIeEnable(msp_pin_t pin) {
+  if (pin < INT_PORT_MAX) on(ie(pin), bit(pin)); }
 // pinIeDisable - disable the given pin's interrupt
-void inline pinIeDisable(msp_pin_t pin) { off(ie(pin), bit(pin)); }
+// WARNING: Does nothing for pins that don't have IE
+void inline pinIeDisable(msp_pin_t pin) {
+  if (pin < INT_PORT_MAX) off(ie(pin), bit(pin)); }
 #endif
 #ifndef DISABLE_PFW_IFG
 // pinIfgRead - read the pin's interrupt flag
-bool inline pinIfgRead(msp_pin_t pin) { return (bool) read(ifg(pin), bit(pin)); }
+// WARNING: Does nothing for pins that don't have IFG
+bool inline pinIfgRead(msp_pin_t pin) {
+  if (pin < INT_PORT_MAX) return (bool) read(ifg(pin), bit(pin));
+  else return false; }
 // pinIfgClear - clear the given pin's interrupt flag
-void inline pinIfgClear(msp_pin_t pin) { off(ifg(pin), bit(pin)); }
+// WARNING: Does nothing for pins that don't have IFG
+void inline pinIfgClear(msp_pin_t pin) {
+  if (pin < INT_PORT_MAX) off(ifg(pin), bit(pin)); }
 #endif
 // END pin operation functions
