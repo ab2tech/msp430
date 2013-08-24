@@ -50,6 +50,7 @@
   } msp_pin_t;
 #endif
 
+// Define the maximum pin for each port
 #define PORT1 p1_7
 #ifdef MSP430F5510_EXT
 #define PORT2 p2_7
@@ -126,9 +127,9 @@ extern const uint16_t msp_pin_base[MSP_PIN_SIZE];
 // pinRead - reads a given pin's in bit
 bool inline pinRead(msp_pin_t pin) { return (bool) read(in(pin), bit(pin)); }
 
-// pinOn - turns a given pin's corresponding dir bit on
+// pinOn - turns a given pin's corresponding out bit on
 void inline pinOn(msp_pin_t pin) { on(out(pin), bit(pin)); }
-// pinOff - turns a given pin's corresponding dir bit off
+// pinOff - turns a given pin's corresponding out bit off
 void inline pinOff(msp_pin_t pin) { off(out(pin), bit(pin)); }
 // pinToggle - toggles a given pin's corresponding out bit
 void inline pinToggle(msp_pin_t pin) { toggle(out(pin), bit(pin)); }
@@ -146,9 +147,9 @@ void inline pinOutput(msp_pin_t pin) { on(dir(pin), bit(pin)); }
 void inline pinInput(msp_pin_t pin) { off(dir(pin), bit(pin)); }
 
 #ifndef DISABLE_PFW_REN
-// pinRenOn - enables the pullup resistor for the given pin
+// pinRenOn - enables the REN bit for the given pin
 void inline pinRenOn(msp_pin_t pin) { on(ren(pin), bit(pin)); }
-// pinRenOff - disables the pullup resistor for the given pin
+// pinRenOff - disables the REN bit for the given pin
 void inline pinRenOff(msp_pin_t pin) { off(ren(pin), bit(pin)); }
 // pinPullup - enables the pin's pullup resistor
 void inline pinPullup(msp_pin_t pin) {
