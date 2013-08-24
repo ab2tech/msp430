@@ -20,7 +20,7 @@
 #include "msp/ab2.h"
 #include <msp430f5510.h>
 
-typedef const enum
+typedef enum
 {
   ta0_0, ta0_1, ta0_2, ta0_3, ta0_4,
   ta1_0, ta1_1, ta1_2,
