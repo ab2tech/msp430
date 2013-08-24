@@ -179,13 +179,8 @@ class clock
 {
 public:
   // Configure only system frequency, or leave it as default (F_25MHz)
-  explicit clock(uint32_t sys_freq = F_25MHz) :
-    sys_freq(F_2MHz),
-    uptime_is_enabled(false),
-    xt1_is_enabled(false),
-    xt2_is_enabled(false),
-    xt1_freq(0),
-    xt2_freq(0) {
+  clock(uint32_t sys_freq = F_25MHz)
+  {
     // WDT *must* be disabled before proceeding or we'll get reset waiting for
     // the clock to settle
     disableWDT();
@@ -198,104 +193,106 @@ public:
     cfgCLK(CLK_ACLK, CLK_SEL_REFO, CLK_DIV_1);
     cfgCLK(CLK_MCLK, CLK_SEL_DCO, CLK_DIV_1);
     cfgCLK(CLK_SMCLK, CLK_SEL_DCO, CLK_DIV_1);
-  };
+  }
 
-  msp_timerA_t     allocTimer(void);
+  static msp_timerA_t       allocTimer(void);
 
-  clk_ret_t cfgCLK(clk_t clk, clk_sel_t sel, clk_div_t div);
-  clk_ret_t cfgSysFreq(uint32_t  cfg_sys_freq,
-                       clk_sel_t cfg_fll_selref = CLK_SEL_REFO,
-                       uint32_t  cfg_fll_freq   = F_32kHz,
-                       clk_div_t cfg_fll_refdiv = CLK_DIV_1,
-                       clk_div_t cfg_fll_d_div  = CLK_DIV_2);
-  clk_ret_t        cfgUpTime(clk_uptime_clk_t uptime_clk = CLK_UPTIME_CLK_ACLK);
-  clk_ret_t        cfgXT1(uint32_t cfg_xt1_freq,
-                          clk_xt1_cap_t cfg_xt1_cap,
-                          clk_xt_drive_t drive = CLK_XT_DRIVE_AUTO);
-  clk_ret_t        cfgXT2(uint32_t cfg_xt2_freq,
-                   clk_xt_drive_t drive = CLK_XT_DRIVE_AUTO);
+  static clk_ret_t          cfgCLK(clk_t clk, clk_sel_t sel, clk_div_t div);
+  static clk_ret_t          cfgSysFreq(uint32_t  cfg_sys_freq,
+                                       clk_sel_t cfg_fll_selref = CLK_SEL_REFO,
+                                       uint32_t  cfg_fll_freq   = F_32kHz,
+                                       clk_div_t cfg_fll_refdiv = CLK_DIV_1,
+                                       clk_div_t cfg_fll_d_div  = CLK_DIV_2);
+  static clk_ret_t          cfgUpTime(clk_uptime_clk_t uptime_clk
+                                                      = CLK_UPTIME_CLK_ACLK);
+  static clk_ret_t          cfgXT1(uint32_t cfg_xt1_freq,
+                                   clk_xt1_cap_t cfg_xt1_cap,
+                                   clk_xt_drive_t drive = CLK_XT_DRIVE_AUTO);
+  static clk_ret_t          cfgXT2(uint32_t cfg_xt2_freq,
+                                   clk_xt_drive_t drive = CLK_XT_DRIVE_AUTO);
 
-  void             clk2PinDisable(clk_pin_t pin);
-  void             clk2PinEnable(clk_pin_t pin);
-  clk_div_t        clk2PinGetAclkDivider(void);
-  void             clk2PinSetAclkDivider(clk_div_t div);
+  static void               clk2PinDisable(clk_pin_t pin);
+  static void               clk2PinEnable(clk_pin_t pin);
+  static clk_div_t          clk2PinGetAclkDivider(void);
+  static void               clk2PinSetAclkDivider(clk_div_t div);
 
-  static void      delayS(uint32_t s);
-  static void      delayMS(uint32_t ms);
+  static void               delayS(uint32_t s);
+  static void               delayMS(uint32_t ms);
 
-  void             disableUptime(void);
+  static void               disableUptime(void);
 
-  void             disableXT1(void);
-  void             disableXT2(void);
+  static void               disableXT1(void);
+  static void               disableXT2(void);
 
-  clk_div_t        getCLKDiv(clk_t clk);
-  clk_sel_t        getCLKSel(clk_t clk);
+  static clk_div_t          getCLKDiv(clk_t clk);
+  static clk_sel_t          getCLKSel(clk_t clk);
 
-  clk_div_t        getFLLRefDiv(void);
-  clk_sel_t        getFLLSelRef(void);
-  clk_div_t        getFLLD(void);
-  uint16_t         getFLLN(void);
+  static clk_div_t          getFLLRefDiv(void);
+  static clk_sel_t          getFLLSelRef(void);
+  static clk_div_t          getFLLD(void);
+  static uint16_t           getFLLN(void);
 
-  uint32_t         getUpTime(void);
+  static uint32_t           getUpTime(void);
 
-  void inline      disableSMCLK(void)     { on (UCSCTL6, SMCLKOFF); };
-  void inline      enableSMCLK(void)      { off(UCSCTL6, SMCLKOFF); };
+  static void inline        disableSMCLK(void)     { on (UCSCTL6, SMCLKOFF); };
+  static void inline        enableSMCLK(void)      { off(UCSCTL6, SMCLKOFF); };
 
-  void inline      disableWDT(void)       { set(WDTCTL, (WDTPW | WDTHOLD)); };
+  static void inline        disableWDT(void)       { set(WDTCTL,
+                                                         (WDTPW | WDTHOLD)); };
 
-  uint32_t         getFLLFreq(void)       { return fll_freq; };
-  uint32_t         getSysFreq(void)       { return sys_freq; };
+  static uint32_t           getFLLFreq(void)       { return fll_freq; };
+  static uint32_t           getSysFreq(void)       { return sys_freq; };
 
-  static uint16_t inline getMSTicks(void) { return ticks_in_a_ms; };
+  static uint16_t inline    getMSTicks(void)       { return ticks_in_a_ms; };
 
-  bool             releaseTimer(msp_timerA_t timer);
+  static bool               releaseTimer(msp_timerA_t timer);
 
 private:
-  uint32_t         sys_freq;
-  uint32_t         fll_freq;
+  static uint32_t           sys_freq;
+  static uint32_t           fll_freq;
 
   // TimerA used with the clock library
-  static msp_timerA_t timer;
+  static msp_timerA_t       timer;
   static const msp_timerA_t aux_timer[CLK_AUX_TIMERS];
   static bool               aux_timer_in_use[CLK_AUX_TIMERS];
 
   // Number of ticks in a ms
-  static uint16_t  ticks_in_a_ms;
+  static uint16_t           ticks_in_a_ms;
 
   // Delay counter variables
-  static uint32_t  s_count;
-  static uint32_t  ms_count;
+  static uint32_t           s_count;
+  static uint32_t           ms_count;
 
   // State variable for uptime counter
-  bool             uptime_is_enabled;
+  static bool               uptime_is_enabled;
 
   // Uptime counter -- this is the uptime value in seconds -- has to be static
   // since we need to modify it in our interrupt -- chose 32-bit to maximize
   // the uptime count capability without going too extreme. 32-bit provides 136
   // years of uptime tracking :)
-  static uint32_t  uptime_count;
+  static uint32_t           uptime_count;
   // Uptime interval -- has to be static since we need it in our interrupt --
   // chose 16-bit because the maximum value for us is 762 @25MHz
-  static uint16_t  uptime_interval;
+  static uint16_t           uptime_interval;
   // Uptime interval counter -- has to be static since we need it in our
   // interrupt
-  static uint16_t  uptime_interval_count;
+  static uint16_t           uptime_interval_count;
 
   // State variables for XT1 & XT2 initialization tracking
-  bool             xt1_is_enabled;
-  bool             xt2_is_enabled;
+  static bool               xt1_is_enabled;
+  static bool               xt2_is_enabled;
 
   // Keep track of the XT1 & XT2 frequency
-  uint32_t         xt1_freq;
-  uint32_t         xt2_freq;
+  static uint32_t           xt1_freq;
+  static uint32_t           xt2_freq;
 
-  void             cfgDelay(void);
-  clk_ret_t        cfgVcore(clk_vcore_t level);
-  clk_ret_t        cfgVcoreDown(uint8_t level);
-  clk_ret_t        cfgVcoreUp(uint8_t level);
+  static void               cfgDelay(void);
+  static clk_ret_t          cfgVcore(clk_vcore_t level);
+  static clk_ret_t          cfgVcoreDown(uint8_t level);
+  static clk_ret_t          cfgVcoreUp(uint8_t level);
 
-  clk_t            getUpTimeClk(void);
+  static clk_t              getUpTimeClk(void);
 
-  static void __interrupt delayISR(void);
-  static void __interrupt uptime_increment(void);
+  static void __interrupt   delayISR(void);
+  static void __interrupt   uptime_increment(void);
 };

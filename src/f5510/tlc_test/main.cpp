@@ -7,9 +7,9 @@ clock clk = clock();
 
 int main (void)
 {
-  tlc5925 tlc_red = tlc5925(&clk, p4_0);
-  tlc5925 tlc_green = tlc5925(&clk, p4_2);
-  tlc5925 tlc_blue = tlc5925(&clk, p4_6);
+  tlc5925 tlc_red = tlc5925(p4_0);
+  tlc5925 tlc_green = tlc5925(p4_2);
+  tlc5925 tlc_blue = tlc5925(p4_6);
   uint16_t ch = TLC5925_CH00;
   for (;;) //ever
   {

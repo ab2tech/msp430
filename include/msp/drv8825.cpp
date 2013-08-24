@@ -243,10 +243,10 @@ void drv8825::reset(void)
 {
   off(step_data, DRV8825_nRESET);
   update();
-  clk->delayMS(1);
+  clock::delayMS(1);
   on (step_data, DRV8825_nRESET);
   update();
-  clk->delayMS(1);
+  clock::delayMS(1);
 }
 
 void drv8825::reverseDir(void)
@@ -304,7 +304,7 @@ void drv8825::sleep(void)
 {
   off(step_data, DRV8825_nSLEEP);
   update();
-  clk->delayMS(1);
+  clock::delayMS(1);
 }
 
 uint16_t drv8825::step(void)
@@ -318,10 +318,10 @@ uint16_t drv8825::step(void)
 
   on (step_data, DRV8825_STEP);
   update();
-  clk->delayMS(1);
+  clock::delayMS(1);
   off(step_data, DRV8825_STEP);
   update();
-  clk->delayMS(1);
+  clock::delayMS(1);
 
   return (location);
 }
@@ -335,5 +335,5 @@ void drv8825::wake(void)
 {
   on (step_data, DRV8825_nSLEEP);
   update();
-  clk->delayMS(1);
+  clock::delayMS(1);
 }

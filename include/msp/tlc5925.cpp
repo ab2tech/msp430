@@ -29,7 +29,7 @@ void tlc5925::channelScanDown(uint16_t scan_quantity)
     {
       write(next_ch);
       next_ch = rlc(next_ch);
-      clk->delayMS(anim_delay);
+      clock::delayMS(anim_delay);
     }
   }
 }
@@ -47,7 +47,7 @@ void tlc5925::channelScanUp(uint16_t scan_quantity)
     {
       write(next_ch);
       next_ch = rrc(next_ch);
-      clk->delayMS(anim_delay);
+      clock::delayMS(anim_delay);
     }
   }
 }
@@ -75,12 +75,12 @@ void tlc5925::flash(uint16_t pulse_quantity, uint16_t channel_data)
       outputEnable();
     else
       restore();
-    clk->delayMS(anim_delay);
+    clock::delayMS(anim_delay);
     if (oe != MSP_PIN_SIZE)
       outputDisable();
     else
       clear();
-    clk->delayMS(anim_delay);
+    clock::delayMS(anim_delay);
   }
 }
 
@@ -92,7 +92,7 @@ void tlc5925::shiftDown(uint16_t shift_quantity, uint16_t channel_data)
   {
     write(channel_data);
     channel_data = rlc(channel_data);
-    clk->delayMS(anim_delay);
+    clock::delayMS(anim_delay);
   }
 }
 
@@ -104,7 +104,7 @@ void tlc5925::shiftUp(uint16_t shift_quantity , uint16_t channel_data)
   {
     write(channel_data);
     channel_data = rrc(channel_data);
-    clk->delayMS(anim_delay);
+    clock::delayMS(anim_delay);
   }
 }
 

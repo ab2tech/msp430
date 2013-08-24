@@ -17,12 +17,22 @@
 #include "clock.h"
 
 // Static class variable initialization
+uint32_t clock::fll_freq = F_32kHz;
 uint32_t clock::ms_count = 0;
 uint32_t clock::s_count = 0;
+// This is the default system frequency of the F5510 at boot time, while MCLK
+// is set to DCODIV @ DCO/2 - F_1MHz
+uint32_t clock::sys_freq = F_2MHz;
 uint16_t clock::ticks_in_a_ms = 0;
 uint32_t clock::uptime_count = 0;
 uint16_t clock::uptime_interval = 0;
 uint16_t clock::uptime_interval_count = 0;
+bool     clock::uptime_is_enabled = 0;
+bool     clock::xt1_is_enabled = false;
+bool     clock::xt2_is_enabled = false;
+uint32_t clock::xt1_freq = 0;
+uint32_t clock::xt2_freq = 0;
+
 // Commit a timerA CCR0 to the clock library
 msp_timerA_t clock::timer = CLK_TIMERA;
 

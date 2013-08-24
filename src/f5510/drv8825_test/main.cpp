@@ -5,7 +5,7 @@
 // Initialize the clock
 clock clk = clock();
 // Initialize the DRV
-drv8825 stepper = drv8825(&clk, SPI_B1, pJ_3, STEPS_PER_REV);
+drv8825 stepper = drv8825(SPI_B1, pJ_3, STEPS_PER_REV);
 
 int main (void)
 {

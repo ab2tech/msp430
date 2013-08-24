@@ -72,11 +72,10 @@ typedef enum
 class tlc5925 : public shift_r
 {
 public:
-  tlc5925(clock *clk, msp_pin_t le, msp_pin_t oe = MSP_PIN_SIZE,
+  tlc5925(msp_pin_t le, msp_pin_t oe = MSP_PIN_SIZE,
           uint16_t anim_delay = 100, tlc5925_ch_t start_ch = TLC5925_CH00,
           spi_usci_t spi_usci = SPI_B1)
-    : clk(clk), anim_delay(anim_delay),
-      start_ch(start_ch), shift_r(spi_usci, le, oe) {};
+    : anim_delay(anim_delay), start_ch(start_ch), shift_r(spi_usci, le, oe) {};
 
   using shift_r::clear;
   using shift_r::restore;
@@ -107,7 +106,6 @@ public:
 private:
   // Animation delay (loop/pulse)
   uint16_t            anim_delay;
-  clock              *clk;
 
   // Allows modification of effective channel 0 index
   tlc5925_ch_t        start_ch;
