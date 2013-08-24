@@ -137,14 +137,14 @@ clk_ret_t clock::cfgCLK(clk_t clk, clk_sel_t sel, clk_div_t div)
     uptime_reconfigure = true;
   }
   // Disable the existing source
-  UCSCTL4 &= ~(CLK_DIVSEL_MAX << clk);
+  off(UCSCTL4, (CLK_DIVSEL_MAX << clk));
   // Configure the new source
-  UCSCTL4 |= (sel << clk);
+  on (UCSCTL4, (sel << clk));
 
   // Disable the existing divider
-  UCSCTL5 &= ~(CLK_DIVSEL_MAX << clk);
+  off(UCSCTL5, (CLK_DIVSEL_MAX << clk));
   // Configure the new divider
-  UCSCTL5 |= (div << clk);
+  on (UCSCTL5, (div << clk));
   // Re-configure uptime if we just disabled it
   if (uptime_reconfigure)
     cfgUpTime();
