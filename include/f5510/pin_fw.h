@@ -71,9 +71,23 @@
 #define INT_PORT_MAX (PORT2+1)
 #define SEL_PORT_MAX (PORT6+1)
 
+// MSP pin bit and base address lookup table definitions
 extern const uint8_t  msp_pin_bit[MSP_PIN_SIZE];
 extern const uint16_t msp_pin_base[MSP_PIN_SIZE];
 
+// Pin register access macros
+
+// NOTE: It would be good to restrict other files from using these macros.
+// However, that isn't possible while maintaining the 'inline' status of the
+// pin operation functions (they must be defined here in the header file, can't
+// be moved to the cpp file). Since the performance implications of not having
+// the pin operation functions inlined are tremendous, the need for pin
+// operation functions to be inlined trumps the need for these macros to be
+// inaccessible to other files.
+
+// WARNING: Users should observe the restriction that these macros only be used
+// in other files if absolutely necessary to avoid potential issues that can
+// occur from improper usage of the macros
 #define bit(pin) (msp_pin_bit[(pin)])
 #define PIN_OFFSET  0x00
 #define in(pin)  (REG8(msp_pin_base[(pin)] + PIN_OFFSET))
@@ -105,64 +119,66 @@ extern const uint16_t msp_pin_base[MSP_PIN_SIZE];
 #define PIFG_OFFSET 0x1C
 #define ifg(pin) (REG8(msp_pin_base[(pin)] + PIFG_OFFSET))
 #endif
+// END pin register access macros
 
-// Pin Macros
+// Pin operation function definitions
 //
 // pinRead - reads a given pin's in bit
-#define pinRead(pin) read(in((pin)), bit((pin)))
+bool inline pinRead(msp_pin_t pin) { return (bool) read(in(pin), bit(pin)); }
+
 // pinOn - turns a given pin's corresponding dir bit on
-#define pinOn(pin) on(out((pin)), bit((pin)))
+void inline pinOn(msp_pin_t pin) { on(out(pin), bit(pin)); }
 // pinOff - turns a given pin's corresponding dir bit off
-#define pinOff(pin) off(out((pin)), bit((pin)))
+void inline pinOff(msp_pin_t pin) { off(out(pin), bit(pin)); }
 // pinToggle - toggles a given pin's corresponding out bit
-#define pinToggle(pin) toggle(out((pin)), bit((pin)))
+void inline pinToggle(msp_pin_t pin) { toggle(out(pin), bit(pin)); }
 // pinPulse - pulses a given pin's corresponding out bit (turns it on, then
 //            turns it off in sequence)
-#define pinPulse(pin) pulse(out((pin)), bit((pin)))
+void inline pinPulse(msp_pin_t pin) { pulse(out(pin), bit(pin)); }
 // pinPulseDuration - pulses a given pin's corresponding out bit for the
 //                    specified duration
-#define pinPulseDuration(pin, duration) \
-  pulseDuration(out((pin)), bit((pin)), (duration))
+void inline pinPulseDuration(msp_pin_t pin, uint32_t duration) {
+  pulseDuration(out(pin), bit(pin), duration); }
 
 // pinOutput - makes the given pin an output
-#define pinOutput(pin) on(dir((pin)), bit((pin)))
+void inline pinOutput(msp_pin_t pin) { on(dir(pin), bit(pin)); }
 // pinInput - makes the given pin an input
-#define pinInput(pin) off(dir((pin)), bit((pin)))
+void inline pinInput(msp_pin_t pin) { off(dir(pin), bit(pin)); }
 
 #ifndef DISABLE_PFW_REN
-  // pinRenOn - enables the pullup resistor for the given pin
-  #define pinRenOn(pin) on(ren((pin)), bit((pin)))
-  // pinRenOff - disables the pullup resistor for the given pin
-  #define pinRenOff(pin) off(ren((pin)), bit((pin)))
+// pinRenOn - enables the pullup resistor for the given pin
+void inline pinRenOn(msp_pin_t pin) { on(ren(pin), bit(pin)); }
+// pinRenOff - disables the pullup resistor for the given pin
+void inline pinRenOff(msp_pin_t pin) { off(ren(pin), bit(pin)); }
 #endif
 #ifndef DISABLE_PFW_DS
-  // pinDsFull - drive the given pin at full strength
-  #define pinDsFull(pin) on(ds((pin)), bit((pin))
-  // pinDsReduced - drive the given pin at reduced strength
-  #define pinDsReduced(pin) off(ds((pin)), bit((pin))
+// pinDsFull - drive the given pin at full strength
+void inline pinDsFull(msp_pin_t pin) { on(ds(pin), bit(pin)); }
+// pinDsReduced - drive the given pin at reduced strength
+void inline pinDsReduced(msp_pin_t pin) { off(ds(pin), bit(pin)); }
 #endif
 #ifndef DISABLE_PFW_SEL
-  // pinSelOn - enable the given pin's corresponding sel bit
-  #define pinSelOn(pin) on(sel((pin)), bit((pin)))
-  // pinSelOff - disable the given pin's corresponding sel bit
-  #define pinSelOff(pin) off(sel((pin)), bit((pin)))
+// pinSelOn - enable the given pin's corresponding sel bit
+void inline pinSelOn(msp_pin_t pin) { on(sel(pin), bit(pin)); }
+// pinSelOff - disable the given pin's corresponding sel bit
+void inline pinSelOff(msp_pin_t pin) { off(sel(pin), bit(pin)); }
 #endif
 #ifndef DISABLE_PFW_IES
-  // pinIesHighToLow - make the interrupt edge high-to-low
-  #define pinIesHighToLow(pin) on(ies((pin)), bit((pin)))
-  // pinIesLowToHigh - make the interrupt edge low-to-high
-  #define pinIesLowToHigh(pin) off(ies((pin)), bit((pin)))
+// pinIesHighToLow - make the interrupt edge high-to-low
+void inline pinIesHighToLow(msp_pin_t pin) { on(ies(pin), bit(pin)); }
+// pinIesLowToHigh - make the interrupt edge low-to-high
+void inline pinIesLowToHigh(msp_pin_t pin) { off(ies(pin), bit(pin)); }
 #endif
 #ifndef DISABLE_PFW_IE
-  // pinIeEnable - enable the given pin's interrupt
-  #define pinIeEnable(pin) on(ie((pin)), bit((pin)))
-  // pinIeDisable - disable the given pin's interrupt
-  #define pinIeDisable(pin) off(ie((pin)), bit((pin)))
+// pinIeEnable - enable the given pin's interrupt
+void inline pinIeEnable(msp_pin_t pin) { on(ie(pin), bit(pin)); }
+// pinIeDisable - disable the given pin's interrupt
+void inline pinIeDisable(msp_pin_t pin) { off(ie(pin), bit(pin)); }
 #endif
 #ifndef DISABLE_PFW_IFG
-  // pinIfgRead - read the pin's interrupt flag
-  #define pinIfgRead(pin) read(ifg((pin)), bit((pin)))
-  // pinIfgClear - clear the given pin's interrupt flag
-  #define pinIfgClear(pin) off(ifg((pin)), bit((pin)))
+// pinIfgRead - read the pin's interrupt flag
+bool inline pinIfgRead(msp_pin_t pin) { return (bool) read(ifg(pin), bit(pin)); }
+// pinIfgClear - clear the given pin's interrupt flag
+void inline pinIfgClear(msp_pin_t pin) { off(ifg(pin), bit(pin)); }
 #endif
-// END Pin Macros
+// END pin operation functions
