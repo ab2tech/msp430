@@ -150,6 +150,15 @@ void inline pinInput(msp_pin_t pin) { off(dir(pin), bit(pin)); }
 void inline pinRenOn(msp_pin_t pin) { on(ren(pin), bit(pin)); }
 // pinRenOff - disables the pullup resistor for the given pin
 void inline pinRenOff(msp_pin_t pin) { off(ren(pin), bit(pin)); }
+// pinPullup - enables the pin's pullup resistor
+void inline pinPullup(msp_pin_t pin) {
+  pinInput(pin); pinRenOn(pin); pinOn(pin); }
+// pinPulldown - enables the pin's pulldown resistor
+void inline pinPulldown(msp_pin_t pin) {
+  pinInput(pin); pinRenOn(pin); pinOff(pin); }
+void inline pinPull(msp_pin_t pin, bool up) {
+  if (up) pinPullup(pin);
+  else pinPulldown(pin); }
 #endif
 #ifndef DISABLE_PFW_DS
 // pinDsFull - drive the given pin at full strength
