@@ -52,7 +52,9 @@ private:
   int_edge_t   edge;
 
   void inline  clearIFG(void) { pinIfgClear(pin); };
-  void inline  event(void) { (*callback)(); };
+  void inline  event(void) {
+    if (edge && !pinRead(pin)) (*callback)();
+    else if (!edge && pinRead(pin)) (*callback)(); };
   void inline  installCallback(void (*func)(void)) { callback = func; };
   static isr_t ISR(void *sw);
 };
