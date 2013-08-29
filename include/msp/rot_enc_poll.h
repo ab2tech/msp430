@@ -51,6 +51,7 @@ public:
     init();
   }
 
+  void   inline clearVal(void)             { val = 0; };
   int8_t inline getDelta(void)             { return delta; };
   int8_t inline getDivs(void)              { return divs;  };
   int8_t inline getLast(void)              { return last;  };

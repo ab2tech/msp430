@@ -48,6 +48,8 @@ void doBtn(void)
 
   divisor = (divs / NUM_TLC_LEDs);
   tlc_green.write(divisor);
+  enc.clearVal();
+  tlc_red.write((uint16_t)1);
 }
 
 void doEncoder(rot_enc_int *enc)

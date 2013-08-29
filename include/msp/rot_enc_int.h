@@ -50,6 +50,7 @@ public:
     isr_d::install(isr_d::pinVector(a), this, &ISR);
   }
 
+  void   inline clearVal(void)             { val = 0; };
   int8_t inline getDivs(void)              { return divs;  };
   int8_t inline getPrev(void)              { return prev;  };
   int8_t inline getVal(void)               { return val;   };
