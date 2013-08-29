@@ -103,6 +103,9 @@ public:
   void inline setAnimDelay(uint16_t delay) { set(anim_delay, delay); };
   // Re-configure start channel
   void inline setStartCh(tlc5925_ch_t ch)  { set(start_ch, ch); };
+  // Override the shift_r write function with one that calls the tlc5925 write
+  // function in case an 8 bit value is attempted to be written to the TLC
+  void inline write(uint8_t channel_data) { write((uint16_t) channel_data); };
 private:
   // Animation delay (loop/pulse)
   uint16_t            anim_delay;
