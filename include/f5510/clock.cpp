@@ -394,7 +394,7 @@ clk_ret_t clock::cfgUpTime(clk_uptime_clk_t uptime_clk)
     // accuracy won't be very good -- this is a limitation of the WDT clock
     // dividers that are available. Regardless, it's best to run the uptime
     // mechanism against a 32K clock to reduce unnecessary interrupt overhead.
-    // Thus, if this mechanism is important to the user, make the WDT clock 
+    // Thus, if this mechanism is important to the user, make the WDT clock
     // 32.768K.
     if (wdtfreq % F_32kHz)
     {
@@ -629,7 +629,7 @@ clk_ret_t clock::cfgXT1(uint32_t cfg_xt1_freq,
   else
   {
     // Make sure the XT1 LF bypass frequency being configured is within range
-    if (cfg_xt1_freq < XT1_LF_BYPASS_MIN_F || 
+    if (cfg_xt1_freq < XT1_LF_BYPASS_MIN_F ||
         cfg_xt1_freq > XT1_LF_BYPASS_MAX_F)
     {
       disableXT1();
@@ -644,13 +644,12 @@ clk_ret_t clock::cfgXT1(uint32_t cfg_xt1_freq,
   {
     // Clear XT1 fault flag
     off(UCSCTL7, XT1LFOFFG);
-    // CLear OFIFG fault flag
+    // Clear OFIFG fault flag
     off(SFRIFG1, OFIFG);
   } while (UCSCTL7 & XT1LFOFFG);
 
 
-  // Now that the the oscillator is stabilized, enable XT1 if we're not trying
-  // to go into bypass
+  // Now that the the oscillator is stabilized, handle drive strength if needed
   if (drive != CLK_XT_DRIVE_BYPASS)
   {
     // Still need to set the requested drive mode for LF
@@ -883,7 +882,7 @@ clk_sel_t clock::getFLLSelRef(void)
 
 clk_div_t clock::getFLLD(void)
 {
-  return ((clk_div_t)((UCSCTL2 & 
+  return ((clk_div_t)((UCSCTL2 &
           (CLK_DIVSEL_MAX << FLLD_OFFSET)) >> FLLD_OFFSET));
 }
 
