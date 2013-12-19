@@ -47,36 +47,50 @@
 #include <msp430g2553.h>
 #include "msp/ab2.h"
 #include "pin_fw.h"
-
-#define UART_PUTSF_BUF_SIZE 256
-
-// Define some common brclk_freq values
-typedef enum
-{
-  BRCLK_32kHz, BRCLK_1MHz, BRCLK_4MHz, BRCLK_8MHz, BRCLK_12MHz,
-  BRCLK_16MHz
-} brclk_freq_t;
+#include "isr_dispatcher.h"
 
 // Define the brclk_src options
 typedef enum
 {
-  BRSRC_ACLK, BRSRC_SMCLK
+  BRSRC_ACLK = UCSSEL_1,
+  BRSRC_SMCLK = UCSSEL_2
 } brclk_src_t;
 
-// Define the supported baud rates
 typedef enum
 {
-  B9600, B115200
-} br_t;
+  UART_A0 = 0,
+  NUM_UART_USCIs
+} uart_usci_t;
 
-#define UCA0RXD p1_1
-#define UCA0TXD p1_2
+class uart
+{
+public:
+  uart(uart_usci_t usci = UART_A0,
+       brclk_src_t brclk_src = BRSRC_SMCLK,
+       uint32_t brclk_freq = F_16MHz,
+       uint32_t br = 9600,
+       bool interrupt_enable = true,
+       bool oversample = false) : uart_usci(usci) {
 
-void uartInitDefaults(void);
-void uartInit(brclk_src_t brclk_src, brclk_freq_t brclk_freq, br_t br);
-char uartGetc(void);
-void uartPutc(char c);
-void uartPuts(char *buf);
-void uartPutsf(const char *fmt, ...);
-void uartNewLine(void);
+    switch (uart_usci)
+    {
+      case UART_A0:
+      case NUM_UART_USCIs:
+        uart_base_addr = USCI_A0_BASE;
+        break;
+      default:
+        _never_executed();
+    }
 
+    init(brclk_src, brclk_freq, br, ie, osample);
+  }
+  void init(brclk_src_t brclk_src, brclk_freq_t brclk_freq, br_t br);
+  char getc(void);
+  void putc(char c);
+  void puts(char *buf);
+  void putsf(const char *fmt, ...);
+  void newLine(void);
+private:
+  uart_usci_t uart_usci;
+  uint16_t    uart_base_addr;
+};
