@@ -54,6 +54,7 @@
                              off((out), (bits)); \
                            } while (0);
 
+#define NIBL_SIZE 4
 // Bit manipulation macros
 // Need this for rotate with carry macros
 #define BYTE_SIZE 8
