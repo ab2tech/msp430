@@ -13,7 +13,9 @@
 //    limitations under the License.
 
 // MSP430F5510 SPI Library
-// Simple SPI library for providing maximum re-use and ease of integration
+// Simple SPI library for providing maximum re-use and ease of integration.
+// Consider adding an ISR for receiving data if that is a significant use
+// case for the given implementation.
 // MSP430F5510 64-pin (RGC) or 80-pin BGA (ZQE) supported with definition of
 // MSP430F5510_EXT flag
 
@@ -27,7 +29,6 @@
 
 #define DEFAULT_DUMMY_SPI_CHAR 0xFF
 #define SPI_MIN_PRESCALER      1
-#define SPI_INPUT_ENABLED      true
 
 // Define the various SPI USCIs available on the 5510
 typedef enum
@@ -95,9 +96,9 @@ public:
   void           cfgMSB(void);
   void           disableSOMI(void);
   void           fallingEdge(void);
-  void           getFrame(uint8_t *buf, uint16_t size);
   uint16_t       getPrescaler(void);
   void           pulseClk(uint8_t times);
+  void           readFrame(uint8_t *buf, uint16_t size);
   void           risingEdge(void);
   void           setPrescaler(uint16_t prescaler);
   uint8_t        write(uint8_t byte);
@@ -108,7 +109,7 @@ public:
   // Release the state machine from reset
   void inline    exitReset(void)  { off(UC_CTL1(spi_base_addr), UCSWRST); };
   // Read a byte from the SPI slave
-  uint8_t inline get(void) { return (write(dummy_char)); };
+  uint8_t inline read(void) { return (write(dummy_char)); };
   // Set the dummy character to something other than default
   void inline    setDummyChar(uint8_t byte) { set(dummy_char, byte); };
   // Configure the minimum prescaler value (maximum frequency). For MSP430F55xx

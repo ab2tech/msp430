@@ -86,20 +86,6 @@ void spi::fallingEdge(void)
   exitReset();
 }
 
-void spi::getFrame(uint8_t *buf, uint16_t size)
-{
-  uint16_t i = 0;
-  for (i=0; i<size; i++)
-  {
-    // Write the dummy char to the TXBUF
-    set(UC_TXBUF(spi_base_addr), dummy_char);
-    // Wait for the transaction to complete
-    while (read(UC_IFG(spi_base_addr), UCRXIFG) == 0);
-    // Store the received value in the buffer
-    set(buf[i], UC_RXBUF(spi_base_addr));
-  }
-}
-
 // Get the current SPI prescaler
 uint16_t spi::getPrescaler(void)
 {
@@ -148,6 +134,21 @@ void spi::pulseClk(uint8_t times)
   }
   // Now turn the SPI functionality back on
   pinSelOn(spi_pins[spi_usci][SPI_USCI_CLK]);
+}
+
+// Read a series of bytes from a SPI slave
+void spi::readFrame(uint8_t *buf, uint16_t size)
+{
+  uint16_t i = 0;
+  for (i=0; i<size; i++)
+  {
+    // Write the dummy char to the TXBUF
+    set(UC_TXBUF(spi_base_addr), dummy_char);
+    // Wait for the transaction to complete
+    while (read(UC_IFG(spi_base_addr), UCRXIFG) == 0);
+    // Store the received value in the buffer
+    set(buf[i], UC_RXBUF(spi_base_addr));
+  }
 }
 
 // Configure SPI for rising edge
