@@ -138,8 +138,7 @@ void inline pinToggle(msp_pin_t pin) { toggle(out(pin), bit(pin)); }
 void inline pinPulse(msp_pin_t pin) { pulse(out(pin), bit(pin)); }
 // pinPulseDuration - pulses a given pin's corresponding out bit for the
 //                    specified duration
-void inline pinPulseDuration(msp_pin_t pin, uint32_t duration) {
-  pulseDuration(out(pin), bit(pin), duration); }
+#define pinPulseDuration(pin, duration) pulseDuration(out(pin), bit(pin), duration)
 
 // pinOutput - makes the given pin an output
 void inline pinOutput(msp_pin_t pin) { on(dir(pin), bit(pin)); }
