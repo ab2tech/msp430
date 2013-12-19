@@ -266,10 +266,10 @@ void __interrupt isr_d::isrTA2_1(void)
     case TA2IV_4:
     case TA2IV_3:
       break;
-    case TA2IV_TA1CCR2:
+    case TA2IV_TA2CCR2:
       (*isr[TA2_2_ID])(obj[TA2_2_ID]);
       break;
-    case TA2IV_TA1CCR1:
+    case TA2IV_TA2CCR1:
       (*isr[TA2_1_ID])(obj[TA2_1_ID]);
       break;
     case TA2IV_NONE:
@@ -727,10 +727,10 @@ void __interrupt isr_d::isrTB0_1(void)
     case TB0IV_3:
       (*isr[TB0_3_ID])(obj[TB0_3_ID]);
       break;
-    case TB0IV_TB1CCR2:
+    case TB0IV_TBCCR2:
       (*isr[TB0_2_ID])(obj[TB0_2_ID]);
       break;
-    case TB0IV_TB1CCR1:
+    case TB0IV_TBCCR1:
       (*isr[TB0_1_ID])(obj[TB0_1_ID]);
       break;
     case TB0IV_NONE:
