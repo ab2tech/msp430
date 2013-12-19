@@ -13,10 +13,9 @@
 //    limitations under the License.
 
 // MSP430G2553 SPI Library
-// Simple SPI library for providing maximum re-use and ease of integration
-
-// Limitations: Only master out SPI is supported. Read should be trivial, with
-// the only qualification being the configuration of an RX ISR
+// Simple SPI library for providing maximum re-use and ease of integration.
+// Consider adding an ISR for receiving data if that is a significant use
+// case for the given implementation.
 
 #pragma once
 #define AB2_SPI
@@ -24,22 +23,16 @@
 #include "msp/ab2.h"
 #include <msp430g2553.h>
 #include "pin_fw.h"
+#include "usci.h"
 
-// Define a return type for SPI functions with no meaningful return value
-// (return status)
-typedef enum
-{
-  SPI_NO_ERR,   // No error
-  SPI_REINIT,   // SPI USCI has already been initialized
-  SPI_USCI_DNE, // USCI does not exist
-  SPI_ERR       // Error
-} spi_ret_t;
+#define DEFAULT_DUMMY_SPI_CHAR 0xFF
+#define SPI_MIN_PRESCALER      2
 
 // Define the various SPI USCIs available on the 2553
 typedef enum
 {
-  SPI_A0,
-  SPI_B0,
+  SPI_A0 = 0,
+  SPI_B0 = 2,
   NUM_SPI_USCIs
 } spi_usci_t;
 
@@ -52,12 +45,74 @@ typedef enum
   NUM_SPI_PINS
 } spi_pin_t;
 
-spi_ret_t spiInit(spi_usci_t usci);
-uint16_t  spiGetPrescaler(spi_usci_t usci);
-spi_ret_t spiPulseClk(spi_usci_t usci);
-spi_ret_t spiFallingEdge(spi_usci_t usci);
-spi_ret_t spiRisingEdge(spi_usci_t usci);
-spi_ret_t spiSetMaxPrescaler(spi_usci_t usci);
-spi_ret_t spiSetPrescaler(spi_usci_t usci, uint16_t prescaler);
-spi_ret_t spiWrite(spi_usci_t usci, uint8_t byte);
+class spi
+{
+public:
+  spi(spi_usci_t usci, bool io = false) : spi_usci(usci), io(io),
+    dummy_char(DEFAULT_DUMMY_SPI_CHAR)
+  {
+    // Configure the base address depending on which USCI this is
+    switch (spi_usci)
+    {
+      case SPI_A0:
+        spi_base_addr = USCI_A0_BASE;
+        break;
+      case SPI_B0:
+        spi_base_addr = USCI_B0_BASE;
+        break;
+      default:
+       _never_executed();
+    }
+    // Only initialize this USCI if it hasn't already been initialized
+    // (useful if multiple libraries initialize the same SPI USCI)
+    if (!is_init[spi_usci])
+    {
+      is_init[spi_usci] = true;
+      init();
+    }
+    // Initialize the SOMI pin if I/O is enabled -- do this every time because
+    // an I/O instance might get enabled after an output-only instance.
+    if (io)
+    {
+      pinSelOn(spi_pins[spi_usci][SPI_USCI_SOMI]);
+      pinSel2On(spi_pins[spi_usci][SPI_USCI_SOMI]);
+    }
+  }
 
+  void           cfgLSB(void);
+  void           cfgMSB(void);
+  void           disableSOMI(void);
+  void           fallingEdge(void);
+  uint16_t       getPrescaler(void);
+  void           pulseClk(uint8_t times);
+  void           readFrame(uint8_t *buf, uint16_t size);
+  void           risingEdge(void);
+  void           setPrescaler(uint16_t prescaler);
+  uint8_t        write(uint8_t byte);
+  void           writeFrame(uint8_t *buf, uint16_t size);
+
+  // Put the state machine in reset
+  void inline    enterReset(void) { on (UC_CTL1(spi_base_addr), UCSWRST); };
+  // Release the state machine from reset
+  void inline    exitReset(void)  { off(UC_CTL1(spi_base_addr), UCSWRST); };
+  // Read a byte from the SPI slave
+  uint8_t inline read(void) { return (write(dummy_char)); };
+  // Set the dummy character to something other than default
+  void inline    setDummyChar(uint8_t byte) { set(dummy_char, byte); };
+  // Configure the minimum prescaler value (maximum frequency). For MSP430G2553
+  // devices, this is equal to the BRCLK frequency (prescaler == 1).
+  void inline    setMinPrescaler(void) { setPrescaler(SPI_MIN_PRESCALER); };
+
+  static const   msp_pin_t spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS];
+private:
+  bool           io;
+
+  void           init(void);
+
+  uint8_t        dummy_char;
+
+  static bool    is_init[NUM_SPI_USCIs];
+
+  uint16_t       spi_base_addr;
+  spi_usci_t     spi_usci;
+};
