@@ -16,7 +16,7 @@
 
 #pragma once
 #define AB2_ROT_ENC_INT
-#include "msp/ab2.h"
+#include "ab2.h"
 #include "../clock.h"
 #include "../pin_fw.h"
 #include "../isr_dispatcher.h"
