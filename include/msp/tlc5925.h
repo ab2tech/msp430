@@ -23,29 +23,6 @@
 #include "../pin_fw.h"
 #include "../spi.h"
 #include "shift_r.h"
-#include "../clock.h"
-
-// Channel preset definitions (channel 0 referenced)
-#define TLC5925_BOLD_CURSOR            (CH00|CH01)
-#define TLC5925_BOTTOM_LEFT_QUADRANT   (CH00|CH01|CH02|CH03|CH04)
-#define TLC5925_BOTTOM_RIGHT_QUADRANT  (CH00|CH12|CH13|CH14|CH15)
-#define TLC5925_CH0_15                 (CH00|CH01|CH02|CH03|CH04|CH05|CH06| \
-                                        CH07|CH08|CH09|CH10|CH11|CH12|CH13| \
-                                        CH14|CH15)
-#define TLC5925_CH5555                 (CH00|CH02|CH04|CH06|CH08|CH10|CH12| \
-                                        CH14)
-#define TLC5925_CHAAAA                 (CH01|CH03|CH05|CH07|CH09|CH11|CH13| \
-                                        CH15)
-#define TLC5925_CRASH_DUMMY_LEFT       (CH00|CH04|CH05|CH06|CH07|CH08|CH12| \
-                                        CH13|CH14|CH15)
-#define TLC5925_CRASH_DUMMY_RIGHT      (CH00|CH01|CH02|CH03|CH04|CH08|CH09| \
-                                        CH10|CH11|CH12)
-#define TLC5925_RIGHT_HALF             (CH00|CH08|CH09|CH10|CH11|CH12|CH13| \
-                                        CH14|CH15)
-#define TLC5925_LEFT_HALF              (CH00|CH01|CH02|CH03|CH04|CH05|CH06| \
-                                        CH07|CH08)
-
-#define TLC5925_NUM_CHANNELS           16
 
 // Channel definitions
 typedef enum
@@ -67,6 +44,43 @@ typedef enum
   TLC5925_CH14 = BITE,
   TLC5925_CH15 = BITF
 } tlc5925_ch_t;
+
+// Channel preset definitions (channel 0 referenced)
+#define TLC5925_BOLD_CURSOR            (TLC5925_CH00|TLC5925_CH01)
+#define TLC5925_BOTTOM_LEFT_QUADRANT   (TLC5925_CH00|TLC5925_CH01|TLC5925_CH02|\
+                                        TLC5925_CH03|TLC5925_CH04)
+#define TLC5925_BOTTOM_RIGHT_QUADRANT  (TLC5925_CH00|TLC5925_CH12|TLC5925_CH13|\
+                                        TLC5925_CH14|TLC5925_CH15)
+#define TLC5925_CH0_15                 (TLC5925_CH00|TLC5925_CH01|TLC5925_CH02|\
+                                        TLC5925_CH03|TLC5925_CH04|TLC5925_CH05|\
+                                        TLC5925_CH06|TLC5925_CH07|TLC5925_CH08|\
+                                        TLC5925_CH09|TLC5925_CH10|TLC5925_CH11|\
+                                        TLC5925_CH12|TLC5925_CH13|TLC5925_CH14|\
+                                        TLC5925_CH15)
+#define TLC5925_CH5555                 (TLC5925_CH00|TLC5925_CH02|TLC5925_CH04|\
+                                        TLC5925_CH06|TLC5925_CH08|TLC5925_CH10|\
+                                        TLC5925_CH12|TLC5925_CH14)
+#define TLC5925_CHAAAA                 (TLC5925_CH01|TLC5925_CH03|TLC5925_CH05|\
+                                        TLC5925_CH07|TLC5925_CH09|TLC5925_CH11|\
+                                        TLC5925_CH13|TLC5925_CH15)
+#define TLC5925_CRASH_DUMMY_LEFT       (TLC5925_CH00|TLC5925_CH04|TLC5925_CH05|\
+                                        TLC5925_CH06|TLC5925_CH07|TLC5925_CH08|\
+                                        TLC5925_CH12|TLC5925_CH13|TLC5925_CH14|\
+                                        TLC5925_CH15)
+#define TLC5925_CRASH_DUMMY_RIGHT      (TLC5925_CH00|TLC5925_CH01|TLC5925_CH02|\
+                                        TLC5925_CH03|TLC5925_CH04|TLC5925_CH08|\
+                                        TLC5925_CH09|TLC5925_CH10|TLC5925_CH11|\
+                                        TLC5925_CH12)
+#define TLC5925_RIGHT_HALF             (TLC5925_CH00|TLC5925_CH08|TLC5925_CH09|\
+                                        TLC5925_CH10|TLC5925_CH11|TLC5925_CH12|\
+                                        TLC5925_CH13|TLC5925_CH14|TLC5925_CH15)
+#define TLC5925_LEFT_HALF              (TLC5925_CH00|TLC5925_CH01|TLC5925_CH02|\
+                                        TLC5925_CH03|TLC5925_CH04|TLC5925_CH05|\
+                                        TLC5925_CH06|TLC5925_CH07|TLC5925_CH08)
+
+#define TLC5925_NUM_CHANNELS           16
+
+#define TLC5925_ANIM_DELAY             100
 
 // TLC5925 class declaration
 class tlc5925 : public shift_r

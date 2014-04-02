@@ -56,8 +56,8 @@ void tlc5925::channelScanUp(uint16_t scan_quantity)
 void tlc5925::clear(void)
 {
   spi::risingEdge();
-  spi::write(0);
-  spi::write(0);
+  spi::tx(0);
+  spi::tx(0);
   shift_r::latch();
 }
 
@@ -84,7 +84,7 @@ void tlc5925::flash(uint16_t pulse_quantity, uint16_t channel_data)
   }
 }
 
-// Rotates the specified TLC5925 channel data up (left shift with carry) the
+// Rotates the specified TLC5925 channel data down (left shift with carry) the
 // channels
 void tlc5925::shiftDown(uint16_t shift_quantity, uint16_t channel_data)
 {
@@ -115,8 +115,8 @@ void tlc5925::write(uint16_t channel_data)
 
   spi::risingEdge();
   outputDisable();
-  spi::write((pres_channel_data >> 8) & 0xFF);
-  spi::write(pres_channel_data & 0xFF);
+  spi::tx((pres_channel_data >> 8) & 0xFF);
+  spi::tx(pres_channel_data & 0xFF);
   shift_r::latch();
   outputEnable();
 }
