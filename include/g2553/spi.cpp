@@ -27,7 +27,6 @@ bool spi::is_init[NUM_SPI_USCIs] = {false, false};
 
 
 const msp_pin_t spi::spi_pins[NUM_SPI_USCIs][NUM_SPI_PINS] = {
-#ifdef MSP430F5510_EXT
   {
     // USCI_A0
     // CLK , SOMI, SIMO
@@ -62,7 +61,7 @@ void spi::cfgMSB(void)
 void spi::disableSOMI(void)
 {
   pinSelOff(spi_pins[spi_usci][SPI_USCI_SOMI]);
-  pinSel2Off(spi_usci[spi_usci][SPI_USCI_SOMI]);
+  pinSel2Off(spi_pins[spi_usci][SPI_USCI_SOMI]);
 }
 
 // Configure SPI for falling edge
@@ -98,7 +97,7 @@ void spi::init(void)
   // SMCLK
   on(UC_CTL1(spi_base_addr), UCSSEL_2);
 
-  // Set the prescaler to min (1) initially
+  // Set the prescaler to min initially
   setMinPrescaler();
 
   // Initialize USCI state machine
@@ -127,8 +126,16 @@ void spi::pulseClk(uint8_t times)
   pinSel2On(spi_pins[spi_usci][SPI_USCI_CLK]);
 }
 
+// Configure SPI for rising edge
+void spi::risingEdge(void)
+{
+  enterReset();
+  on (UC_CTL0(spi_base_addr), UCCKPH);
+  exitReset();
+}
+
 // Read a series of bytes from a SPI slave
-void spi::readFrame(uint8_t *buf, uint16_t size)
+void spi::rxFrame(uint8_t *buf, uint16_t size)
 {
   uint16_t i = 0;
   for (i=0; i<size; i++)
@@ -142,14 +149,6 @@ void spi::readFrame(uint8_t *buf, uint16_t size)
   }
 }
 
-// Configure SPI for rising edge
-void spi::risingEdge(void)
-{
-  enterReset();
-  on (UC_CTL0(spi_base_addr), UCCKPH);
-  exitReset();
-}
-
 // Set the SPI clock prescaler value
 void spi::setPrescaler(uint16_t prescaler)
 {
@@ -159,19 +158,20 @@ void spi::setPrescaler(uint16_t prescaler)
 }
 
 // Write a byte to SPI -- read return byte as well
-uint8_t spi::write(uint8_t byte)
+uint8_t spi::tx(uint8_t byte)
 {
   // Write a byte to TXBUF
   set(UC_TXBUF(spi_base_addr), byte);
   // Wait for the transaction to complete
-  while (read(UC_IFG(spi_base_addr), SPI_RXIFG(spi_usci)) == 0);
+  //while (read(UC_IFG(spi_base_addr), SPI_RXIFG(spi_usci)) == 0);
+  while (read(UC_STAT(spi_base_addr), UCBUSY));
 
   // Return any data that might have been returned by the slave
   return (UC_RXBUF(spi_base_addr));
 }
 
 // Write a series of bytes to SPI
-void spi::writeFrame(uint8_t *buf, uint16_t size)
+void spi::txFrame(uint8_t *buf, uint16_t size)
 {
   uint16_t i = 0;
   volatile uint8_t tmpVar;
@@ -183,7 +183,7 @@ void spi::writeFrame(uint8_t *buf, uint16_t size)
     set(UC_TXBUF(spi_base_addr), buf[i]);
 
     // Wait for the TX buffer to be ready
-    while (read(UC_IFG(spi_base_addr), UCTXIFG) == 0);
+    while (read(UC_IFG(spi_base_addr), SPI_TXIFG(spi_usci)) == 0);
   }
 
   // Wait for the transaction to complete
