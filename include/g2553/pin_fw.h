@@ -53,6 +53,7 @@
 // MSP pin bit and base address lookup table definitions
 extern const uint8_t  msp_pin_bit[MSP_PIN_SIZE];
 extern const uint16_t msp_pin_base[MSP_PIN_SIZE];
+extern const uint16_t msp_pin_sel2[MSP_PIN_SIZE];
 
 // Pin register access macros
 
@@ -87,7 +88,7 @@ extern const uint16_t msp_pin_base[MSP_PIN_SIZE];
 // arbitrary relative to the base address of the module. Calculating the
 // SEL2 address would be costly from a performance perspective, so just
 // store all these addresses in flash instead.
-#define sel2(pin) (REG8(msp_pin_sel2[(pin)])
+#define sel2(pin) (REG8(msp_pin_sel2[(pin)]))
 #endif
 #ifndef DISABLE_PFW_IES
 #define PIES_OFFSET 0x04
@@ -149,9 +150,9 @@ void inline pinSelOn(msp_pin_t pin) { on(sel(pin), bit(pin)); }
 void inline pinSelOff(msp_pin_t pin) { off(sel(pin), bit(pin)); }
 #endif
 #ifndef DISABLE_PFW_SEL2
-// pinSelOn - enable the given pin's corresponding sel bit
+// pinSel2On - enable the given pin's corresponding sel bit
 void inline pinSel2On(msp_pin_t pin) { on(sel2(pin), bit(pin)); }
-// pinSelOff - disable the given pin's corresponding sel bit
+// pinSel2Off - disable the given pin's corresponding sel bit
 void inline pinSel2Off(msp_pin_t pin) { off(sel2(pin), bit(pin)); }
 #endif
 #ifndef DISABLE_PFW_IES

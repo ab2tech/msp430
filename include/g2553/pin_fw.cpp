@@ -38,13 +38,13 @@ const uint16_t msp_pin_base[MSP_PIN_SIZE] = {
 
 #ifndef DISABLE_PFW_SEL2
 const uint16_t msp_pin_sel2[MSP_PIN_SIZE] = {
-  (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL,
-    (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL, (uint16_t) &P1SEL,
-  (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL,
-    (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL, (uint16_t) &P2SEL
+  (uint16_t) &P1SEL2, (uint16_t) &P1SEL2, (uint16_t) &P1SEL2, (uint16_t) &P1SEL2,
+    (uint16_t) &P1SEL2, (uint16_t) &P1SEL2, (uint16_t) &P1SEL2, (uint16_t) &P1SEL2,
+  (uint16_t) &P2SEL2, (uint16_t) &P2SEL2, (uint16_t) &P2SEL2, (uint16_t) &P2SEL2,
+    (uint16_t) &P2SEL2, (uint16_t) &P2SEL2, (uint16_t) &P2SEL2, (uint16_t) &P2SEL2
 #ifdef MSP430G2553_EXT
-  , (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL,
-    (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL, (uint16_t) &P3SEL
+  , (uint16_t) &P3SEL2, (uint16_t) &P3SEL2, (uint16_t) &P3SEL2, (uint16_t) &P3SEL2,
+    (uint16_t) &P3SEL2, (uint16_t) &P3SEL2, (uint16_t) &P3SEL2, (uint16_t) &P3SEL2
 #endif
 };
 #endif
