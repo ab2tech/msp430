@@ -32,11 +32,27 @@
 // Set the DCO frequency
 void basic_clock::setDCO(dco_freq_t freq)
 {
-  // dco_freq_t are the addresses for each calibrated DCO data in flash
-  // freq is the address corresponding to CALDCO of the desired frequency
-  uint8_t caldco = REG8(freq);
-  // freq+1 is the address corresponding to CALBC1 of the desired frequency
-  uint8_t calbc1 = REG8(freq+1);
+  uint8_t caldco = 0;
+  uint8_t calbc1 = 0;
+
+  switch (freq)
+  {
+    case DCO_F_1MHz:
+      caldco = CALDCO_1MHZ;
+      calbc1 = CALBC1_1MHZ;
+      break;
+    case DCO_F_8MHz:
+      caldco = CALDCO_8MHZ;
+      calbc1 = CALBC1_8MHZ;
+      break;
+    case DCO_F_12MHz:
+      caldco = CALDCO_12MHZ;
+      calbc1 = CALBC1_12MHZ;
+      break;
+    default:
+      caldco = CALDCO_16MHZ;
+      calbc1 = CALBC1_16MHZ;
+  }
 
   set(BCSCTL1, calbc1);
   set(DCOCTL,  caldco);
@@ -55,9 +71,9 @@ void basic_clock::setDCO(dco_freq_t freq)
 // sourced by VLO. Silly, but it is what it is.
 
 // Set the ACLK source and divider
-void basic_clock::cfgACLK(aclk_src_t src = ACLK_SRC_VLO,
-                          clk_div_t  div = CLK_DIV_1,
-                          xcap_t     cap = XCAP_1pF)
+void basic_clock::cfgACLK(aclk_src_t src,
+                          clk_div_t  div,
+                          xcap_t     cap)
 {
   if (src != ACLK_SRC_VLO)
   {
@@ -82,9 +98,9 @@ void basic_clock::cfgACLK(aclk_src_t src = ACLK_SRC_VLO,
   on (BCSCTL3, src);
 
   // Clear the divider bits
-  off(BCSCTL1, (DIV_MAX << ACLK_DIV_OFFSET));
+  off(BCSCTL1, (DIV_MAX << DIVA_OFFSET));
   // Configure the divider
-  on (BCSCTL1, (div << ACLK_DIV_OFFSET));
+  on (BCSCTL1, (div << DIVA_OFFSET));
 
   // Unless the clock source is VLO, need to let the oscillator stabilize
   if (src != ACLK_SRC_VLO)
@@ -101,8 +117,8 @@ void basic_clock::cfgACLK(aclk_src_t src = ACLK_SRC_VLO,
 }
 
 // Set the MCLK source and divider
-void basic_clock::cfgMCLK(mclk_src_t src = MCLK_SRC_DCO,
-                          clk_div_t  div = CLK_DIV_1)
+void basic_clock::cfgMCLK(mclk_src_t src,
+                          clk_div_t  div)
 {
   // Clear the source bits
   off(BCSCTL2, SELM_3);
@@ -110,14 +126,14 @@ void basic_clock::cfgMCLK(mclk_src_t src = MCLK_SRC_DCO,
   on (BCSCTL2, src);
 
   // Clear the divider bits
-  off(BCSCTL2, (DIV_MAX << MCLK_DIV_OFFSET));
+  off(BCSCTL2, (DIV_MAX << DIVM_OFFSET));
   // Configure the divider
-  on (BCSCTL2, (div << MCLK_DIV_OFFSET));
+  on (BCSCTL2, (div << DIVM_OFFSET));
 }
 
 // Set the SMCLK source and divider
-void basic_clock::cfgSMCLK(smclk_src_t src = SMCLK_SRC_DCO,
-                           clk_div_t   div = CLK_DIV_1)
+void basic_clock::cfgSMCLK(smclk_src_t src,
+                           clk_div_t   div)
 {
   // Clear the source bit
   off(BCSCTL2, SELS);
@@ -125,7 +141,7 @@ void basic_clock::cfgSMCLK(smclk_src_t src = SMCLK_SRC_DCO,
   on (BCSCTL2, src);
 
   // Clear the divider bits
-  off(BCSCTL2, (DIV_MAX << SMCLK_DIV_OFFSET));
+  off(BCSCTL2, (DIV_MAX << DIVS_OFFSET));
   // Configure the divider
-  on (BCSCTL2, (div << SMCLK_DIV_OFFSET));
+  on (BCSCTL2, (div << DIVS_OFFSET));
 }

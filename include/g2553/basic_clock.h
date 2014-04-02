@@ -19,6 +19,7 @@
 #define AB2_BASIC_CLOCK
 
 #include <msp430g2553.h>
+#include "pin_fw.h"
 #include "msp/ab2.h"
 
 // Define the default divisions supported by the various clock signals
@@ -49,10 +50,10 @@ typedef enum
 // Define the pre-calibrated DCO frequencies supported by the clock module
 typedef enum
 {
-  DCO_F_1MHz  = (uint16_t)(&CALDCO_1MHZ),
-  DCO_F_8MHz  = (uint16_t)(&CALDCO_8MHZ),
-  DCO_F_12MHz = (uint16_t)(&CALDCO_12MHZ),
-  DCO_F_16MHz = (uint16_t)(&CALDCO_16MHZ),
+  DCO_F_1MHz,
+  DCO_F_8MHz,
+  DCO_F_12MHz,
+  DCO_F_16MHz
 } dco_freq_t;
 
 // Define the MCLK sources supported by the clock module
@@ -60,7 +61,7 @@ typedef enum
 {
   MCLK_SRC_DCO  = SELM_0, // 0x00 | 0x01 # 00b | 01b
   // Not technically sourced by ACLK, but by LFXT1 or VLO
-  MCLK_SRC_ACLK = SELM_3, // 0x80 | 0xC0 # 10b | 11b
+  MCLK_SRC_ACLK = SELM_3  // 0x80 | 0xC0 # 10b | 11b
 } mclk_src_t;
 
 // Define the SMCLK sources supported by the clock module
@@ -85,6 +86,7 @@ class basic_clock
 public:
   basic_clock(dco_freq_t freq = DCO_F_16MHz)
   {
+    disableWDT();
     setDCO(freq);
     cfgACLK();
     cfgMCLK();
@@ -92,14 +94,16 @@ public:
   }
 
   // Default the XCAP configuration to 1pF (reset default). The 'cap' paramater
-  // is only meaningful if the ACLK source is to be the 32kHz crystal. Otherwise,
-  // it will be ignored.
-  static void cfgACLK(aclk_src_t src = ACLK_SRC_VLO,
-                      clk_div_t  div = CLK_DIV_1,
-                      xcap_t     cap = XCAP_1pF);
-  static void cfgMCLK(mclk_src_t src = MCLK_SRC_DCO,
-                      clk_div_t  div = CLK_DIV_1);
-  static void cfgSMCLK(smclk_src_t src = SMCLK_SRC_DCO,
-                        clk_div_t  div = CLK_DIV_1);
-  static void setDCO(dco_freq_t freq = DCO_F_16MHz);
+  // is only meaningful if the ACLK source is to be the 32kHz crystal.
+  // Otherwise, it will be ignored.
+  static void          cfgACLK(aclk_src_t src = ACLK_SRC_VLO,
+                               clk_div_t  div = CLK_DIV_1,
+                               xcap_t     cap = XCAP_1pF);
+  static void          cfgMCLK(mclk_src_t src = MCLK_SRC_DCO,
+                               clk_div_t  div = CLK_DIV_1);
+  static void          cfgSMCLK(smclk_src_t src = SMCLK_SRC_DCO,
+                                 clk_div_t  div = CLK_DIV_1);
+  static void inline   disableWDT(void)       { set(WDTCTL,
+                                                  (WDTPW | WDTHOLD)); };
+  static void          setDCO(dco_freq_t freq = DCO_F_16MHz);
 };
