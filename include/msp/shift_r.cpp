@@ -19,7 +19,7 @@ void shift_r::write(uint8_t byte)
 {
   if (oe != MSP_PIN_SIZE)
     outputDisable();
-  spi::write(byte);
+  spi::tx(byte);
   latch();
   if (oe != MSP_PIN_SIZE)
     outputEnable();

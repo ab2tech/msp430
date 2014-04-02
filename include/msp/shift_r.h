@@ -21,7 +21,6 @@
 // Steal our MSP include from pin_fw to make this a generic library
 #include "../pin_fw.h"
 #include "../spi.h"
-#include "../clock.h"
 
 class shift_r : public spi
 {
@@ -36,11 +35,9 @@ public:
     pinOutput(le);
   };
 
-  using       spi::write;
-
   void        write(uint8_t byte);
 
-  void inline clear(void)         { spi::write(0); latch(); };
+  void inline clear(void)         { spi::tx(0); latch(); };
   void inline latch(void)         { pinPulse(le); };
   void inline outputDisable(void) { if (oe != MSP_PIN_SIZE) pinOn (oe); };
   void inline outputEnable(void)  { if (oe != MSP_PIN_SIZE) pinOff(oe); };
