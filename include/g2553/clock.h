@@ -20,84 +20,71 @@
 
 #include <msp430g2553.h>
 #include "msp/ab2.h"
+#include "pin_fw.h"
+#include "timerA_fw.h"
+#include "basic_clock.h"
 
-// Define the default divisions supported by the various clock signals
-// If a clock signal doesn't support all of these dividers or supports
-// additional dividers, they should be defined independently
-typedef enum
+// TODO if needed: add uptime functionality a la F5510 clock library
+//
+// Define number of units in a second
+#define CLK_MS_IN_S                    1000
+// Define the timer we're going to allocate to the clock...this is important
+// because the other CCRs for this TA are going to be available for allocation
+// by other libraries
+#define CLK_TIMERA                     ta0_0
+// NOTE: This *must* be changed if CLK_TIMERA is changed
+#define CLK_TIMER_VECTOR               TIMER0_A0_VECTOR
+// Total number of CCRs for this timerA (excluding CCR0)
+#define CLK_AUX_TIMERS                 2
+
+// Define the pins that can have clocks output to them
+typedef enum _clk_pin_t
 {
-  CLK_DIV_1,
-  CLK_DIV_2,
-  CLK_DIV_4,
-  CLK_DIV_8
-} clk_div_t;
+  CLK_PIN_ACLK  = p1_0,
+  CLK_PIN_SMCLK = p1_4
+} clk_pin_t;
 
-// Define the ACLK sources supported by the clock module
-typedef enum
+class clock : public basic_clock
 {
-  ACLK_SRC_32kHz, // 32.768kHz external crystal
-  ACLK_SRC_1MHz,  // 400kHz-1MHz external crystal
-  ACLK_SRC_3MHz,  // 1MHz-3MHz external crystal
-  ACLK_SRC_16MHz, // 3MHz-16MHz external crystal
-  ACLK_SRC_DIG,   // Digital external clock source
-  ACLK_SRC_VLO    // Internal very low frequency oscillator (~12kHz)
-} aclk_src_t;
+public:
+  clock(dco_freq_t dco_freq = DCO_F_16MHz) :
+    basic_clock(dco_freq)
+  {
+    // WDT disabled as a part of basic_clock initialization
+    sys_freq = calcSysFreq();
+    cfgDelay();
+  }
 
-// Define the DCO frequencies supported by the clock module
-typedef enum
-{
-  DCO_F_1MHz,
-  DCO_F_8MHz,
-  DCO_F_12MHz,
-  DCO_F_16MHz
-} dco_freq_t;
+  static msp_timerA_t       allocTimer(void);
 
-// Define the MCLK sources supported by the clock module
-typedef enum
-{
-  MCLK_SRC_DCO,
-  MCLK_SRC_ACLK, // Not technically source by ACLK, but by LFXT1CLK or VLO
-  MCLK_SRC_XT2   // Must be enabled and present for this to work
-} mclk_src_t;
+  static void               clk2PinDisable(clk_pin_t pin);
+  static void               clk2PinEnable(clk_pin_t pin);
 
-// Define the SMCLK sources supported by the clock module
-typedef enum
-{
-  SMCLK_SRC_DCO,
-  SMCLK_SRC_XTAL // XT2 if present or same source as ACLK if XT2 not present
-} smclk_src_t;
+  static void               delayS(uint32_t s);
+  static void               delayMS(uint32_t ms);
 
-// Define the settings for XT1 capacitance as seen by the LFXT1 crystal when
-// XTS=0. If XTS=1 or LFXT1Sx=11 XCAPx should be 00.
-typedef enum
-{
-  XCAP_OFF,   // 00
-  XCAP_1pF,   // 00
-  XCAP_6pF,   // 01
-  XCAP_10pF,  // 10
-  XCAP_12_5pF // 11
-} xcap_t;
+  static uint16_t inline    getMSTicks(void)       { return ticks_in_a_ms; };
 
-// Define the XT2 frequency ranges supported by the clock module
-typedef enum
-{
-  XT2_F_1MHz,  // 400kHz-1MHz external crystal
-  XT2_F_3MHz,  // 1MHz-3MHz external crystal
-  XT2_F_16MHz, // 3MHz-16MHz external crystal
-  XT2_F_DIG   // Digital external clock source
-} xt2_range_t;
+  static bool               releaseTimer(msp_timerA_t timer);
 
-void clockInitDefaults(void);
-void clockInit(aclk_src_t asrc, clk_div_t adiv,
-               dco_freq_t dcof,
-               mclk_src_t msrc, clk_div_t mdiv,
-               smclk_src_t ssrc, clk_div_t sdiv);
-void clockSetACLK(aclk_src_t src, clk_div_t div);
-void clockSetDCO(dco_freq_t freq);
-void clockSetMCLK(mclk_src_t src, clk_div_t div);
-void clockSetSMCLK(smclk_src_t src, clk_div_t div);
-void clockSetXT1Caps(xcap_t cap);
-void clockSetXT2(xt2_range_t range);
+private:
+  static dco_freq_t         dco_freq;
+  static uint32_t           sys_freq;
 
-inline uint8_t clockGetLFXT1Fault(void);
-inline uint8_t clockGetXT2Fault(void);
+  // TimerA used with the clock library
+  static msp_timerA_t       timer;
+  static const msp_timerA_t aux_timer[CLK_AUX_TIMERS];
+  static bool               aux_timer_in_use[CLK_AUX_TIMERS];
+
+  // Number of ticks in a ms
+  static uint16_t           ticks_in_a_ms;
+
+  // Delay counter variables
+  static uint32_t           s_count;
+  static uint32_t           ms_count;
+
+  static void               calcSysFreq(void);
+  static void               cfgDelay(void);
+
+  static void __interrupt   delayISR(void);
+}
