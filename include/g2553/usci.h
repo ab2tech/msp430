@@ -18,12 +18,15 @@
 // universal (applicable to both USCI_A and USCI_B, while definitions prefixed
 // with prefix UCA_ or UCB_ are only applicable to the respective USCI.
 
+#define USCI_A0_BASE                   ((uint16_t) &UCA0CTL0)
+#define USCI_B0_BASE                   ((uint16_t) &UCB0CTL0)
+
 #define UC_CTLW0_OFFSET                0x00
 #define UC_CTLW0(base_addr)            REG16(base_addr + UC_CTLW0_OFFSET)
-#define UC_CTL1_OFFSET                 0x00
-#define UC_CTL1(base_addr)             REG8(base_addr + UC_CTL1_OFFSET)
-#define UC_CTL0_OFFSET                 0x01
+#define UC_CTL0_OFFSET                 0x00
 #define UC_CTL0(base_addr)             REG8(base_addr + UC_CTL0_OFFSET)
+#define UC_CTL1_OFFSET                 0x01
+#define UC_CTL1(base_addr)             REG8(base_addr + UC_CTL1_OFFSET)
 
 #define UC_BRW_OFFSET                  0x02
 #define UC_BRW(base_addr)              REG16(base_addr + UC_BRW_OFFSET)
