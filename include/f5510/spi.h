@@ -42,6 +42,9 @@ typedef enum
   NUM_SPI_USCIs
 } spi_usci_t;
 
+// Need a default SPI USCI that can be referenced by external generic libraries
+#define DEFAULT_SPI_USCI SPI_B1
+
 // Define the various SPI pins for each USCI
 typedef enum
 {

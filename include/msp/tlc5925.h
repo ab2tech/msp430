@@ -88,7 +88,7 @@ class tlc5925 : public shift_r
 public:
   tlc5925(msp_pin_t le, msp_pin_t oe = MSP_PIN_SIZE,
           uint16_t anim_delay = 100, tlc5925_ch_t start_ch = TLC5925_CH00,
-          spi_usci_t spi_usci = SPI_B1)
+          spi_usci_t spi_usci = DEFAULT_SPI_USCI)
     : anim_delay(anim_delay), start_ch(start_ch), shift_r(spi_usci, le, oe) {};
 
   using shift_r::clear;
