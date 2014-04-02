@@ -137,7 +137,7 @@ void spi::pulseClk(uint8_t times)
 }
 
 // Read a series of bytes from a SPI slave
-void spi::readFrame(uint8_t *buf, uint16_t size)
+void spi::rxFrame(uint8_t *buf, uint16_t size)
 {
   uint16_t i = 0;
   for (i=0; i<size; i++)
@@ -168,7 +168,7 @@ void spi::setPrescaler(uint16_t prescaler)
 }
 
 // Write a byte to SPI -- read return byte as well
-uint8_t spi::write(uint8_t byte)
+uint8_t spi::tx(uint8_t byte)
 {
   // Write a byte to TXBUF
   set(UC_TXBUF(spi_base_addr), byte);
@@ -180,7 +180,7 @@ uint8_t spi::write(uint8_t byte)
 }
 
 // Write a series of bytes to SPI
-void spi::writeFrame(uint8_t *buf, uint16_t size)
+void spi::txFrame(uint8_t *buf, uint16_t size)
 {
   uint16_t i = 0;
   volatile uint8_t tmpVar;

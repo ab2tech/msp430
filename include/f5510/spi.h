@@ -98,18 +98,18 @@ public:
   void           fallingEdge(void);
   uint16_t       getPrescaler(void);
   void           pulseClk(uint8_t times);
-  void           readFrame(uint8_t *buf, uint16_t size);
+  void           rxFrame(uint8_t *buf, uint16_t size);
   void           risingEdge(void);
   void           setPrescaler(uint16_t prescaler);
-  uint8_t        write(uint8_t byte);
-  void           writeFrame(uint8_t *buf, uint16_t size);
+  uint8_t        tx(uint8_t byte);
+  void           txFrame(uint8_t *buf, uint16_t size);
 
   // Put the state machine in reset
   void inline    enterReset(void) { on (UC_CTL1(spi_base_addr), UCSWRST); };
   // Release the state machine from reset
   void inline    exitReset(void)  { off(UC_CTL1(spi_base_addr), UCSWRST); };
   // Read a byte from the SPI slave
-  uint8_t inline read(void) { return (write(dummy_char)); };
+  inline uint8_t rx(void) { return (tx(dummy_char)); };
   // Set the dummy character to something other than default
   void inline    setDummyChar(uint8_t byte) { set(dummy_char, byte); };
   // Configure the minimum prescaler value (maximum frequency). For MSP430F55xx
