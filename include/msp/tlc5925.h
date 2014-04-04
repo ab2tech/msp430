@@ -23,6 +23,7 @@
 #include "../pin_fw.h"
 #include "../spi.h"
 #include "shift_r.h"
+#include "clock.h"
 
 // Channel definitions
 typedef enum
@@ -126,5 +127,6 @@ private:
 
   // Allows modification of effective channel 0 index
   tlc5925_ch_t        start_ch;
+protected:
   uint16_t            pres_channel_data;
 };
