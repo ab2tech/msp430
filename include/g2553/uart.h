@@ -47,7 +47,7 @@
 #include <msp430g2553.h>
 #include "msp/ab2.h"
 #include "pin_fw.h"
-#include "isr_dispatcher.h"
+#include "usci.h"
 
 // Define the brclk_src options
 typedef enum
@@ -62,6 +62,13 @@ typedef enum
   NUM_UART_USCIs
 } uart_usci_t;
 
+typedef enum
+{
+  UART_RXD = 0,
+  UART_TXD = 1,
+  NUM_UART_PINS
+} uart_pin_t;
+
 class uart
 {
 public:
@@ -69,8 +76,8 @@ public:
        brclk_src_t brclk_src = BRSRC_SMCLK,
        uint32_t brclk_freq = F_16MHz,
        uint32_t br = 9600,
-       bool interrupt_enable = true,
-       bool oversample = false) : uart_usci(usci) {
+       bool ie = true,
+       bool osample = false) : uart_usci(usci) {
 
     switch (uart_usci)
     {
@@ -84,7 +91,7 @@ public:
 
     init(brclk_src, brclk_freq, br, ie, osample);
   }
-  void init(brclk_src_t brclk_src, brclk_freq_t brclk_freq, br_t br);
+  void init(brclk_src_t brclk_src, uint32_t brclk_freq, uint32_t br, bool ie, bool osample);
   char getc(void);
   void putc(char c);
   void puts(char *buf);
@@ -93,4 +100,5 @@ public:
 private:
   uart_usci_t uart_usci;
   uint16_t    uart_base_addr;
+  static const msp_pin_t uart_pins[NUM_UART_USCIs][NUM_UART_PINS];
 };

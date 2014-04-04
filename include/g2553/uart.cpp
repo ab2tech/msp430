@@ -31,9 +31,7 @@ const msp_pin_t uart::uart_pins[NUM_UART_USCIs][NUM_UART_PINS] = {
     // RXD,  TXD
        p1_1, p1_2
   }
-}
-
-const uint
+};
 
 // Initialize the UART to the settings specified
 void uart::init(brclk_src_t brclk_src,
@@ -45,9 +43,9 @@ void uart::init(brclk_src_t brclk_src,
   // Shift the input frequency 3 places so we can do fixed-point math
   // with some resolution
   uint64_t freq_f = ((uint64_t)brclk_freq * UART_FPF); // fixed-point
-  uint32_t n_f = (freq/((uint32_t)br));     // fixed-point
-  uint16_t n = (n_f/UART_FPF)               // regular
-  uint32_t intn_f = ((uint32_t)n*UART_FPF); // fixed-point (rounded)
+  uint32_t n_f = (freq_f/((uint32_t)br));              // fixed-point
+  uint16_t n = (n_f/UART_FPF)  ;                       // regular
+  uint32_t intn_f = ((uint32_t)n*UART_FPF);            // fixed-point (rounded)
 
   // UCBRx
   uint16_t ucbr = n;
@@ -70,10 +68,10 @@ void uart::init(brclk_src_t brclk_src,
   }
 
   // Enable the UART pins
-  pinSelOn (uart_pins[uart_usci][UART_USCI_RXD]);
-  pinSelOn (uart_pins[uart_usci][UART_USCI_TXD]);
-  pinSel2On(uart_pins[uart_usci][UART_USCI_RXD]);
-  pinSel2On(uart_pins[uart_usci][UART_USCI_TXD]);
+  pinSelOn (uart_pins[uart_usci][UART_RXD]);
+  pinSelOn (uart_pins[uart_usci][UART_TXD]);
+  pinSel2On(uart_pins[uart_usci][UART_RXD]);
+  pinSel2On(uart_pins[uart_usci][UART_TXD]);
 
   // Enable the USCI reset
   on(UC_CTL1(uart_base_addr), UCSWRST);
@@ -90,12 +88,12 @@ void uart::init(brclk_src_t brclk_src,
   // Set the upper byte of the prescaler
   set(UC_BR1(uart_base_addr), ((ucbr>>BYTE_SIZE) && 0xFF));
   // Set the MCTL to match the calculations above
-  set(UC_MCTL(uart_base_addr), mctl);
+  set(UCA_MCTL(uart_base_addr), mctl);
 
   if (ie)
   {
     // Enable the USCI A0 RX Interrupt (ISR must be user implemented)
-    on(UC_IE(uart_base_addr), UART_RXIE(uart_usci));
+    on(UC_IE(uart_base_addr), UCA_RXIE(uart_usci));
   }
   // Disable the USCI reset
   off(UC_CTL1(uart_base_addr), UCSWRST);
@@ -106,7 +104,7 @@ char uart::getc(void)
 {
   // Blocking function until a character arrives.
   // Good for waiting on something like a return.
-  while (!read(UC_IFG(uart_base_addr), UART_RXIFG(uart_usci)));
+  while (!read(UC_IFG(uart_base_addr), UCA_RXIFG(uart_usci)));
 
   // Once there is a character to return, return it
   return UC_RXBUF(uart_base_addr);
@@ -116,7 +114,7 @@ char uart::getc(void)
 void uart::putc(char c)
 {
   // Wait until the buffer is ready
-  while (!read(UC_IFG(uart_base_addr), UART_RXIFG(uart_usci)));
+  while (!read(UC_IFG(uart_base_addr), UCA_RXIFG(uart_usci)));
 
   // Write the character to the TX buffer
   set(UC_TXBUF(uart_base_addr), c);
@@ -126,7 +124,7 @@ void uart::putc(char c)
 void uart::puts(char *buf)
 {
   while(*buf)
-    uartPutc(*buf++);
+    putc(*buf++);
 }
 
 // Put a formatted string to UART
@@ -145,6 +143,6 @@ void uart::putsf(const char *fmt, ...)
 // Put a newline to UART
 void uart::newLine()
 {
-  uartPuts("\r\n");
+  puts("\r\n");
 }
 
