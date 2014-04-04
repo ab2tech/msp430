@@ -47,12 +47,12 @@ typedef enum _clk_pin_t
 class clock : public basic_clock
 {
 public:
-  clock(dco_freq_t dco_freq = DCO_F_16MHz) :
-    basic_clock(dco_freq)
+  clock(dco_freq_t dco_freq = DCO_F_16MHz) : basic_clock(dco_freq)
   {
     // WDT disabled as a part of basic_clock initialization
-    sys_freq = calcSysFreq();
+    sys_freq = calcSysFreq(dco_freq);
     cfgDelay();
+    _EINT();
   }
 
   static msp_timerA_t       allocTimer(void);
@@ -65,10 +65,11 @@ public:
 
   static uint16_t inline    getMSTicks(void)       { return ticks_in_a_ms; };
 
+  static uint32_t inline    getSysFreq(void)       { return sys_freq; };
+
   static bool               releaseTimer(msp_timerA_t timer);
 
 private:
-  static dco_freq_t         dco_freq;
   static uint32_t           sys_freq;
 
   // TimerA used with the clock library
@@ -83,8 +84,8 @@ private:
   static uint32_t           s_count;
   static uint32_t           ms_count;
 
-  static void               calcSysFreq(void);
+  static uint32_t           calcSysFreq(dco_freq_t dco_freq);
   static void               cfgDelay(void);
 
   static void __interrupt   delayISR(void);
-}
+};

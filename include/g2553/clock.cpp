@@ -17,9 +17,10 @@
 #include "clock.h"
 
 // Static class variable initialization
-uint32_t clock::ms_count = 0;
-uint32_t clock::s_count = 0;
-uint16_t clock::ticks_in_a_ms = 0;
+uint32_t   clock::ms_count = 0;
+uint32_t   clock::s_count = 0;
+uint16_t   clock::ticks_in_a_ms = 0;
+uint32_t   clock::sys_freq = 0;
 
 // Commit a timerA CCR0 to the clock library
 msp_timerA_t clock::timer = CLK_TIMERA;
@@ -50,7 +51,7 @@ msp_timerA_t clock::allocTimer(void)
   return MSP_TIMERA_SIZE;
 }
 
-uint32_t clock::calcSysFreq(void)
+uint32_t clock::calcSysFreq(dco_freq_t dco_freq)
 {
   switch (dco_freq)
   {
@@ -61,6 +62,7 @@ uint32_t clock::calcSysFreq(void)
     case DCO_F_8MHz:
       return F_8MHz;
     case DCO_F_1MHz:
+    default:
       return F_1MHz;
   }
 }
@@ -74,7 +76,7 @@ void clock::cfgDelay(void)
 
   // Configure the clock's timerA for continuous mode and assign SMCLK as its
   // source
-  set(tactl(timer), (TASSEL__SMCLK | MC__CONTINUOUS | TACLR));
+  set(tactl(timer), (TASSEL_2 | MC_2 | TACLR));
   // Enable the timer interrupt (ISR ignores anything not a delay)
   on (tacctl(timer), CCIE);
   // Set the CCR at 0 to start
@@ -91,6 +93,17 @@ void clock::delayMS(uint32_t ms)
   // Enter LPM0 -- clocks stay enabled, disables CPU
   // GIE bit is already enabled by clock initialization
   LPM0;
+}
+
+// Delay for the number of seconds specified as an argument
+void clock::delayS(uint32_t s)
+{
+  s_count = s;
+  while (s_count > 0)
+  {
+    delayMS(1000);
+    s_count--;
+  }
 }
 
 // Release a timer that was previously allocated from the clock's CCR pool
@@ -127,7 +140,8 @@ void clock::clk2PinEnable(clk_pin_t pin)
   pinSelOn((msp_pin_t) pin);
 }
 
-#pragma vector=CLK_TIMER_VECTOR
+//TODO use definition instead if I can
+#pragma vector=TIMER0_A0_VECTOR
 __interrupt void clock::delayISR(void)
 {
   // Ignore interrupts when a MS delay is not in progress
