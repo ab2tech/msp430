@@ -20,7 +20,6 @@
 #include "ab2.h"
 // Steal our MSP include from pin_fw to make this a generic library
 #include "../pin_fw.h"
-#include "../isr_dispatcher.h"
 
 typedef enum
 {
@@ -31,9 +30,8 @@ typedef enum
 class int_sw
 {
 public:
-  int_sw(msp_pin_t pin, void (*callback)(void),
-      int_edge_t edge = INT_EDGE_H2L) :
-        callback(callback), pin(pin), edge(edge) {
+  int_sw(msp_pin_t pin, int_edge_t edge = INT_EDGE_H2L) : pin(pin), edge(edge)
+  {
     // For low-to-high detection, we want the pin to have its pulldown enabled
     // For high-to-low detection, we want the pin to have its pullup enabled
     // Use the pinPull API for this to make the source cleaner :)
@@ -43,18 +41,30 @@ public:
     // Enable the pin's interrupt and clear its interrupt flag
     pinIfgClear(pin);
     pinIeEnable(pin);
-    // Install the switch ISR
-    isr_d::install(isr_d::pinVector(pin), this, &ISR);
   };
 private:
-  void       (*callback)(void);
   msp_pin_t    pin;
   int_edge_t   edge;
-
-  void inline  clearIFG(void) { pinIfgClear(pin); };
-  void inline  event(void) {
-    if (edge && !pinRead(pin)) (*callback)();
-    else if (!edge && pinRead(pin)) (*callback)(); };
-  void inline  installCallback(void (*func)(void)) { callback = func; };
-  static isr_t ISR(void *sw);
 };
+
+
+/*
+// Sample ISR for P1.0
+#pragma vector=PORT1_VECTOR
+void __interrupt intSW_ISR(void)
+{
+  // Clear the IFG for P1.0
+  // DO STUFF
+}
+
+// Sample ISR for P1.0 where other P1 IRQs exist
+#pragma vector=PORT1_VECTOR
+void __interrupt intSW_ISR(void)
+{
+  // Check the IFG for P1.0
+  // If set
+  // |
+  //  -> Clear the IFG for P1.0
+  //  -> DO STUFF
+}
+*/
