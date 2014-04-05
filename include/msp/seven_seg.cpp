@@ -52,6 +52,7 @@ void seven_seg::blank(bool zero, bool one)
   blank0 = zero;
   blank1 = one;
 }
+
 void seven_seg::dp(bool top, bool bot)
 {
   dp_top = top;
