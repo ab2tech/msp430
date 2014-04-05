@@ -20,7 +20,6 @@
 #include "../clock.h"
 #include "../pin_fw.h"
 #include "../timerA_fw.h"
-#include "../isr_dispatcher.h"
 
 #ifndef ROT_ENC_DIVISIONS
 #define ROT_ENC_DIVISIONS 32
@@ -29,17 +28,9 @@
 class rot_enc_poll
 {
 public:
-  // Construct a rotary encoder object with the A and B pins plus a callback to
-  // execute in the ISR and a timerA0. If a timer is provided in the
-  // constructor, that timer is assumed to be already configured with SMCLK as
-  // the source (need clock's MSTicks value to be accurate) and in continuous
-  // mode.
-  rot_enc_poll(msp_pin_t a, msp_pin_t b,
-      void (*callbackFunc)(rot_enc_poll *enc),
-      int8_t divs = ROT_ENC_DIVISIONS,
-      msp_timerA_t timer = MSP_TIMERA_SIZE) :
-      a(a), b(b), callbackFunc(callbackFunc), timer(timer),
-      divs(divs), delta(0), last(0), val(0)
+  // Construct a rotary encoder object with the A and B pins.
+  rot_enc_poll(msp_pin_t a, msp_pin_t b, int8_t divs = ROT_ENC_DIVISIONS)
+      a(a), b(b), divs(divs), last(0), val(1)
   {
     // Configure the rotary encoder pin pullups
     pinPullup(a);
@@ -47,32 +38,82 @@ public:
     pinIesHighToLow(a);
     pinIesHighToLow(b);
 
-    // Initialize
-    init();
+    // Gather initial values
+    if (pinRead(a))
+      new_val = 3;
+    if (pinRead(b))
+      new_val ^= 1;
+    last = new_val;
   }
-
-  void   inline clearVal(void)             { val = 0; };
-  int8_t inline getDelta(void)             { return delta; };
-  int8_t inline getDivs(void)              { return divs;  };
-  int8_t inline getLast(void)              { return last;  };
-  int8_t inline getPrev(void)              { return prev;  };
-  int8_t inline getVal(void)               { return val;   };
-  void   inline setDivs(uint16_t new_divs) { divs = new_divs; };
-  void          init(void);
-  void          update(void);
-
-  // Static wrapper for updateEncoder to be installed as an ISR
-  static isr_t  ISR(void *encoder);
-
-private:
-  void        (*callbackFunc)(rot_enc_poll *enc);
 
   msp_pin_t     a;
   msp_pin_t     b;
-  int8_t        delta;
   int8_t        divs;
   int8_t        last;
   int8_t        prev;
-  msp_timerA_t  timer;
   int8_t        val;
 };
+
+
+/*
+// Sample initialization and ISR
+
+msp_timerA_t timer; 
+
+int main(void)
+{
+  // Stuff
+  // Should probably check to make sure a timer is actually being allocated
+  // here...if we over-allocate there is the potential for undefined behavior
+  timer = clock::allocTimer();
+  // Keep in mind 'B' doesn't have to have an interrupt
+  rot_enc_poll encoder = rot_enc_poll(pX_X, pX_X);
+  // Set the CCR for 1ms from now
+  set(taccr(timer), (tar(timer) + clock::getMSTicks()));
+  // Enable the timer interrupt
+  on(tacctl(timer), CCIE);
+  // More stuff
+}
+
+// Below is simple for case where only one TIMER0_A1 interrupt is enabled. Need
+// to add logic to check for the specific interrupt if more than one is enabled.
+// NOTE: This is the reason for the global 'timer' variable.
+#pragma vector=TIMER0_A1_VECTOR
+void __interrupt intSW_ISR(void)
+{
+  int8_t delta, new_val, diff;
+
+  new_val = 0;
+  if (pinRead(encoder.a))
+    new_val = 3;
+  if (pinRead(encoder.b))
+    new_val ^= 1;
+  diff = encoder.last - new_val;
+  if (diff & 1)
+  {
+    // new_val value is now the last value
+    encoder.last = new_val;
+    // Bit 1 provides the direction
+    delta += (diff & 2) - 1;
+  }
+
+  // Update the encoder value, keeping it within the bounds of the divisions
+  // set up
+  encoder.val += delta;
+  if (encoder.val > (encoder.divs - 1))
+    encoder.val = 0;
+  else if (encoder.val < 0)
+    encoder.val = (encoder.divs - 1);
+
+  if (encoder.val != encoder.prev)
+  {
+    // DO STUFF
+  }
+
+  encoder.prev = encoder.val;
+
+  // Set up the next interrupt -- may differ based on timer configuration
+  // This is applicable for continuous mode 1ms intervals
+  addeq(taccr(encoder.timer), clock::getMSTicks());
+}
+*/
