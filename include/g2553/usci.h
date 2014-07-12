@@ -71,12 +71,6 @@
 // that is only valid for one USCI is okay. However, if this is ever ported to
 // an MSP430x2xx device which supports multiple USCIAs or USCIBs, these will
 // need to be modified accordingly.
-#define UCB_I2COA_OFFSET               0xB0
-#define UCB_I2COA(base_addr)           REG16(base_addr + UCB_I2COA_OFFSET)
-
-#define UCB_I2CSA_OFFSET               0xB2
-#define UCB_I2CSA(base_addr)           REG16(base_addr + UCB_I2CSA_OFFSET)
-
 #define UC_IE(base_addr)               IE2
 #define UCA_RXIE(base_addr)            UCA0RXIE
 #define UCA_TXIE(base_addr)            UCA0TXIE
@@ -84,3 +78,16 @@
 #define UC_IFG(base_addr)              IFG2
 #define UCA_RXIFG(base_addr)           UCA0RXIFG
 #define UCA_TXIFG(base_addr)           UCA0TXIFG
+
+#define UCB_I2COA_OFFSET               0xB0
+#define UCB_I2COA(base_addr)           REG16(base_addr + UCB_I2COA_OFFSET)
+
+#define UCB_I2CSA_OFFSET               0xB2
+#define UCB_I2CSA(base_addr)           REG16(base_addr + UCB_I2CSA_OFFSET)
+
+#define UCB_RXIE(base_addr)            UCB0RXIE
+#define UCB_TXIE(base_addr)            UCB0TXIE
+
+#define UCB_RXIFG(base_addr)           UCB0RXIFG
+#define UCB_TXIFG(base_addr)           UCB0TXIFG
+
