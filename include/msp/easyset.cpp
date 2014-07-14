@@ -62,7 +62,7 @@ void easyset::init(void)
   // If a timer hasn't been defined, allocate one from the pool of extra clock
   // timers. If a timer is defined, it must be configured for continuous mode
   // to work properly with this library.
-  if (timer != MSP_TIMERA_SIZE)
+  if (timer == MSP_TIMERA_SIZE)
     timer = clock::allocTimer();
 }
 
@@ -70,7 +70,7 @@ void easyset::update(void)
 {
   int16_t i = 0;
   writeCmd();
-  for (i=(num_nodes-1); i>=0; i--)
+  for (i=(num_nodes-1); i>=0; --i)
   {
     if (res == ES_12BIT)
       writeNibble(out0[i]>>BYTE_SIZE & 0xF);
