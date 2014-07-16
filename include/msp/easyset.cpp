@@ -15,19 +15,19 @@
 // MSP430 EasySet Library
 #include "easyset.h"
 
-void *easyset::data(es_out_t out, uint16_t node, uint16_t val)
+void *easyset::data(uint16_t node, es_out_t out, uint16_t val)
 {
   uint16_t *p;
   switch (out)
   {
     case ES_OUT_0:
-      p = out0;
+      p = pOut0;
       break;
     case ES_OUT_1:
-      p = out1;
+      p = pOut1;
       break;
     case ES_OUT_2:
-      p = out2;
+      p = pOut2;
       break;
     default:
       _never_executed();
@@ -69,18 +69,18 @@ void easyset::init(void)
 void easyset::update(void)
 {
   int16_t i = 0;
-  writeCmd();
-  for (i=(num_nodes-1); i>=0; --i)
+  for (i=0; i<num_nodes; i++)
   {
+    writeCmd();
     if (res == ES_12BIT)
-      writeNibble(out0[i]>>BYTE_SIZE & 0xF);
-    writeByte(out0[i] & 0xFF);
+      writeNibble(pOut0[i]>>BYTE_SIZE & 0xF);
+    writeByte(pOut0[i] & 0xFF);
     if (res == ES_12BIT)
-      writeNibble(out1[i]>>BYTE_SIZE & 0xF);
-    writeByte(out1[i] & 0xFF);
+      writeNibble(pOut1[i]>>BYTE_SIZE & 0xF);
+    writeByte(pOut1[i] & 0xFF);
     if (res == ES_12BIT)
-      writeNibble(out2[i]>>BYTE_SIZE & 0xF);
-    writeByte(out2[i] & 0xFF);
+      writeNibble(pOut2[i]>>BYTE_SIZE & 0xF);
+    writeByte(pOut2[i] & 0xFF);
     writeEOS();
   }
   writeGS();

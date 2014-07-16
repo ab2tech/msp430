@@ -22,8 +22,8 @@
 #include "../timerA_fw.h"
 
 // Delay Calculations           EXPLICIT DELAY + IMPLICIT DELAY = TOTAL DELAY
-#define ES_EOS_DELAY       1 // 1*2Tcycle      + 2Tcycle        = 4Tcycle
-#define ES_GSLAT_DELAY     3 // 3*2Tcycle      + 2Tcycle        = 8Tcycle
+#define ES_EOS_DELAY       4 // 4Tcycle        + 1Tcycle        = 5Tcycle (3.5-5.5)
+#define ES_GSLAT_DELAY     7 // 7Tcycle        + 1Tcycle        = 8Tcycle (8+)
 
 // EasySet Commands
 #define ES_WRITECMD        0x3A
@@ -57,9 +57,9 @@ public:
   {
     pinOutput(sdo);
     pinOff(sdo);
-    out0 = new uint16_t [num_nodes];
-    out1 = new uint16_t [num_nodes];
-    out2 = new uint16_t [num_nodes];
+    pOut0 = new uint16_t [num_nodes];
+    pOut1 = new uint16_t [num_nodes];
+    pOut2 = new uint16_t [num_nodes];
     // Configure the delay for 1us so we can achieve Tcycle of ~4us
     delay_cycles = (uint16_t)(clock::getSysFreq() / F_1MHz);
     // For system frequencies below 1MHz, delay only one cycle
@@ -69,20 +69,20 @@ public:
   }
 
   ~easyset() {
-    delete[] out0;
-    delete[] out1;
-    delete[] out2;
+    delete[] pOut0;
+    delete[] pOut1;
+    delete[] pOut2;
   }
 
-  void *data(es_out_t out, uint16_t node, uint16_t val);
+  void *data(uint16_t node, es_out_t out, uint16_t val);
   void  update(void);
 
 private:
   uint16_t         delay_cycles;
   uint16_t         num_nodes;
-  uint16_t        *out0;
-  uint16_t        *out1;
-  uint16_t        *out2;
+  uint16_t        *pOut0;
+  uint16_t        *pOut1;
+  uint16_t        *pOut2;
   es_resolution_t  res;
   msp_pin_t        sdo;
   msp_timerA_t     timer;
