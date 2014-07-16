@@ -47,19 +47,66 @@ typedef enum
   ES_OUT_2
 } es_out_t;
 
+// Potential RGB configurations
+typedef enum
+{
+  ES_RGB,
+  ES_GBR,
+  ES_BRG,
+  ES_RBG,
+  ES_GRB,
+  ES_BGR
+} es_rgb_t;
+
 class easyset
 {
 public:
   easyset(msp_pin_t sdo, uint16_t num_nodes,
           es_resolution_t res = ES_8BIT,
+          es_rgb_t rgb = ES_BRG,
           msp_timerA_t timer = MSP_TIMERA_SIZE) :
-    sdo(sdo), num_nodes(num_nodes), res(res), timer(timer)
+    sdo(sdo), num_nodes(num_nodes), res(res), rgb(rgb), timer(timer)
   {
     pinOutput(sdo);
     pinOff(sdo);
     pOut0 = new uint16_t [num_nodes];
     pOut1 = new uint16_t [num_nodes];
     pOut2 = new uint16_t [num_nodes];
+    switch(rgb)
+    {
+      case ES_RGB:
+        pRed   = pOut0;
+        pGreen = pOut1;
+        pBlue  = pOut2;
+        break;
+      case ES_RBG:
+        pRed   = pOut0;
+        pGreen = pOut2;
+        pBlue  = pOut1;
+        break;
+      case ES_GRB:
+        pRed   = pOut1;
+        pGreen = pOut0;
+        pBlue  = pOut2;
+        break;
+      case ES_GBR:
+        pRed   = pOut2;
+        pGreen = pOut0;
+        pBlue  = pOut1;
+        break;
+      case ES_BRG:
+        pRed   = pOut1;
+        pGreen = pOut2;
+        pBlue  = pOut0;
+        break;
+      case ES_BGR:
+        pRed   = pOut2;
+        pGreen = pOut1;
+        pBlue  = pOut0;
+        break;
+      default:
+        _never_executed();
+    }
     // Configure the delay for 1us so we can achieve Tcycle of ~4us
     delay_cycles = (uint16_t)(clock::getSysFreq() / F_1MHz);
     // For system frequencies below 1MHz, delay only one cycle
@@ -75,6 +122,7 @@ public:
   }
 
   void *data(uint16_t node, es_out_t out, uint16_t val);
+  void  rgbData(uint16_t node, uint16_t r, uint16_t g, uint16_t b);
   void  update(void);
 
 private:
@@ -83,6 +131,10 @@ private:
   uint16_t        *pOut0;
   uint16_t        *pOut1;
   uint16_t        *pOut2;
+  uint16_t        *pRed;
+  uint16_t        *pGreen;
+  uint16_t        *pBlue;
+  es_rgb_t         rgb;
   es_resolution_t  res;
   msp_pin_t        sdo;
   msp_timerA_t     timer;

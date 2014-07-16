@@ -66,6 +66,21 @@ void easyset::init(void)
     timer = clock::allocTimer();
 }
 
+void easyset::rgbData(uint16_t node, uint16_t r, uint16_t g, uint16_t b)
+{
+  uint16_t *pR = pRed   + node;
+  uint16_t *pG = pGreen + node;
+  uint16_t *pB = pBlue  + node;
+
+  // Check for node index out of bounds
+  if (node >= num_nodes)
+    return;
+
+  *pR = r;
+  *pG = g;
+  *pB = b;
+}
+
 void easyset::update(void)
 {
   int16_t i = 0;
