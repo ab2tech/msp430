@@ -11,6 +11,7 @@ int main (void)
 {
   for (;;) //ever
   {
+    // Do some rotations with delays in between
     stepper.rotate(360);
     clk.delayMS(500);
     stepper.ccw(180);
@@ -20,6 +21,7 @@ int main (void)
     stepper.rotate(720);
     clk.delayMS(2000);
 
+    // Iterate through different MODE settings
     // Don't go past MODE_16 (too slow)
     if (stepper.modeUp() == DRV8825_MODE_32)
     {
