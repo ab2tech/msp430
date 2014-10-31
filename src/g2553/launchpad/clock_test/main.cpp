@@ -1,22 +1,26 @@
 #include "main.h"
 
 #define LED_PIN  p1_0
-#define LED_PIN2 p1_6
 
 int main(void)
 {
-  clock(DCO_F_16MHz);
+  // Initialize the clock
+  clock();
 
+  // Make the LED_PIN an output
   pinOutput(LED_PIN);
 
+  // Enable SMCLK pin output
   //clock::clk2PinEnable(CLK_PIN_ACLK);
   clock::clk2PinEnable(CLK_PIN_SMCLK);
 
-  for (;;)
+  // Loop
+  for (;;)//ever
   {
+    // Blink the LED (5Hz)
     pinOn(LED_PIN);
-    clock::delayMS(10);
+    clock::delayMS(100);
     pinOff(LED_PIN);
-    clock::delayMS(10);
+    clock::delayMS(100);
   }
 }
