@@ -13,12 +13,12 @@ void toggleLED()
 
 int main (void)
 {
-  // Set up the switch
+  // Set up the switch and callback function
   int_sw sw = int_sw(SW_PIN, &toggleLED);
   // Configure the LED_PIN as an output
   pinOutput(LED_PIN);
   pinOn(LED_PIN);
-  // Already done by clock library, but do it again anyway
+  // Already done by clock library, but enable interrupts again anyway
   _EINT();
   // Enter low power mode 3
   LPM3;
