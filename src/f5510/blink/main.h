@@ -5,6 +5,3 @@
 #include "msp/ab2.h"
 #include "pin_fw.h"
 #include "clock.h"
-
-#define F_CPU F_25MHz
-#include "msp/delay.h"
