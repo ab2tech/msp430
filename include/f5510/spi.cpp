@@ -182,11 +182,11 @@ uint8_t spi::tx(uint8_t byte)
 // Write a series of bytes to SPI
 void spi::txFrame(uint8_t *buf, uint16_t size)
 {
-  uint16_t i = 0;
+  int16_t i = 0;
   volatile uint8_t tmpVar;
 
   // Send the buffer one byte at a time
-  for (i=0; i<size; i++)
+  for (i=size-1; i>=0; --i)
   {
     // Write the TX buffer with the i-th byte
     set(UC_TXBUF(spi_base_addr), buf[i]);
@@ -196,7 +196,7 @@ void spi::txFrame(uint8_t *buf, uint16_t size)
   }
 
   // Wait for the transaction to complete
-  while (read(UC_STAT(spi_base_addr), UCBUSY) == 0);
+  while (read(UC_STAT(spi_base_addr), UCBUSY));
   // Dummy read to clear the RX IFG flag
   set(tmpVar, UC_RXBUF(spi_base_addr));
 }
