@@ -22,8 +22,8 @@
 // Steal our MSP include from pin_fw to make this a generic library
 #include "../pin_fw.h"
 #include "../spi.h"
+#include "../clock.h"
 #include "shift_r.h"
-#include "clock.h"
 
 // Channel definitions
 typedef enum
